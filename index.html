@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kend.esign.studio</title>
+    <title>kend.design.studio</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -152,7 +152,7 @@
                     </div>
                     <!-- HERO BRANDING RESTORED -->
                     <h1 class="text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[10rem] font-black leading-[0.8] tracking-tighter uppercase mb-10">
-                        <span class="text-white">KEND.ESIGN.</span><br>
+                        <span class="text-white">KEND.DESIGN.</span><br>
                         <span class="text-white/40">STUDIO</span>
                     </h1>
                     <p id="hero-para" class="text-white/60 text-base md:text-xl max-w-2xl font-medium leading-relaxed">
@@ -202,80 +202,176 @@
     </section>
 
     <!-- CV SECTION (Modular Boxes) -->
-    <section id="cv" class="py-24 md:py-32 px-6 md:px-16 lg:px-24">
+<!-- CV SECTION (Modular Box Layout) -->
+    <section id="cv" class="py-24 md:py-32 px-6 md:px-16 lg:px-24 bg-[#F5F5F7]">
         <div class="max-w-[1400px] mx-auto">
-            <h2 class="text-4xl md:text-6xl font-black text-primary mb-16 tracking-tight">Curriculum Vitae</h2>
             
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+                <div>
+                    <span class="text-[10px] md:text-xs font-bold tracking-[0.3em] text-secondary uppercase mb-4 block">Professional Background</span>
+                    <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight">Curriculum Vitae</h2>
+                </div>
+                <button class="btn-animate inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-accent transition-colors">
+                    <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+                </button>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <!-- Sidebar Column -->
+                
+                <!-- SIDEBAR: Education, Skills, Achievement -->
                 <div class="lg:col-span-4 space-y-6">
-                    <div class="bg-white rounded-[2rem] p-10 border border-black/5 shadow-ios-card">
-                        <div class="flex items-center gap-3 mb-8"><i data-lucide="graduation-cap" class="w-5 h-5 text-accent"></i><h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Education</h3></div>
+                    
+                    <!-- Box: Education -->
+                    <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
+                        <div class="flex items-center gap-3 mb-8">
+                            <i data-lucide="graduation-cap" class="w-5 h-5 text-accent"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Education</h3>
+                        </div>
                         <div class="space-y-8">
-                            <div><h4 class="font-bold text-primary">Master of Business Administration</h4><p class="text-secondary text-sm">Universitas Gadjah Mada</p><p class="text-xs font-bold text-accent mt-1 tracking-tighter">2023 – 2025</p></div>
-                            <div><h4 class="font-bold text-primary">Profesional Degree — Architecture</h4><p class="text-secondary text-sm">Universitas Gadjah Mada</p><p class="text-xs font-bold text-accent mt-1 tracking-tighter">2021 – 2022</p></div>
-                            <div><h4 class="font-bold text-primary">B.Eng — Architecture</h4><p class="text-secondary text-sm">Universitas Gadjah Mada</p><p class="text-xs font-bold text-accent mt-1 tracking-tighter">2015 – 2019</p></div>
+                            <div>
+                                <h4 class="font-bold text-primary leading-tight">Master of Business Administration (M.B.A.)</h4>
+                                <p class="text-secondary text-sm">Universitas Gadjah Mada</p>
+                                <p class="text-xs font-bold text-accent mt-1 tracking-tighter">2023 – 2025</p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-primary leading-tight">Professional Degree – Architecture (Ar.)</h4>
+                                <p class="text-secondary text-sm">Universitas Gadjah Mada</p>
+                                <p class="text-xs font-bold text-accent mt-1 tracking-tighter">2021 – 2022</p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-primary leading-tight">Bachelor of Engineering – Architecture</h4>
+                                <p class="text-secondary text-sm">Universitas Gadjah Mada</p>
+                                <p class="text-xs font-bold text-accent mt-1 tracking-tighter">2015 – 2019</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-[2rem] p-10 border border-black/5 shadow-ios-card">
-                        <div class="flex items-center gap-3 mb-8"><i data-lucide="cpu" class="w-5 h-5 text-accent"></i><h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Tools & Skills</h3></div>
+                    <!-- Box: Tools & Skills (Color Coded) -->
+                    <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
+                        <div class="flex items-center gap-3 mb-8">
+                            <i data-lucide="cpu" class="w-5 h-5 text-accent"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Tools & Skills</h3>
+                        </div>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1.5 bg-primary text-white text-[10px] font-bold rounded-lg uppercase tracking-tighter">Revit</span>
-                            <span class="px-3 py-1.5 bg-primary text-white text-[10px] font-bold rounded-lg uppercase tracking-tighter">AutoCAD</span>
-                            <span class="px-3 py-1.5 bg-primary text-white text-[10px] font-bold rounded-lg uppercase tracking-tighter">Rhino</span>
-                            <span class="px-3 py-1.5 bg-accent text-white text-[10px] font-bold rounded-lg uppercase tracking-tighter">Strategic Thinking</span>
-                            <span class="px-3 py-1.5 bg-accent text-white text-[10px] font-bold rounded-lg uppercase tracking-tighter">Data Analysis</span>
+                            <!-- Tools (Primary Color - Hard Skills) -->
+                            <span class="px-3 py-1.5 bg-primary rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">Revit</span>
+                            <span class="px-3 py-1.5 bg-primary rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">AutoCAD</span>
+                            <span class="px-3 py-1.5 bg-primary rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">Rhino</span>
+                            <span class="px-3 py-1.5 bg-primary rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">SketchUp</span>
+                            <span class="px-3 py-1.5 bg-primary rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">3Ds Max</span>
+                            <span class="px-3 py-1.5 bg-primary rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">Naviswork</span>
+                            <span class="px-3 py-1.5 bg-primary rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">Stata 17</span>
+                            <span class="px-3 py-1.5 bg-primary rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">SPSS</span>
+                            <span class="px-3 py-1.5 bg-primary rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">Adobe Suite</span>
+                            <!-- Skills (Accent Color - Soft Skills) -->
+                            <span class="px-3 py-1.5 bg-accent rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">Stakeholder Mgmt</span>
+                            <span class="px-3 py-1.5 bg-accent rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">Data Analysis</span>
+                            <span class="px-3 py-1.5 bg-accent rounded-lg text-[10px] font-bold text-white uppercase tracking-tighter">Strategic Thinking</span>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-[2rem] p-10 border border-black/5 shadow-ios-card">
-                        <div class="flex items-center gap-3 mb-8"><i data-lucide="trophy" class="w-5 h-5 text-accent"></i><h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Achievement</h3></div>
+                    <!-- Box: Achievement -->
+                    <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
+                        <div class="flex items-center gap-3 mb-8">
+                            <i data-lucide="trophy" class="w-5 h-5 text-accent"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Achievement</h3>
+                        </div>
                         <div class="space-y-6 text-sm">
-                            <div class="flex gap-4"><span class="font-black text-primary">2025</span><p class="text-secondary font-medium tracking-tight">Secure Architecture Package – PT. AMF</p></div>
-                            <div class="flex gap-4"><span class="font-black text-primary">2021</span><p class="text-secondary font-medium tracking-tight">2nd Place – Jati Campus Design</p></div>
+                            <div class="flex gap-4">
+                                <span class="font-black text-primary">2025</span>
+                                <p class="text-secondary font-medium tracking-tight">Secure Architecture Package – PT. AMF, Batam</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="font-black text-primary">2021</span>
+                                <p class="text-secondary font-medium tracking-tight">2nd Place – Jati Campus Design Competition</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="font-black text-primary">2019</span>
+                                <p class="text-secondary font-medium tracking-tight">4th Place – IKN Masterplan Design Competition</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Main Experience Column (Revealed Data) -->
-                <div class="lg:col-span-8 bg-white rounded-[2rem] md:rounded-[3rem] p-10 md:p-16 border border-black/5 shadow-ios-card">
-                    <div class="flex items-center gap-3 mb-12"><i data-lucide="briefcase" class="w-5 h-5 text-accent"></i><h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Experience</h3></div>
-                    <div class="space-y-0">
+                <!-- MAIN COLUMN: Experience (One-Way Reveal) -->
+                <div class="lg:col-span-8 bg-white rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 border border-black/5 shadow-ios-card">
+                    <div class="flex items-center gap-3 mb-12">
+                        <i data-lucide="briefcase" class="w-5 h-5 text-accent"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Experience</h3>
+                    </div>
+
+                    <div class="space-y-0 timeline-container">
+                        
                         <!-- Job 1 -->
                         <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0">
-                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent transition-colors"></div>
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent transition-all duration-300"></div>
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                 <h4 class="text-2xl font-black text-primary tracking-tight">Project Architect</h4>
-                                <span class="text-xs font-black text-accent uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full">2025 – Present</span>
+                                <span class="text-xs font-black text-accent uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full w-fit">2025 – Present</span>
                             </div>
-                            <p class="text-secondary font-bold mt-1">PT Agies Mitra Faathir — Batam</p>
+                            <p class="text-secondary font-bold mt-1">PT Agies Mitra Faathir — Batam, Indonesia</p>
                             <div class="exp-details">
-                                <ul class="list-disc list-outside ml-4 mt-4 space-y-3 text-secondary text-sm font-medium leading-relaxed">
-                                    <li>Review consultant designs to ensure compliance with regulations and standards.</li>
+                                <ul class="list-disc list-outside ml-4 space-y-3 text-secondary text-[15px] font-medium leading-relaxed">
+                                    <li>Review consultant designs to ensure compliance with regulations, standards, and drawing quality.</li>
                                     <li>Provide design alternatives integrating financial forecasting and ROI considerations.</li>
-                                    <li>Manage budget planning (RAB) and pricing proposals to optimize costs.</li>
+                                    <li>Manage budget planning (RAB) and pricing proposals, optimizing costs.</li>
                                     <li>Curate and present architectural material options to support client decisions.</li>
                                 </ul>
                             </div>
                         </div>
 
                         <!-- Job 2 -->
-                        <div class="exp-item relative pl-10 group cursor-pointer border-l-2 border-zinc-100 last:border-0 pb-1">
-                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent transition-colors"></div>
+                        <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent transition-all duration-300"></div>
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                 <h4 class="text-2xl font-black text-primary tracking-tight">BIM Engineer</h4>
-                                <span class="text-xs font-bold text-secondary uppercase tracking-widest bg-zinc-100 px-3 py-1 rounded-full">2022 – 2024</span>
+                                <span class="text-xs font-bold text-secondary uppercase tracking-widest bg-zinc-100 px-3 py-1 rounded-full w-fit">2022 – 2024</span>
                             </div>
                             <p class="text-secondary font-bold mt-1">Shimizu-Adhi Karya CP201 Project — Jakarta</p>
                             <div class="exp-details">
-                                <ul class="list-disc list-outside ml-4 mt-4 space-y-3 text-secondary text-sm font-medium leading-relaxed">
-                                    <li>Contributed to BIM coordination to align design and construction.</li>
+                                <ul class="list-disc list-outside ml-4 space-y-3 text-secondary text-[15px] font-medium leading-relaxed">
+                                    <li>Contributed to BIM coordination to align design and construction, minimizing discrepancies.</li>
                                     <li>Streamlined information management across Architecture, MEP, and Civil teams.</li>
-                                    <li>Developed BIM data for Jakarta MRT CP201 Monas Station.</li>
+                                    <li>Developed BIM data for Jakarta MRT CP201 Monas – Thamrin Station.</li>
+                                    <li>Delivered 3D scans and design data to support accurate on-site execution.</li>
                                 </ul>
                             </div>
                         </div>
+
+                        <!-- Job 3 -->
+                        <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent transition-all duration-300"></div>
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                <h4 class="text-2xl font-black text-primary tracking-tight">Architect (Internship)</h4>
+                                <span class="text-xs font-bold text-secondary uppercase tracking-widest bg-zinc-100 px-3 py-1 rounded-full w-fit">2021 – 2022</span>
+                            </div>
+                            <p class="text-secondary font-bold mt-1">PT Pandega Desain Wehirama — Jakarta</p>
+                            <div class="exp-details">
+                                <ul class="list-disc list-outside ml-4 space-y-3 text-secondary text-[15px] font-medium leading-relaxed">
+                                    <li>Supported design development for data centers, resorts, and monumental buildings.</li>
+                                    <li>Assisted senior architects with design revisions and cost calculations.</li>
+                                    <li>Prepared concept decks and visual materials for project pitches.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Job 4 -->
+                        <div class="exp-item relative pl-10 group cursor-pointer border-l-2 border-zinc-100 last:border-0 pb-1">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent transition-all duration-300"></div>
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                <h4 class="text-2xl font-black text-primary tracking-tight">Green Building Consultant</h4>
+                                <span class="text-xs font-bold text-secondary uppercase tracking-widest bg-zinc-100 px-3 py-1 rounded-full w-fit">2019 – 2020</span>
+                            </div>
+                            <p class="text-secondary font-bold mt-1">Desain Performa Energi — Yogyakarta</p>
+                            <div class="exp-details">
+                                <ul class="list-disc list-outside ml-4 space-y-3 text-secondary text-[15px] font-medium leading-relaxed">
+                                    <li>Prepared green building certification through design simulations and sustainability reporting.</li>
+                                    <li>Researched net-zero energy strategies for Indonesia’s new capital city (IKN).</li>
+                                    <li>Collaborated with multidisciplinary teams to integrate sustainable solutions.</li>
+                                </ul>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
