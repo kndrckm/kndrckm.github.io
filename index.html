@@ -11,65 +11,83 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Satoshi', 'sans-serif'] },
-                    colors: {
-                        ios: { bg: '#F5F5F7', text: '#1D1D1F', accent: '#0071E3', secondary: '#86868B' }
-                    }
                 }
             }
         }
     </script>
     <style>
-        .glass-nav { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.7); }
-        .hero-gradient { background: linear-gradient(180deg, rgba(245,245,247,0) 0%, rgba(245,245,247,1) 100%); }
+        body { background-color: #D1D5DB; } /* Outer background color */
+        .glass {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .text-shadow {
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
-<body class="font-sans antialiased bg-[#F5F5F7]">
+<body class="font-sans antialiased p-4 md:p-8 min-h-screen flex items-center justify-center">
 
-    <nav class="fixed top-0 w-full z-50 glass-nav border-b border-black/5">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="#" class="text-xl font-bold tracking-tighter">ARCH.</a>
-            <div class="hidden md:flex space-x-8 text-sm font-medium text-ios-secondary">
-                <a href="#">Portfolio</a><a href="#">Services</a><a href="#">About</a><a href="#">Contact</a>
-            </div>
-        </div>
-    </nav>
-
-    <section class="relative h-screen flex items-center">
-        <div class="absolute inset-0 z-0">
+    <!-- Main Framed Container -->
+    <div class="relative w-full max-w-[1600px] aspect-video md:h-[92vh] overflow-hidden rounded-[3rem] shadow-2xl">
+        
+        <!-- Hero Background Image -->
+        <div class="absolute inset-0">
             <img src="https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/uploads/da3abaa7-4b4d-43fb-b76a-0d6f4165fcf6/1770107731107-eee72ce8/Gemini_Generated_Image_si6k6xsi6k6xsi6k.png" 
                  class="w-full h-full object-cover" alt="Modern Architecture">
-            <div class="absolute inset-0 hero-gradient"></div>
+            <!-- Dark Overlay for readability -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
         </div>
-        <div class="relative z-10 max-w-7xl mx-auto px-6 w-full">
-            <span class="text-xs font-bold tracking-widest text-ios-accent uppercase mb-4 block">Residential & Commercial Design</span>
-            <h1 class="text-5xl md:text-8xl font-bold tracking-tight mb-6 leading-tight">Architectural Vision.</h1>
-            <p class="text-lg md:text-xl text-ios-secondary max-w-2xl mb-10">Where light meets structure. We create timeless environments designed for the future of living.</p>
-            <a href="#" class="inline-block bg-black text-white px-8 py-4 rounded-full font-medium shadow-xl hover:scale-105 transition-transform">Explore Projects</a>
-        </div>
-    </section>
 
-    <section class="py-24 px-6 max-w-7xl mx-auto">
-        <h2 class="text-4xl font-bold mb-12">Featured Projects</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="group">
-                <div class="overflow-hidden rounded-3xl mb-4 shadow-lg"><img src="https://images.unsplash.com/photo-1600596542815-e32c8cc22bc9?auto=format&fit=crop&w=800" class="group-hover:scale-105 transition-transform duration-500"></div>
-                <h3 class="text-xl font-bold">The Glass Pavilion</h3>
-            </div>
-            <div class="group">
-                <div class="overflow-hidden rounded-3xl mb-4 shadow-lg"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800" class="group-hover:scale-105 transition-transform duration-500"></div>
-                <h3 class="text-xl font-bold">Nordic Retreat</h3>
-            </div>
-            <div class="group">
-                <div class="overflow-hidden rounded-3xl mb-4 shadow-lg"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800" class="group-hover:scale-105 transition-transform duration-500"></div>
-                <h3 class="text-xl font-bold">Tribeca Loft</h3>
-            </div>
-        </div>
-    </section>
+        <!-- Floating Pill Navigation -->
+        <nav class="absolute top-8 left-1/2 -translate-x-1/2 z-50">
+            <div class="glass flex items-center px-2 py-2 rounded-full border border-white/20 shadow-lg">
+                <!-- Logo -->
+                <div class="px-6 py-2">
+                    <span class="font-bold tracking-tighter text-black text-lg">ARCH.</span>
+                </div>
+                
+                <!-- Menu Items -->
+                <div class="hidden md:flex items-center space-x-1 px-4">
+                    <a href="#" class="px-5 py-2 text-sm font-medium text-gray-700 hover:bg-white/40 rounded-full transition">Portfolio</a>
+                    <a href="#" class="px-5 py-2 text-sm font-medium text-gray-700 hover:bg-white/40 rounded-full transition">Services</a>
+                    <a href="#" class="px-5 py-2 text-sm font-medium text-gray-700 hover:bg-white/40 rounded-full transition">About</a>
+                </div>
 
-    <footer class="bg-black text-white py-20 px-6 text-center">
-        <h2 class="text-4xl font-bold mb-8">Let's create together.</h2>
-        <p class="text-gray-400 mb-8">© 2024 Architectural Vision.</p>
-    </footer>
+                <!-- Contact Button -->
+                <a href="#" class="bg-black text-white px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 hover:scale-105 transition-transform">
+                    Contact <span class="text-[10px]">↗</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-20 z-10">
+            <!-- Subtitle -->
+            <div class="flex items-center gap-4 mb-4">
+                <div class="h-[1px] w-8 bg-white/60"></div>
+                <span class="text-xs font-bold tracking-[0.2em] text-white uppercase">Residential & Commercial Design</span>
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="text-6xl md:text-[11rem] font-bold text-white leading-[0.85] tracking-tight mb-8">
+                Architectural<br>Vision.
+            </h1>
+
+            <!-- Description -->
+            <p class="text-white/80 max-w-md text-sm md:text-base leading-relaxed">
+                Crafting spaces that breathe. Where light meets structure <br class="hidden md:block"> and form follows emotion.
+            </p>
+        </div>
+
+        <!-- Explore Vertical Line Widget -->
+        <div class="absolute bottom-12 right-12 z-10 flex flex-col items-center">
+            <span class="text-[10px] font-bold tracking-[0.3em] text-white/60 uppercase mb-4 [writing-mode:vertical-lr] md:[writing-mode:horizontal-tb]">Explore</span>
+            <div class="w-[1px] h-20 bg-gradient-to-b from-white/80 to-transparent"></div>
+        </div>
+
+    </div>
 
 </body>
 </html>
