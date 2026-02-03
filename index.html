@@ -5,15 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>kend.esain</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500&display=swap" rel="stylesheet">
+    
+    <!-- Changed font to Inter from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Satoshi', 'sans-serif'] },
+                    // Updated font family to Inter
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     boxShadow: {
-                        // Custom "iOS 26" Deep Shadow (Layered)
                         'ios-deep': '0 10px 20px rgba(0,0,0,0.05), 0 30px 60px rgba(0,0,0,0.1), 0 50px 100px rgba(0,0,0,0.15)',
                     }
                 }
@@ -22,7 +26,6 @@
     </script>
 
     <style>
-        /* The Background behind the frame */
         body { 
             background-color: #E5E7EB; 
             display: flex;
@@ -30,10 +33,9 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px; /* Space around the frame on desktop */
+            padding: 20px; 
         }
 
-        /* Glassmorphism Navigation */
         .nav-glass {
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(15px);
@@ -41,74 +43,63 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* The Darkening Overlay inside the image frame */
         .image-overlay {
             background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
         }
 
-        /* Smooth scrolling for the whole page */
         html { scroll-behavior: smooth; }
     </style>
 </head>
 <body class="font-sans antialiased">
 
-    <!-- MAIN FRAME (The "Framer" Component Container) -->
-    <!-- On Mobile: Rounded but fills screen | On Desktop: Floating with deep shadow -->
     <main class="relative w-full max-w-[1440px] h-[90vh] md:h-[85vh] overflow-hidden rounded-[2.5rem] md:rounded-[4rem] bg-white shadow-ios-deep">
         
-        <!-- 1. THE PHOTO (Replace './assets/hero.png' with your filename) -->
-        <div class="absolute inset-0">
+        <div class="absolute inset-0 bg-gray-200">
+            <!-- Fixed Path: Removed './' for better GitHub Pages compatibility -->
             <img src="assets/hero.webp"  
                  class="w-full h-full object-cover" 
-                 alt="Residental design"
-                 onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'"> <!-- Fallback if image not found -->
+                 alt="Residential design"
+                 onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'">
             
-            <!-- Darkened Glass Effect Overlay -->
             <div class="absolute inset-0 image-overlay"></div>
         </div>
 
-        <!-- 2. RESPONSIVE NAVIGATION -->
+        <!-- Navigation -->
         <nav class="absolute top-6 md:top-10 left-1/2 -translate-x-1/2 z-50 w-[90%] md:w-auto">
             <div class="nav-glass px-3 py-2 md:px-6 md:py-3 rounded-full flex items-center justify-between md:justify-start md:gap-8 shadow-sm">
-                <!-- Logo -->
-                <span class="font-black tracking-tighter text-black text-lg ml-2">ARCH.</span>
+                <span class="font-black tracking-tighter text-black text-lg ml-2 uppercase">KEND.</span>
                 
-                <!-- Desktop Menu (Hidden on Mobile) -->
                 <div class="hidden md:flex items-center gap-1">
-                    <a href="#" class="px-4 py-2 text-sm font-medium hover:bg-white/30 rounded-full transition">Portfolio</a>
-                    <a href="#" class="px-4 py-2 text-sm font-medium hover:bg-white/30 rounded-full transition">Services</a>
-                    <a href="#" class="px-4 py-2 text-sm font-medium hover:bg-white/30 rounded-full transition">About</a>
+                    <a href="#" class="px-4 py-2 text-sm font-semibold hover:bg-white/30 rounded-full transition">Portfolio</a>
+                    <a href="#" class="px-4 py-2 text-sm font-semibold hover:bg-white/30 rounded-full transition">Services</a>
+                    <a href="#" class="px-4 py-2 text-sm font-semibold hover:bg-white/30 rounded-full transition">About</a>
                 </div>
 
-                <!-- Contact Button (Changes size on Mobile) -->
                 <a href="#" class="bg-black text-white px-5 py-2 md:px-7 md:py-2.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-2">
                     Contact <span class="hidden md:inline">↗</span>
                 </a>
             </div>
         </nav>
 
-        <!-- 3. MAIN CONTENT (Responsive Typography) -->
+        <!-- Content -->
         <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-20 z-10">
             <div class="max-w-5xl">
-                <!-- Line & Label -->
                 <div class="flex items-center gap-3 mb-4 opacity-80">
                     <div class="h-[1px] w-6 md:w-10 bg-white"></div>
                     <span class="text-[10px] md:text-xs font-bold tracking-[0.3em] text-white uppercase">Residential & Commercial Design</span>
                 </div>
 
-                <!-- Title: Shakes up size based on Screen Width (Framer Style) -->
-                <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black text-white leading-[0.85] tracking-tight mb-6">
+                <!-- Font Weight updated to 900 for that Inter look -->
+                <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black text-white leading-[0.85] tracking-tight mb-6 uppercase">
                     KEND.ESAIN<br>STUDIO
                 </h1>
 
-                <!-- Mobile: Shorter Text | Desktop: Full Text -->
-                <p class="text-white/70 text-sm md:text-lg max-w-sm md:max-w-xl leading-relaxed">
+                <p class="text-white/70 text-sm md:text-lg max-w-sm md:max-w-xl font-medium leading-relaxed">
                     Crafting spaces that breathe. Where light meets structure and form follows emotion. Timeless environments designed for the future.
                 </p>
             </div>
         </div>
 
-        <!-- 4. EXPLORE WIDGET (Hidden on small phones to keep it clean) -->
         <div class="absolute bottom-12 right-12 z-10 hidden md:flex flex-col items-center">
             <span class="text-[10px] font-bold tracking-[0.4em] text-white/40 uppercase mb-6 [writing-mode:vertical-lr]">Explore</span>
             <div class="w-[1px] h-24 bg-gradient-to-b from-white/60 to-transparent"></div>
