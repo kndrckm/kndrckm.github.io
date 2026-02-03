@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     
     <script>
         tailwind.config = {
@@ -28,11 +30,9 @@
     </script>
 
     <style>
-        /* Smooth scrolling for the whole page */
         html { scroll-behavior: smooth; }
         body { background-color: #F5F5F7; margin: 0; }
 
-        /* Navigation Glass Effect */
         .nav-glass {
             background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(20px);
@@ -40,98 +40,81 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        /* The Image Darkening Gradient */
         .image-overlay {
             background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%);
         }
 
-        /* Glass Edge Reflection (Reference Image 2 style) */
         .glass-edge {
             border-bottom: 1.5px solid rgba(255, 255, 255, 0.4);
-            border-left: 1px solid rgba(255, 255, 255, 0.2);
-            border-right: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: inset 0 -1px 1px rgba(255,255,255,0.2);
         }
 
-        /* Click Animation for all buttons */
         .btn-animate {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .btn-animate:active {
-            transform: scale(0.92);
+            transform: scale(0.94);
+        }
+
+        /* Mesh Gradient for the Vision Section */
+        .vision-mesh {
+            background: radial-gradient(circle at top left, #2D1B4D 0%, #161617 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .vision-mesh::after {
+            content: '';
+            position: absolute;
+            top: -50%; right: -20%;
+            width: 80%; height: 100%;
+            background: radial-gradient(circle, rgba(0, 122, 255, 0.15) 0%, transparent 70%);
+            filter: blur(80px);
         }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body class="font-sans antialiased text-primary">
 
-    <!-- HERO SECTION (Full Width, Bottom Rounded) -->
+    <!-- HERO SECTION -->
     <main class="relative w-full h-screen md:h-[95vh] overflow-hidden rounded-b-[3rem] md:rounded-b-[5rem] bg-black shadow-ios-deep glass-edge">
-        
-        <!-- Background Image -->
         <div class="absolute inset-0">
-            <img src="assets/hero.webp"  
-                 class="w-full h-full object-cover" 
-                 alt="Residential design"
-                 onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'">
+            <img src="assets/hero.webp" class="w-full h-full object-cover" alt="Hero" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'">
             <div class="absolute inset-0 image-overlay"></div>
         </div>
 
-        <!-- Navigation (Inter Light) -->
         <nav class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-50 w-[90%] md:w-auto">
             <div class="nav-glass px-3 py-2 md:px-6 md:py-2.5 rounded-full flex items-center justify-between md:justify-start md:gap-10 shadow-sm">
-                <!-- Logo -->
-                <span class="font-bold tracking-tighter text-primary text-lg ml-2">KEND.</span>
-                
-                <!-- Menu (Inter Light / Weight 300) -->
+                <span class="font-bold tracking-tighter text-primary text-lg ml-2 uppercase">KEND.</span>
                 <div class="hidden md:flex items-center gap-2 font-light text-primary">
                     <a href="#" class="btn-animate px-4 py-1.5 text-sm hover:bg-white/40 rounded-full transition">Portfolio</a>
                     <a href="#" class="btn-animate px-4 py-1.5 text-sm hover:bg-white/40 rounded-full transition">Services</a>
                     <a href="#" class="btn-animate px-4 py-1.5 text-sm hover:bg-white/40 rounded-full transition">About</a>
                 </div>
-
-                <!-- Contact Button (Accent Color on Hover) -->
-                <a href="#" class="btn-animate bg-primary hover:bg-accent text-white px-6 py-2 rounded-full text-xs md:text-sm font-bold transition-colors duration-300 shadow-md">
+                <a href="#" class="btn-animate bg-primary hover:bg-accent text-white px-6 py-2 rounded-full text-xs md:text-sm font-bold transition-colors duration-300">
                     Contact
                 </a>
             </div>
         </nav>
 
-        <!-- Hero Content -->
         <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-20 z-10">
             <div class="max-w-[1400px] mx-auto w-full">
-                
-                <!-- Subtitle -->
                 <div class="flex items-center gap-4 mb-4">
                     <span class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential & Commercial Design</span>
                     <div class="h-[1px] w-12 md:w-24 bg-white/30"></div>
                 </div>
-
-                <!-- Headline -->
                 <h1 class="text-[15vw] sm:text-[12vw] md:text-[10vw] lg:text-[10rem] font-black leading-[0.8] tracking-tighter uppercase mb-10">
                     <span class="text-white">KEND.ESIGN</span><br>
                     <span class="text-white/40">STUDIO</span>
                 </h1>
-
-                <!-- Body Text -->
                 <p class="text-white/60 text-base md:text-xl max-w-2xl font-medium leading-snug">
                     Crafting spaces that breathe. Where light meets structure <br class="hidden md:block"> and form follows emotion.
                 </p>
             </div>
         </div>
-
-        <!-- Explore Vertical Widget -->
-        <div class="absolute bottom-12 right-12 z-10 hidden md:flex flex-col items-center">
-            <span class="text-[10px] font-bold tracking-[0.4em] text-white/30 uppercase mb-6 [writing-mode:vertical-lr]">Explore</span>
-            <div class="w-[1px] h-20 bg-gradient-to-b from-white/40 to-transparent"></div>
-        </div>
     </main>
 
-
-    <!-- FEATURED PROJECTS SECTION -->
+    <!-- FEATURED PROJECTS -->
     <section class="py-24 md:py-32 px-6 md:px-16 lg:px-24">
-        
-        <!-- Section Header -->
-        <div class="max-w-[1400px] mx-auto mb-12 md:mb-16">
+        <div class="max-w-[1400px] mx-auto mb-16">
             <span class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-4 block">Selected Works</span>
             <div class="flex justify-between items-end">
                 <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight">Featured Projects</h2>
@@ -141,68 +124,99 @@
             </div>
         </div>
 
-        <!-- Project Grid -->
-        <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-14">
-            
-            <!-- Project 1: Asymmetric Large (2/3 width) -->
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-14">
             <div class="md:col-span-2 group cursor-pointer">
-                <div class="btn-animate overflow-hidden rounded-[2.5rem] md:rounded-[4rem] bg-zinc-200 aspect-[16/10] md:h-[550px] mb-6 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2600" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="The Glass Pavilion">
+                <div class="btn-animate overflow-hidden rounded-[2.5rem] md:rounded-[4rem] bg-zinc-200 aspect-[16/10] shadow-sm mb-6">
+                    <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2600" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                 </div>
                 <div class="flex justify-between items-center px-6">
-                    <h3 class="text-xl md:text-2xl font-bold text-primary tracking-tight">The Glass Pavilion</h3>
+                    <h3 class="text-xl md:text-2xl font-bold tracking-tight">The Glass Pavilion</h3>
                     <span class="text-sm font-bold text-secondary">2023</span>
                 </div>
             </div>
-
-            <!-- Project 2: Asymmetric Small (1/3 width) -->
             <div class="md:col-span-1 group cursor-pointer">
-                <div class="btn-animate overflow-hidden rounded-[2.5rem] md:rounded-[4rem] bg-zinc-200 aspect-[4/5] md:h-[550px] mb-6 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2600" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Nordic Retreat">
+                <div class="btn-animate overflow-hidden rounded-[2.5rem] md:rounded-[4rem] bg-zinc-200 aspect-[4/5] shadow-sm mb-6">
+                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2600" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                 </div>
                 <div class="flex justify-between items-center px-6">
-                    <h3 class="text-xl md:text-2xl font-bold text-primary tracking-tight">Nordic Retreat</h3>
+                    <h3 class="text-xl md:text-2xl font-bold tracking-tight">Nordic Retreat</h3>
                     <span class="text-sm font-bold text-secondary">2022</span>
                 </div>
             </div>
-
-            <!-- Project 3: Full Width Banner -->
-            <div class="md:col-span-3 group cursor-pointer">
-                <div class="btn-animate overflow-hidden rounded-[2.5rem] md:rounded-[4rem] bg-zinc-200 aspect-[16/7] md:h-[650px] mb-6 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Tribeca Loft">
-                </div>
-                <div class="flex justify-between items-center px-6">
-                    <h3 class="text-xl md:text-2xl font-bold text-primary tracking-tight">Tribeca Loft Conversion</h3>
-                    <span class="text-sm font-bold text-secondary">2024</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Mobile-only Archive Link -->
-        <div class="mt-12 md:hidden">
-            <a href="#" class="text-sm font-bold text-primary flex items-center gap-2">
-                View All Archive <span>→</span>
-            </a>
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="py-24 px-6 text-center border-t border-black/5 bg-white">
-        <div class="max-w-xl mx-auto">
-            <h2 class="text-3xl font-black text-primary uppercase tracking-tighter mb-4">KEND.ESAIN</h2>
-            <p class="text-secondary text-sm font-medium mb-12">Building the future of architectural living.</p>
-            <div class="flex justify-center gap-8 mb-12">
-                <a href="#" class="text-primary font-bold text-sm hover:text-accent transition-colors">Instagram</a>
-                <a href="#" class="text-primary font-bold text-sm hover:text-accent transition-colors">LinkedIn</a>
-                <a href="#" class="text-primary font-bold text-sm hover:text-accent transition-colors">Behance</a>
-            </div>
-            <p class="text-secondary/50 text-[10px] font-bold uppercase tracking-[0.2em]">© 2024 All Rights Reserved</p>
+    <!-- DESIGN PHILOSOPHY -->
+    <section class="py-24 md:py-32 px-6 bg-white">
+        <div class="max-w-[1400px] mx-auto text-center mb-20">
+            <span class="text-[10px] md:text-xs font-bold tracking-[0.3em] text-secondary uppercase mb-4 block">Expertise</span>
+            <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight">Design Philosophy</h2>
         </div>
-    </footer>
+
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <div class="btn-animate group bg-[#F5F5F7] p-10 md:p-12 rounded-[3rem] border border-black/5 hover:bg-white hover:shadow-xl transition-all duration-500 relative flex flex-col h-full">
+                <div class="bg-white p-4 rounded-2xl w-fit shadow-sm mb-8">
+                    <i data-lucide="pen-tool" class="w-6 h-6 text-primary"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Architectural Design</h3>
+                <p class="text-secondary leading-relaxed mb-12">Comprehensive conceptual planning and schematic design focused on spatial harmony and functional elegance.</p>
+                <div class="mt-auto self-end p-3 bg-white rounded-full shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
+                    <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="btn-animate group bg-[#F5F5F7] p-10 md:p-12 rounded-[3rem] border border-black/5 hover:bg-white hover:shadow-xl transition-all duration-500 relative flex flex-col h-full">
+                <div class="bg-white p-4 rounded-2xl w-fit shadow-sm mb-8">
+                    <i data-lucide="box" class="w-6 h-6 text-primary"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">3D Visualization</h3>
+                <p class="text-secondary leading-relaxed mb-12">Photorealistic rendering and immersive walkthroughs that bring the architectural vision to life before construction.</p>
+                <div class="mt-auto self-end p-3 bg-white rounded-full shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
+                    <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="btn-animate group bg-[#F5F5F7] p-10 md:p-12 rounded-[3rem] border border-black/5 hover:bg-white hover:shadow-xl transition-all duration-500 relative flex flex-col h-full">
+                <div class="bg-white p-4 rounded-2xl w-fit shadow-sm mb-8">
+                    <i data-lucide="layout" class="w-6 h-6 text-primary"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Interior Planning</h3>
+                <p class="text-secondary leading-relaxed mb-12">Detailed interior layouts and material selection to ensure continuity between exterior form and interior living.</p>
+                <div class="mt-auto self-end p-3 bg-white rounded-full shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
+                    <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISION / CTA SECTION -->
+    <section class="py-12 md:py-24 px-4 md:px-8">
+        <div class="max-w-[1400px] mx-auto vision-mesh rounded-[3rem] md:rounded-[5rem] py-24 md:py-40 px-6 text-center shadow-ios-deep">
+            <h2 class="text-4xl md:text-7xl font-black text-white tracking-tighter mb-6">Have a vision in mind?</h2>
+            <p class="text-white/50 text-base md:text-xl font-medium mb-12">Let's create something timeless together.</p>
+            
+            <a href="mailto:hello@kend-esain.com" class="btn-animate inline-flex items-center gap-3 bg-white text-primary px-10 py-5 rounded-full font-bold text-lg hover:bg-zinc-100 shadow-xl transition-all">
+                Start a Project <i data-lucide="arrow-right-circle" class="w-6 h-6"></i>
+            </a>
+
+            <div class="mt-32 pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 max-w-5xl mx-auto">
+                <p class="text-white/20 text-xs font-bold uppercase tracking-widest">© 2024 Architectural Vision. All rights reserved.</p>
+                <div class="flex gap-10">
+                    <a href="#" class="text-white/40 hover:text-white text-sm font-bold transition-colors">Instagram</a>
+                    <a href="#" class="text-white/40 hover:text-white text-sm font-bold transition-colors">LinkedIn</a>
+                    <a href="#" class="text-white/40 hover:text-white text-sm font-bold transition-colors">Behance</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
 
 </body>
 </html>
