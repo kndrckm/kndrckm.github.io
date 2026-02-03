@@ -33,105 +33,60 @@
         }
     </script>
 
-    <style>
-        body { background-color: #F5F5F7; margin: 0; color: #1D1D1F; overflow-x: hidden; }
+<style>
+    /* 1. Global Frame Background */
+    body { background-color: #EDEFF2; margin: 0; color: #1D1D1F; overflow-x: hidden; }
 
-        /* 1. Fixed Navigation */
-        .nav-fixed {
-            position: fixed;
-            top: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            width: 90%;
-            max-width: fit-content;
-        }
-        .nav-glass {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-            padding: 6px;
-        }
-
-        /* 2. STATIC Reflective Hero Box (Centered) */
-        .hero-container {
-            margin: 0 auto 24px auto;
-            width: calc(100% - 24px);
-            max-width: 1400px;
-            border-radius: 0 0 40px 40px;
-            border: 1.5px solid rgba(255, 255, 255, 0.4); /* STATIC BORDER */
-            border-top: none;
-            position: relative;
-            overflow: hidden;
-            background: #000;
-            /* STATIC DEEP SHADOW */
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.1);
-        }
-
-        @media (min-width: 768px) {
-            .hero-container {
-                width: calc(100% - 40px);
-                border-radius: 0 0 64px 64px;
-                margin-bottom: 40px;
-            }
-        }
-
-        /* 3. Full Rounding for Projects */
-        .apple-corners-full { border-radius: 40px; overflow: hidden; }
-        @media (min-width: 768px) { .apple-corners-full { border-radius: 64px; } }
-
-        /* 4. Animated Mesh Footer */
-        @keyframes mesh-float {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .vision-mesh-animated {
-            background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33);
-            background-size: 400% 400%;
-            animation: mesh-float 15s ease infinite;
-        }
-
-        /* 5. Logic Layers */
-        #scroll-overlay { background-color: black; opacity: 0; pointer-events: none; }
-/* --- CV Reveal Animation Logic --- */
-.exp-details {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 📱 Mobile & Tablet: Show descriptions automatically */
-@media (max-width: 1023px) {
-    .exp-details {
-        max-height: 1000px;
-        opacity: 1;
-        margin-top: 1.5rem;
+    /* 2. Universal Site Container (The Frame) */
+    .site-container {
+        max-width: 1440px;
+        margin-left: auto;
+        margin-right: auto;
+        width: calc(100% - 48px); /* 24px gutter on mobile */
     }
-    /* Make the dot accent colored by default on mobile since it's "revealed" */
-    .exp-item .dot {
-        background-color: #007AFF !important;
-        border-color: #007AFF !important;
+    @media (min-width: 768px) {
+        .site-container { width: calc(100% - 80px); } /* 40px gutter on tablet/desktop */
     }
-}
 
-/* 💻 Desktop: Hidden until 'is-revealed' class is added via JS */
-@media (min-width: 1024px) {
-    .is-revealed .exp-details {
-        max-height: 1000px;
-        opacity: 1;
-        margin-top: 1.5rem;
+    /* 3. Hero Fix: Static Border & Centering */
+    .hero-container {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        border-radius: 0 0 40px 40px;
+        border: 1.5px solid rgba(255, 255, 255, 0.4);
+        border-top: none;
+        position: relative;
+        overflow: hidden;
+        background: #000;
+        box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
     }
-}
-        .is-revealed .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; }
-        .image-overlay-base { background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%); }
-        .white-gloss { background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 50%); pointer-events: none; }
-        .project-card { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .project-card.pop-up-active { opacity: 1; transform: translateY(0) scale(1); }
-    </style>
+    @media (min-width: 768px) {
+        .hero-container { border-radius: 0 0 64px 64px; }
+    }
+
+    /* 4. Full Rounding missing class */
+    .apple-corners-full { border-radius: 40px; overflow: hidden; }
+    @media (min-width: 768px) { .apple-corners-full { border-radius: 64px; } }
+
+    /* 5. Navigation & Effects */
+    .nav-fixed { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 1000; width: fit-content; }
+    .nav-glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+    
+    @keyframes mesh-float { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .vision-mesh-animated { background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33); background-size: 400% 400%; animation: mesh-float 15s ease infinite; }
+    
+    #scroll-overlay { background-color: black; opacity: 0; pointer-events: none; }
+    .exp-details { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    @media (max-width: 1023px) { .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; } }
+    @media (min-width: 1024px) { .is-revealed .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; } }
+    
+    .image-overlay-base { background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%); }
+    .white-gloss { background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 50%); pointer-events: none; }
+    .project-card { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .project-card.pop-up-active { opacity: 1; transform: translateY(0) scale(1); }
+</style>
 	
 </head>
 <body class="font-sans antialiased">
