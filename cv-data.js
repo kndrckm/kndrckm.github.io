@@ -2,13 +2,12 @@
 // It is injected into the index.html #cv section automatically.
 
 const cvHTML = `
-<div class="max-w-[1400px] mx-auto">
+<div class="site-container">
     
-    <!-- Section Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
         <div>
             <span class="text-[10px] md:text-xs font-bold tracking-[0.3em] text-secondary uppercase mb-4 block">Professional Background</span>
-            <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight">Curriculum Vitae</h2>
+            <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase">Curriculum Vitae</h2>
         </div>
         <button class="btn-animate inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-accent transition-colors shadow-lg">
             <i data-lucide="download" class="w-4 h-4"></i> Download PDF
@@ -17,10 +16,8 @@ const cvHTML = `
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- SIDEBAR: Education, Skills, Achievement -->
         <div class="lg:col-span-4 space-y-6">
             
-            <!-- Box: Education -->
             <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
                 <div class="flex items-center gap-3 mb-8">
                     <i data-lucide="graduation-cap" class="w-5 h-5 text-accent"></i>
@@ -45,14 +42,12 @@ const cvHTML = `
                 </div>
             </div>
 
-            <!-- Box: Tools & Skills (Color Coded) -->
             <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
                 <div class="flex items-center gap-3 mb-8">
                     <i data-lucide="cpu" class="w-5 h-5 text-accent"></i>
                     <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Tools & Skills</h3>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <!-- Tools (Primary Color - Hard Skills) -->
                     <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Ms. Office</span>
                     <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Revit</span>
                     <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">AutoCAD</span>
@@ -64,7 +59,6 @@ const cvHTML = `
                     <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">SPSS</span>
                     <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Adobe Suite</span>
                     
-                    <!-- Skills (Accent Color - Soft Skills) -->
                     <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Team Coordination</span>
                     <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Stakeholder Management</span>			
                     <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Data Analysis</span>
@@ -72,7 +66,6 @@ const cvHTML = `
                 </div>
             </div>
 
-            <!-- Box: Achievement -->
             <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
                 <div class="flex items-center gap-3 mb-8">
                     <i data-lucide="trophy" class="w-5 h-5 text-accent"></i>
@@ -95,7 +88,6 @@ const cvHTML = `
             </div>
         </div>
 
-        <!-- MAIN COLUMN: Experience (One-Way Reveal) -->
         <div class="lg:col-span-8 bg-white rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 border border-black/5 shadow-ios-card">
             <div class="flex items-center gap-3 mb-12">
                 <i data-lucide="briefcase" class="w-5 h-5 text-accent"></i>
@@ -104,7 +96,6 @@ const cvHTML = `
 
             <div class="space-y-0 timeline-container">
                 
-                <!-- Job 1 -->
                 <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0">
                     <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent group-hover:border-accent transition-all duration-300"></div>
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
@@ -122,7 +113,6 @@ const cvHTML = `
                     </div>
                 </div>
 
-                <!-- Job 2 -->
                 <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0">
                     <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent group-hover:border-accent transition-all duration-300"></div>
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
@@ -140,7 +130,6 @@ const cvHTML = `
                     </div>
                 </div>
 
-                <!-- Job 3 -->
                 <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0">
                     <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent group-hover:border-accent transition-all duration-300"></div>
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
@@ -157,7 +146,6 @@ const cvHTML = `
                     </div>
                 </div>
 
-                <!-- Job 4 -->
                 <div class="exp-item relative pl-10 group cursor-pointer border-l-2 border-zinc-100 last:border-0 pb-1">
                     <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent group-hover:border-accent transition-all duration-300"></div>
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
