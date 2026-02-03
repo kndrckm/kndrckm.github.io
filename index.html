@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kend.design.studio</title>
+    <title>kend.esain</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Changed font to Inter from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    // Updated font family to Inter
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#1D1D1F',
+                        secondary: '#6E6E73',
+                        accent: '#007AFF',
+                    },
                     boxShadow: {
-                        'ios-deep': '0 10px 20px rgba(0,0,0,0.05), 0 30px 60px rgba(0,0,0,0.1), 0 50px 100px rgba(0,0,0,0.15)',
+                        'ios-deep': '0 20px 50px rgba(0,0,0,0.15)',
                     }
                 }
             }
@@ -26,91 +28,105 @@
     </script>
 
     <style>
-        body { 
-            background-color: #E5E7EB; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px; 
-        }
+        body { background-color: #F5F5F7; margin: 0; }
 
+        /* Navigation Glass Effect */
         .nav-glass {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
+        /* The Image Darkening Gradient */
         .image-overlay {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%);
         }
 
-        html { scroll-behavior: smooth; }
+        /* Glass Edge Reflection (Reference Image 2 style) */
+        .glass-edge {
+            border-bottom: 1.5px solid rgba(255, 255, 255, 0.4);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 -1px 1px rgba(255,255,255,0.2);
+        }
+
+        /* Click Animation for all buttons */
+        .btn-animate {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-animate:active {
+            transform: scale(0.92);
+        }
     </style>
 </head>
 <body class="font-sans antialiased">
 
-    <main class="relative w-full max-w-[1440px] h-[90vh] md:h-[85vh] overflow-hidden rounded-[2.5rem] md:rounded-[4rem] bg-white shadow-ios-deep">
+    <!-- MAIN FRAME (Full Width, Bottom Rounded Only) -->
+    <main class="relative w-full h-screen md:h-[95vh] overflow-hidden rounded-b-[3rem] md:rounded-b-[5rem] bg-black shadow-ios-deep glass-edge">
         
-        <div class="absolute inset-0 bg-gray-200">
-            <!-- Fixed Path: Removed './' for better GitHub Pages compatibility -->
+        <!-- Background Image -->
+        <div class="absolute inset-0">
             <img src="assets/hero.webp"  
                  class="w-full h-full object-cover" 
                  alt="Residential design"
                  onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'">
-            
             <div class="absolute inset-0 image-overlay"></div>
         </div>
 
-        <!-- Navigation -->
-        <nav class="absolute top-6 md:top-10 left-1/2 -translate-x-1/2 z-50 w-[90%] md:w-auto">
-            <div class="nav-glass px-3 py-2 md:px-6 md:py-3 rounded-full flex items-center justify-between md:justify-start md:gap-8 shadow-sm">
-                <span class="font-black tracking-tighter text-black text-lg ml-2 uppercase">KEND.</span>
+        <!-- Navigation (Inter Light) -->
+        <nav class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-50 w-[90%] md:w-auto">
+            <div class="nav-glass px-3 py-2 md:px-6 md:py-2.5 rounded-full flex items-center justify-between md:justify-start md:gap-10 shadow-sm">
+                <!-- Logo -->
+                <span class="font-bold tracking-tighter text-primary text-lg ml-2">KEND.</span>
                 
-                <div class="hidden md:flex items-center gap-1">
-                    <a href="#" class="px-4 py-2 text-sm font-semibold hover:bg-white/30 rounded-full transition">Portfolio</a>
-                    <a href="#" class="px-4 py-2 text-sm font-semibold hover:bg-white/30 rounded-full transition">Services</a>
-                    <a href="#" class="px-4 py-2 text-sm font-semibold hover:bg-white/30 rounded-full transition">About</a>
+                <!-- Menu (Light Weight) -->
+                <div class="hidden md:flex items-center gap-2 font-light text-primary">
+                    <a href="#" class="btn-animate px-4 py-1.5 text-sm hover:bg-white/40 rounded-full transition">Portfolio</a>
+                    <a href="#" class="btn-animate px-4 py-1.5 text-sm hover:bg-white/40 rounded-full transition">Services</a>
+                    <a href="#" class="btn-animate px-4 py-1.5 text-sm hover:bg-white/40 rounded-full transition">About</a>
                 </div>
 
-                <a href="#" class="bg-black text-white px-5 py-2 md:px-7 md:py-2.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-2">
-                    Contact <span class="hidden md:inline">↗</span>
+                <!-- Contact Button (Accent Color on Hover) -->
+                <a href="#" class="btn-animate bg-primary hover:bg-accent text-white px-6 py-2 rounded-full text-xs md:text-sm font-bold transition-colors duration-300 shadow-md">
+                    Contact
                 </a>
             </div>
         </nav>
 
- <!-- Content -->
-        <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-16 lg:p-24 z-10">
-            <div class="w-full max-w-[1400px]">
+        <!-- Main Content -->
+        <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-20 z-10">
+            <div class="max-w-5xl">
                 
-                <!-- Subtitle with line to the right -->
-                <div class="flex items-center gap-4 mb-2">
+                <!-- Subtitle with Right-Side Line -->
+                <div class="flex items-center gap-4 mb-4">
                     <span class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential & Commercial Design</span>
-                    <div class="h-[1px] w-12 md:w-20 bg-white/40"></div>
+                    <div class="h-[1px] w-12 md:w-24 bg-white/30"></div>
                 </div>
 
-                <!-- Main Headline -->
-                <!-- Change the sizes in the class below to adjust text scale -->
-                <h1 class="text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[8rem] font-black leading-[0.8] tracking-tighter uppercase mb-10">
-                    <span class="text-white">KEND.ESIGN.</span><br>
+                <!-- Headline (Text Size follows Viewport) -->
+                <h1 class="text-[15vw] sm:text-[12vw] md:text-[10vw] lg:text-[9rem] font-black leading-[0.8] tracking-tighter uppercase mb-10">
+                    <span class="text-white">KEND.ESIGN</span><br>
                     <span class="text-white/40">STUDIO</span>
                 </h1>
 
-                <!-- Description at the very bottom -->
+                <!-- Body Text (Using Secondary Color Hex #6E6E73) -->
                 <p class="text-white/60 text-base md:text-xl max-w-2xl font-medium leading-snug">
                     Crafting spaces that breathe. Where light meets structure <br class="hidden md:block"> and form follows emotion.
                 </p>
             </div>
         </div>
 
+        <!-- Explore Vertical Widget -->
         <div class="absolute bottom-12 right-12 z-10 hidden md:flex flex-col items-center">
-            <span class="text-[10px] font-bold tracking-[0.4em] text-white/40 uppercase mb-6 [writing-mode:vertical-lr]">Explore</span>
-            <div class="w-[1px] h-24 bg-gradient-to-b from-white/60 to-transparent"></div>
+            <span class="text-[10px] font-bold tracking-[0.4em] text-white/30 uppercase mb-6 [writing-mode:vertical-lr]">Explore</span>
+            <div class="w-[1px] h-20 bg-gradient-to-b from-white/40 to-transparent"></div>
         </div>
 
     </main>
+
+    <!-- Bottom Padding to see the rounded edge clearly -->
+    <div class="h-20 w-full bg-[#F5F5F7]"></div>
 
 </body>
 </html>
