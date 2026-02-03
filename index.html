@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KEND.DESIGN.STUDIO</title>
+    <title>kend.design.studio</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -84,6 +84,7 @@
     .white-gloss { background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 50%); pointer-events: none; }
     .project-card { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .project-card.pop-up-active { opacity: 1; transform: translateY(0) scale(1); }
+
 </style>
 	
 </head>
@@ -91,21 +92,17 @@
 
 <!-- GEOMETRICALLY ALIGNED NAVIGATION -->
 <nav class="nav-fixed">
-    <!-- Outer Pill: p-1.5 (6px) provides the uniform gap for the concentric look -->
     <div class="nav-glass p-1.5 rounded-full flex items-center shadow-sm">
         
-        <!-- Logo: pl-5 (20px) to balance the left side -->
-        <div class="pl-5 pr-4">
-            <span class="font-black tracking-tighter text-primary text-base hover:text-accent uppercase leading-none">KEND.</span>
+        <div class="pl-5 pr-2">
+            <a href="#hero" class="font-black tracking-tighter text-primary text-base hover:text-accent uppercase leading-none cursor-pointer">KEND.</a>
         </div>
         
-        <!-- Menu Items: mx-4 (16px) to separate from logo and button -->
-        <div class="hidden md:flex items-center gap-1 mx-4">
-            <a href="#portfolio" class="px-5 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">Projects</a>
-            <a href="#cv" class="px-5 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">About</a>
+        <div class="hidden md:flex items-center gap-1 mx-1">
+            <a href="#portfolio" class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">Projects</a>
+            <a href="#cv" class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">About</a>
         </div>
 
-        <!-- Contact Button: No scale, perfect concentric curve alignment -->
         <a href="https://wa.me/6281390200075" 
            target="_blank"
            class="group bg-primary hover:bg-[#25D366] text-white pl-6 pr-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-500 hover:shadow-[0_0_25px_rgba(37,211,102,0.4)] active:scale-95">
@@ -118,18 +115,23 @@
 </nav>
 
 <!-- HERO SECTION -->
-<section class="relative w-full h-[100vh]">
+<section id="hero" class="relative w-full h-[100vh]">
     <div class="site-container h-full">
-        <div class="hero-container sticky top-0 h-screen overflow-hidden">
+        <div id="hero-spotlight-container" class="hero-container sticky top-0 h-screen overflow-hidden group">
+            
             <div class="absolute inset-0">
                 <img src="assets/hero.webp" class="w-full h-full object-cover" alt="Hero" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'">
                 <div id="scroll-overlay" class="absolute inset-0 z-10"></div>
                 <div class="absolute inset-0 white-gloss z-5"></div>
                 <div class="absolute inset-0 image-overlay-base z-0"></div>
+
+                <div class="absolute inset-0 bg-black/0 z-5 pointer-events-none"></div>
+
+                <canvas id="hero-spotlight-canvas" class="absolute inset-0 w-full h-full z-10 pointer-events-none mix-blend-overlay"></canvas>
             </div>
 
-            <div class="absolute inset-0 flex flex-col justify-end px-8 pb-12 md:px-16 md:pb-20 z-20">
-                <div class="w-full">
+            <div class="absolute inset-0 flex flex-col justify-end px-8 pb-12 md:px-16 md:pb-20 z-20 pointer-events-none">
+                <div class="w-full pointer-events-auto">
                     <div class="flex items-center gap-4 mb-4">
                         <span class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential & Commercial Design</span>
                         <div class="h-[3px] w-12 md:w-24 bg-white"></div>
@@ -177,33 +179,37 @@
 <!-- FOOTER / CTA -->
 <section class="py-32 md:py-48">
     <div class="site-container">
-        <div class="vision-mesh-animated rounded-[3rem] md:rounded-[5rem] py-24 md:py-40 px-6 text-center shadow-ios-deep">
-            <h2 class="text-4xl md:text-7xl font-medium text-white tracking-tighter mb-8 uppercase">Have a vision in mind?</h2>
-            <p class="text-white/60 text-base md:text-xl font-light mb-12 italic">Let's create something timeless together.</p>
+        <div id="footer-spotlight-container" class="vision-mesh-animated relative w-full overflow-hidden rounded-[3rem] md:rounded-[5rem] py-24 md:py-40 px-6 text-center shadow-ios-deep group">
             
-            <a href="https://wa.me/6281390200075" target="_blank"
-               class="inline-flex items-center gap-5 bg-white text-primary pl-10 pr-3 py-3.5 rounded-full font-black text-xl transition-all duration-500 hover:scale-110 shadow-2xl group mb-20">
-                Start a Project 
-                <div class="bg-black rounded-full p-3 text-white transition-all duration-500 group-hover:bg-accent group-hover:rotate-45">
-                    <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
-                </div>
-            </a>
+            <canvas id="footer-spotlight-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none mix-blend-overlay"></canvas>
 
-            <div class="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 max-w-6xl mx-auto">
-                <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">© 2026 KEND.ESAIN STUDIO</p>
-                <div class="flex gap-10">
-                    <a href="https://linkedin.com/in/kendrick-marzuki" target="_blank" class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm group">
-                         <div class="p-2 rounded-xl bg-white/10 group-hover:bg-[#0077B5] transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></div> LinkedIn
-                    </a>
-                    <a href="https://www.instagram.com/kndrckm/" target="_blank" class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm group">
-                        <div class="p-2 rounded-xl bg-white/10 group-hover:bg-[#E4405F] transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></div> Instagram
-                    </a>
+            <div class="relative z-10">
+                <h2 class="text-4xl md:text-7xl font-medium text-white tracking-tighter mb-8 uppercase">Have a vision in mind?</h2>
+                <p class="text-white/60 text-base md:text-xl font-light mb-12 italic">Let's create something timeless together.</p>
+                
+                <a href="https://wa.me/6281390200075" target="_blank"
+                   class="inline-flex items-center gap-5 bg-white text-primary pl-10 pr-3 py-3.5 rounded-full font-black text-xl transition-all duration-500 hover:scale-110 shadow-2xl group/btn mb-20">
+                    Start a Project 
+                    <div class="bg-black rounded-full p-3 text-white transition-all duration-500 group-hover/btn:bg-accent group-hover/btn:rotate-45">
+                        <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
+                    </div>
+                </a>
+
+                <div class="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 max-w-6xl mx-auto">
+                    <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">© 2026 KEND.ESAIN STUDIO</p>
+                    <div class="flex gap-10">
+                        <a href="https://linkedin.com/in/kendrick-marzuki" target="_blank" class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm hover:scale-105">
+                             <div class="p-2 rounded-xl bg-white/10 hover:bg-[#0077B5] transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></div> LinkedIn
+                        </a>
+                        <a href="https://www.instagram.com/kndrckm/" target="_blank" class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm hover:scale-105">
+                            <div class="p-2 rounded-xl bg-white/10 hover:bg-[#E4405F] transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></div> Instagram
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
 
     <script>
         // 1. INJECT CV DATA FROM EXTERNAL FILE
@@ -240,6 +246,101 @@
         item.addEventListener('click', reveal);
     });
 }, 100);
+
+		// 5. Footer spotlight effect
+	(function() {
+        // Reusable Spotlight Class
+        class Spotlight {
+            constructor(containerId, canvasId, config) {
+                this.container = document.getElementById(containerId);
+                this.canvas = document.getElementById(canvasId);
+                this.config = config;
+                
+                if (!this.container || !this.canvas) return;
+
+                this.ctx = this.canvas.getContext('2d');
+                this.mouseX = -1000;
+                this.mouseY = -1000;
+
+                this.init();
+            }
+
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                this.container.addEventListener('mousemove', (e) => this.handleMove(e));
+                this.container.addEventListener('mouseleave', () => this.handleLeave());
+                this.draw();
+            }
+
+            resize() {
+                const rect = this.container.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                this.canvas.width = rect.width * dpr;
+                this.canvas.height = rect.height * dpr;
+                this.ctx.scale(dpr, dpr);
+                this.canvas.style.width = `${rect.width}px`;
+                this.canvas.style.height = `${rect.height}px`;
+            }
+
+            handleMove(e) {
+                const rect = this.container.getBoundingClientRect();
+                this.mouseX = e.clientX - rect.left;
+                this.mouseY = e.clientY - rect.top;
+            }
+
+            handleLeave() {
+                this.mouseX = -1000;
+                this.mouseY = -1000;
+            }
+
+            hexToRgb(hex) {
+                const bigint = parseInt(hex.replace('#', ''), 16);
+                return `${(bigint >> 16) & 255},${(bigint >> 8) & 255},${bigint & 255}`;
+            }
+
+            draw() {
+                const width = this.canvas.width / (window.devicePixelRatio || 1);
+                const height = this.canvas.height / (window.devicePixelRatio || 1);
+                
+                this.ctx.clearRect(0, 0, width, height);
+
+                if (this.mouseX !== -1000 && this.mouseY !== -1000) {
+                    const rgb = this.hexToRgb(this.config.color);
+                    const gradient = this.ctx.createRadialGradient(
+                        this.mouseX, this.mouseY, 0,
+                        this.mouseX, this.mouseY, this.config.radius
+                    );
+                    
+                    gradient.addColorStop(0, `rgba(${rgb}, ${this.config.brightness})`);
+                    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fillRect(0, 0, width, height);
+                }
+                requestAnimationFrame(() => this.draw());
+            }
+        }
+
+        // --- INSTANCES ---
+
+        // 1. HERO SPOTLIGHT (Bigger & Brighter for impact)
+        new Spotlight('hero-spotlight-container', 'hero-spotlight-canvas', {
+            radius: 500,
+            brightness: 0.1, 
+            color: '#ffffff'
+        });
+
+        // 2. FOOTER SPOTLIGHT (Standard settings)
+        new Spotlight('footer-spotlight-container', 'footer-spotlight-canvas', {
+            radius: 500,
+            brightness: 0.5,
+            color: '#ffffff'
+        });
+
+    })();
+		
     </script>
+
 </body>
 </html>
