@@ -58,7 +58,6 @@
         position: relative;
         overflow: hidden;
         background: #000;
-        /* Removed: border-radius, border, box-shadow */
     }
     
     /* 4. Full Rounding missing class */
@@ -93,7 +92,9 @@
     @keyframes mesh-float { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     .vision-mesh-animated { background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33); background-size: 400% 400%; animation: mesh-float 15s ease infinite; }
     
-    #scroll-overlay { background-color: black; opacity: 0; pointer-events: none; }
+	/* #scroll-overlay { background-color: black; opacity: 0; pointer-events: none; } Fades image into page background */
+    #scroll-overlay { background-color: #EDEFF2; opacity: 0; pointer-events: none; }
+
     .exp-details { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
     
     @media (max-width: 1023px) { .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; } }
@@ -145,12 +146,15 @@
 </nav>
 
 <!-- HERO SECTION -->
-<section id="hero" class="relative w-full h-[100vh]">
+<section id="hero" class="relative w-full h-[100vh] bg-[#EDEFF2]">
     <div class="w-full h-full">
         <div id="hero-spotlight-container" class="hero-container sticky top-0 h-screen overflow-hidden group">
             
             <div class="absolute inset-0">
-                <img src="assets/hero.webp" class="w-full h-full object-cover" alt="Hero" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'">
+                <img id="hero-img" src="assets/hero.webp" 
+					class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2]" alt="Hero" 
+                     onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'">
+                
                 <div id="scroll-overlay" class="absolute inset-0 z-10"></div>
                 <div class="absolute inset-0 white-gloss z-5"></div>
                 <div class="absolute inset-0 image-overlay-base z-0"></div>
@@ -160,8 +164,8 @@
                 <canvas id="hero-spotlight-canvas" class="absolute inset-0 w-full h-full z-10 pointer-events-none mix-blend-overlay"></canvas>
             </div>
 
-            <div class="absolute inset-0 flex flex-col justify-end px-8 pb-12 md:px-16 md:pb-20 z-20 pointer-events-none">
-                <div class="w-full max-w-[1440px] mx-auto pointer-events-auto"> 
+			<div class="fixed inset-0 flex flex-col justify-end px-8 pb-12 md:px-16 md:pb-20 z-0 pointer-events-none">
+                <div id="hero-foreground" class="w-full max-w-[1440px] mx-auto pointer-events-auto will-change-transform"> 
                     <div class="flex items-center gap-4 mb-4">
                         <span class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential & Commercial Design</span>
                         <div class="h-[3px] w-12 md:w-24 bg-white"></div>
@@ -180,7 +184,7 @@
 </section>
 
 <!-- FEATURED PROJECTS -->
-<section id="portfolio" class=" pt-24 md:pt-48 -scroll-mt-24">
+<section id="portfolio" class="relative z-10 bg-[#EDEFF2] pt-24 md:pt-48 -scroll-mt-24">
     <div class="site-container">
         
         <div class="mb-10 flex items-end justify-between md:mb-14">
@@ -253,16 +257,58 @@
         document.getElementById('cv').innerHTML = cvHTML;
         lucide.createIcons();
 
-        // 2. HERO EFFECTS
+		// 2. SCROLL MANAGER: PARALLAX & SNAP SCROLLING (Hero <-> Portfolio <-> CV)
         const overlay = document.getElementById('scroll-overlay');
-        const heroPara = document.getElementById('hero-para');
-        window.addEventListener('scroll', () => {
-            let scrollY = window.scrollY;
-            let windowHeight = window.innerHeight;
-            overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.6), 0.85);
-            heroPara.style.opacity = Math.max(1 - (scrollY / (windowHeight / 2.5)), 0);
-        });
+        const heroImg = document.getElementById('hero-img');
+        const heroForeground = document.getElementById('hero-foreground');
+        // Sections
+        const heroSection = document.getElementById('hero');
+        const portfolioSection = document.getElementById('portfolio');
+        const cvSection = document.getElementById('cv');
 
+        let isAutoScrolling = false; let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', () => {let scrollY = window.scrollY;let windowHeight = window.innerHeight;
+            
+            // Detect Direction: Positive = Down, Negative = Up
+            let direction = scrollY > lastScrollY ? 'down' : 'up'; lastScrollY = scrollY;
+
+            // --- A. SNAP SCROLL LOGIC ---
+            if (!isAutoScrolling) { const cvRect = cvSection.getBoundingClientRect();
+
+                // TRANSITION 1: HERO <-> PORTFOLIO
+                // a. DOWN: Hero -> Portfolio Trigger: Passed 60% of the screen height
+                if (direction === 'down' && scrollY > (windowHeight * 0.5) && scrollY < windowHeight) {
+                    isAutoScrolling = true;
+                    portfolioSection.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => { isAutoScrolling = false; }, 800);}
+
+                // b. UP: Portfolio -> Hero Trigger: When Hero becomes 15% visible again (scroll is less than 60% of height)
+                else if (direction === 'up' && scrollY < (windowHeight * 0.50) && scrollY > 50) {
+                    isAutoScrolling = true;
+                    heroSection.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => { isAutoScrolling = false; }, 800);}
+
+                // TRANSITION 2: PORTFOLIO <-> CV
+                // a. DOWN: Portfolio -> CV Trigger: When CV top comes into the bottom 20% of the screen
+                else if (direction === 'down' && cvRect.top < (windowHeight * 0.50) && cvRect.top > 0) {
+                    isAutoScrolling = true;
+                    cvSection.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => { isAutoScrolling = false; }, 800);}
+
+                // b. UP: CV -> Portfolio Trigger: When CV is pushed down past 20% of screen
+                else if (direction === 'up' && cvRect.top > (windowHeight * 0.50) && cvRect.top < windowHeight) {
+                    isAutoScrolling = true;
+                    portfolioSection.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => { isAutoScrolling = false; }, 800);} }
+
+            // --- B. PARALLAX VISUALS (HERO ONLY) ---
+            if (scrollY <= windowHeight) {if (heroImg) {heroImg.style.transform = `translateY(-${scrollY * 0.5}px) scale(1.25)`;}            
+                if (heroForeground) {
+                     // Fades out faster (by 40% of scroll) so it's gone before the snap
+                     heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);}
+                if (overlay) {overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.4), 0.85);} }
+        });
+		
         // 3. OBSERVERS
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('pop-up-active'); observer.unobserve(entry.target); } });
@@ -361,14 +407,14 @@
 
         // --- INSTANCES ---
 
-        // 1. HERO SPOTLIGHT (Bigger & Brighter for impact)
+        // a. HERO SPOTLIGHT (Bigger & Brighter for impact)
         new Spotlight('hero-spotlight-container', 'hero-spotlight-canvas', {
             radius: 500,
             brightness: 0.1, 
             color: '#ffffff'
         });
 
-        // 2. FOOTER SPOTLIGHT (Standard settings)
+        // b. FOOTER SPOTLIGHT (Standard settings)
         new Spotlight('footer-spotlight-container', 'footer-spotlight-canvas', {
             radius: 500,
             brightness: 0.5,
