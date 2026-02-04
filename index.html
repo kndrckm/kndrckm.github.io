@@ -337,56 +337,68 @@
 
 		// 2. SCROLL MANAGER: PARALLAX & SNAP SCROLLING (Hero <-> Scope <-> Portfolio <-> CV)
 		const overlay = document.getElementById('scroll-overlay');
-		const heroImg = document.getElementById('hero-img');
-		const heroForeground = document.getElementById('hero-foreground');
+const vid1 = document.getElementById('hero-img'); // Definisi global
+const vid2 = document.getElementById('hero-img-next');
+const heroForeground = document.getElementById('hero-foreground');
 
-		const heroSection = document.getElementById('hero');
-		const scopeSection = document.getElementById('scope');
-		const portfolioSection = document.getElementById('portfolio');
-		const cvSection = document.getElementById('cv');
+const heroSection = document.getElementById('hero');
+const scopeSection = document.getElementById('scope');
+const portfolioSection = document.getElementById('portfolio');
+const cvSection = document.getElementById('cv');
 
-			let isAutoScrolling = false;
-			let lastScrollY = window.scrollY;
+let isAutoScrolling = false;
+let lastScrollY = window.scrollY;
 
-			window.addEventListener('scroll', () => {let scrollY = window.scrollY;let windowHeight = window.innerHeight;
-			let isDesktopLarge = window.innerWidth >= 1440; // Cek ukuran layar
+window.addEventListener('scroll', () => {
+    let scrollY = window.scrollY;
+    let windowHeight = window.innerHeight;
+    let isDesktopLarge = window.innerWidth >= 1440;
 
-			// Detect Direction
-			let direction = scrollY > lastScrollY ? 'down' : 'up'; 
-			lastScrollY = scrollY;
+    let direction = scrollY > lastScrollY ? 'down' : 'up'; 
+    lastScrollY = scrollY;
 
-			// --- A. SNAP SCROLL LOGIC (HANYA AKTIF JIKA >= 1440px) ---
-			if (!isAutoScrolling && isDesktopLarge) {
-			const portfolioRect = portfolioSection.getBoundingClientRect();
-			const cvRect = cvSection.getBoundingClientRect();
+    // --- A. SNAP SCROLL LOGIC ---
+    if (!isAutoScrolling && isDesktopLarge) {
+        const portfolioRect = portfolioSection.getBoundingClientRect();
+        const cvRect = cvSection.getBoundingClientRect();
 
-			// 1. HERO <-> SCOPE Down
-			if (direction === 'down' && scrollY > (windowHeight * 0.5) && scrollY < windowHeight) {
+        if (direction === 'down' && scrollY > (windowHeight * 0.5) && scrollY < windowHeight) {
             isAutoScrolling = true;
             scopeSection.scrollIntoView({ behavior: 'smooth' }); 
-            setTimeout(() => { isAutoScrolling = false; }, 800);}
-
-			// 2. SCOPE <-> PORTFOLIO Down
-			else if (direction === 'down' && portfolioRect.top < (windowHeight * 0.5) && portfolioRect.top > 0) {
+            setTimeout(() => { isAutoScrolling = false; }, 800);
+        }
+        else if (direction === 'down' && portfolioRect.top < (windowHeight * 0.5) && portfolioRect.top > 0) {
             isAutoScrolling = true;
             portfolioSection.scrollIntoView({ behavior: 'smooth' }); 
-            setTimeout(() => { isAutoScrolling = false; }, 800);}
-
-			// 3. PORTFOLIO <-> CV Down
-			else if (direction === 'down' && cvRect.top < (windowHeight * 0.8) && cvRect.top > 0) {
+            setTimeout(() => { isAutoScrolling = false; }, 800);
+        }
+        else if (direction === 'down' && cvRect.top < (windowHeight * 0.8) && cvRect.top > 0) {
             isAutoScrolling = true;
             cvSection.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => { isAutoScrolling = false; }, 800);}}
+            setTimeout(() => { isAutoScrolling = false; }, 800);
+        }
+    }
 
-			// --- B. PARALLAX VISUALS (HERO ONLY) ---
-			if (scrollY <= windowHeight) {
-			// Gerakkan kedua video secara bersamaan agar transisi tetap sinkron
-			[video1, video2].forEach(vid => {if (vid) {vid.style.transform = `translateY(-${scrollY * 0.05}px) scale(1.2)`;}});
-				if (heroForeground) {heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);}
-					if (overlay) {overlay.style.opacity = Math.min(scrollY / (windowHeight * 1), 0.85);}
-			}
+    // --- B. PARALLAX VISUALS & SHADOW EFFECT ---
+    if (scrollY <= windowHeight) {
+        // Gerakkan kedua video
+        [vid1, vid2].forEach(v => {
+            if (v) v.style.transform = `translateY(-${scrollY * 0.05}px) scale(1.2)`;
+        });
+
+        if (heroForeground) {
+            heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);
+        }
+
+        // EFEK SHADOW: Overlay menggelap lebih pekat saat mendekati Scope section
+        if (overlay) {
+            // Mengubah opacity menjadi lebih gelap (max 0.9) untuk efek bayangan transisi
+            overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.8), 0.9);
+        }
+    }
+});
 		
-        // 3. OBSERVERS
+        // 3. OBSERVERS 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('pop-up-active'); observer.unobserve(entry.target); } });
         }, { threshold: 0.15 });
@@ -530,30 +542,23 @@
     })();	
 	
 	// 7. JEDA VIDEO HERO DENGAN SEAMLESS TRANSITION
-	const video1 = document.getElementById('hero-img');
-	const video2 = document.getElementById('hero-img-next');
-
 	let loopCount = 0;
-	const maxLoops = 2;
+const maxLoops = 2;
 
-		if (video1 && video2) {
-		video1.addEventListener('ended', () => {
+if (vid1 && vid2) {
+    vid1.addEventListener('ended', () => {
         loopCount++;
-
         if (loopCount < maxLoops) {
-            // JEDA ANTAR LOOP VIDEO 1 (2 detik)
-            setTimeout(() => {
-                video1.play();
-            }, 2000); 
+            // Jeda 2 detik sebelum loop lagi
+            setTimeout(() => { vid1.play(); }, 2000); 
         } 
         else if (loopCount === maxLoops) {
-            // TRANSISI SEAMLESS KE VIDEO 2
-            video2.play().then(() => {
-                video2.style.opacity = "1";
-                // Gunakan z-20 agar tetap di bawah Canvas (z-30)
-                video2.style.zIndex = "20"; 
-                video1.style.opacity = "0";
-                video1.style.zIndex = "10";
+            // Pindah ke video kedua
+            vid2.play().then(() => {
+                vid2.style.opacity = "1";
+                vid2.style.zIndex = "20"; 
+                vid1.style.opacity = "0";
+                vid1.style.zIndex = "10";
             });
         }
     });
