@@ -1,9 +1,9 @@
 // DATABASE: Add your projects here
 const projectData = [
     {
-        title: "Pentagon Apartment",
-        location: "Batam, Indonesia",
-        image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2600",
+        title: "Student Apartment",
+        location: "Semarang, Indonesia",
+        image: "assets/apartment_1.webp",
         link: "#" // Link to specific project page
     },
     {
