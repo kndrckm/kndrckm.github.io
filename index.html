@@ -70,10 +70,31 @@
     .apple-corners-full { border-radius: 32px; overflow: hidden; }
     @media (min-width: 810px) { .apple-corners-full { border-radius: 40px; } }
 
-    /* 5. Navigation & Effects */
+	/* 5. Navigation: Liquid Edge & Line Effect */
     .nav-fixed { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 1000; width: fit-content; }
-    .nav-glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
     
+    .nav-glass { 
+        /* a. Minimal Background (Almost transparent) */
+        background: rgba(255, 255, 255, 0.70); 
+    
+        /* b. The "Liquid" Blur */
+        backdrop-filter: blur(5px); 
+        -webkit-backdrop-filter: blur(5px); 
+ 
+        /* c. The "Line & Edge" (Crisp border + Inner Glow) */
+        border: 1.5px solid rgba(255, 255, 255, 0.2); 
+        box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.1); 
+
+        /* d. Animation Settings */
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy "pop" effect */ }
+
+		/* e. Hover/Click Animation (Scale 1.05) */
+		.nav-glass:hover, .nav-glass:active {
+			transform: scale(1.01);
+			border-color: rgba(255, 255, 255, 0.5); /* Line gets brighter */
+			box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2); /* Glass gets glossier */
+			background: rgba(255, 255, 255, 0.70); }
+	
     @keyframes mesh-float { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     .vision-mesh-animated { background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33); background-size: 400% 400%; animation: mesh-float 15s ease infinite; }
     
@@ -87,6 +108,16 @@
     .white-gloss { background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 50%); pointer-events: none; }
     .project-card { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .project-card.pop-up-active { opacity: 1; transform: translateY(0) scale(1); }
+	
+	/* 7. CAROUSEL: ALWAYS ACTIVE UNDER 1440px */
+    @media (max-width: 1440px) {
+        /* 1. Make Text & Gradient Visible */
+        .project-card-link .hover-reveal {opacity: 1 !important;}
+        /* 2. Lift the Card & Add Shadow */
+        .project-card-link {box-shadow: 0 12px 12px rgba(0,0,0,0.3) !important; transform: translateY(-8px) !important;}
+        /* 3. Zoom the Image Slightly */
+        .project-card-link img {transform: scale(1.05);}
+    }
 
 	/* 8. Hide Scrollbar for Carousel */
     .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -157,7 +188,7 @@
 </section>
 
 <!-- FEATURED PROJECTS -->
-<section id="portfolio" class="py-24 md:py-48 -scroll-mt-24">
+<section id="portfolio" class=" pt-24 md:pt-48 -scroll-mt-24">
     <div class="site-container">
         
         <div class="mb-10 flex items-end justify-between md:mb-14">
@@ -178,64 +209,64 @@
 
         <div class="w-full relative">
             
-            <div id="project-carousel" class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-12 no-scrollbar p-10">
-                
-                <div class="min-w-[85vw] md:min-w-[600px] snap-center">
-                   <a href="#" class="group block relative h-[500px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-ios-card transition-all duration-500 hover:shadow-[0_12px_12px_rgba(0,0,0,0.3)] hover:-translate-y-2">
-                        
-                        <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2600" 
-                             class="absolute h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Pentagon">
-                        
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-                        
-                        <div class="absolute bottom-0 left-0 p-8 md:p-12 w-full text-white">
-                            <span class="block text-[10px] md:text-xs font-bold tracking-[0.2em] text-white/70 uppercase mb-3">
-                                Batam, Indonesia
-                            </span>
-                            <h3 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">
-                                Pentagon Apartment
-                            </h3>
-                        </div>
-                   </a>
-                </div>
-
-                <div class="min-w-[85vw] md:min-w-[600px] snap-center">
-                   <a href="#" class="group block relative h-[500px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-ios-card transition-all duration-500 hover:shadow-[0_12px_12px_rgba(0,0,0,0.3)] hover:-translate-y-2">
-                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2600" 
-                             class="absolute h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="MRT">
-                        
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-                        
-                        <div class="absolute bottom-0 left-0 p-8 md:p-12 w-full text-white">
-                            <span class="block text-[10px] md:text-xs font-bold tracking-[0.2em] text-white/70 uppercase mb-3">
-                                Jakarta, Indonesia
-                            </span>
-                            <h3 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">
-                                MRT CP201 Monas
-                            </h3>
-                        </div>
-                   </a>
-                </div>
-
-                <div class="min-w-[85vw] md:min-w-[600px] snap-center">
-                   <a href="#" class="group block relative h-[500px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-ios-card transition-all duration-500 hover:shadow-[0_12px_12px_rgba(0,0,0,0.3)] hover:-translate-y-2">
-                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600" 
-                             class="absolute h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Villa">
-                        
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-                        
-                        <div class="absolute bottom-0 left-0 p-8 md:p-12 w-full text-white">
-                            <span class="block text-[10px] md:text-xs font-bold tracking-[0.2em] text-white/70 uppercase mb-3">
-                                Bali, Indonesia
-                            </span>
-                            <h3 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">
-                                Private Villa
-                            </h3>
-                        </div>
-                   </a>
-                </div>
-
+<div id="project-carousel" class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-12 no-scrollbar p-10">
+	<div class="min-w-[85vw] md:min-w-[600px] snap-center">
+			
+			<a href="#" class="project-card-link group block relative h-[500px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-ios-card transition-all duration-500 hover:shadow-[0_12px_12px_rgba(0,0,0,0.3)] hover:-translate-y-2">
+            
+            <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2600" 
+                 class="absolute h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Pentagon">
+            
+            <div class="hover-reveal absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div class="hover-reveal absolute bottom-0 left-0 p-8 md:p-12 w-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity duration-500">
+                <span class="block text-[10px] md:text-xs font-bold tracking-[0.2em] text-white/70 uppercase mb-3">
+                    Batam, Indonesia
+                </span>
+                <h3 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">
+                    Pentagon Apartment
+                </h3>
             </div>
+       </a>
+    </div>
+
+    <div class="min-w-[85vw] md:min-w-[600px] snap-center">
+       <a href="#" class="project-card-link group block relative h-[500px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-ios-card transition-all duration-500 hover:shadow-[0_12px_12px_rgba(0,0,0,0.3)] hover:-translate-y-2">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2600" 
+                 class="absolute h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="MRT">
+            
+            <div class="hover-reveal absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div class="hover-reveal absolute bottom-0 left-0 p-8 md:p-12 w-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity duration-500">
+                <span class="block text-[10px] md:text-xs font-bold tracking-[0.2em] text-white/70 uppercase mb-3">
+                    Jakarta, Indonesia
+                </span>
+                <h3 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">
+                    MRT CP201 Monas
+                </h3>
+            </div>
+       </a>
+    </div>
+
+    <div class="min-w-[85vw] md:min-w-[600px] snap-center">
+       <a href="#" class="project-card-link group block relative h-[500px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-ios-card transition-all duration-500 hover:shadow-[0_12px_12px_rgba(0,0,0,0.3)] hover:-translate-y-2">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600" 
+                 class="absolute h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Villa">
+            
+            <div class="hover-reveal absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <div class="hover-reveal absolute bottom-0 left-0 p-8 md:p-12 w-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity duration-500">
+                <span class="block text-[10px] md:text-xs font-bold tracking-[0.2em] text-white/70 uppercase mb-3">
+                    Bali, Indonesia
+                </span>
+                <h3 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">
+                    Private Villa
+                </h3>
+            </div>
+       </a>
+    </div>
+
+</div>
             
             <div class="flex justify-center gap-2 mt-4" id="carousel-dots"></div>
         </div>
@@ -243,10 +274,11 @@
 </section>
 
 <!-- CV SECTION -->
-<section id="cv" class="py-24 md:py-48 bg-transparent -scroll-mt-24">
+<section id="cv" class="pt-24 mt:pt-48 bg-transparent -scroll-mt-0">
+</section>
 
 <!-- FOOTER / CTA -->
-<section class="py-32 md:py-48">
+<section class="pt-24 md:pt-48 pb-12 md:pb-12">
     <div class="site-container">
         <div id="footer-spotlight-container" class="vision-mesh-animated relative w-full overflow-hidden rounded-[3rem] md:rounded-[5rem] py-24 md:py-40 px-6 text-center shadow-ios-deep group">
             
@@ -408,59 +440,35 @@
         });
     })();
 	
-		// 6. Carousel Logic
-		(function() {
+	// 6. Carousel Logic (Desktop Arrows Only)
+    (function() {
+        // --- SELECTORS ---
         const carousel = document.getElementById('project-carousel');
         const prevBtn = document.getElementById('prev-slide');
         const nextBtn = document.getElementById('next-slide');
-        const dotsContainer = document.getElementById('carousel-dots');
-
+        
+        // Safety Check
         if (!carousel) return;
 
-        // Scroll Amount (Card Width + Gap)
-        const getScrollAmount = () => {
-            // Calculate width of first card + gap (24px)
-            const card = carousel.querySelector('div');
-            return card.offsetWidth + 24;
-        };
-
-        // Button Listeners
-        nextBtn.addEventListener('click', () => {
-            carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
-        });
-
-        prevBtn.addEventListener('click', () => {
-            carousel.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
-        });
-
-        // Dots Logic (Optional)
-        const items = carousel.children;
-        const totalItems = items.length;
-        
-        // Create Dots
-        for (let i = 0; i < totalItems; i++) {
-            const dot = document.createElement('button');
-            dot.className = `h-2 w-2 rounded-full transition-colors ${i === 0 ? 'bg-primary' : 'bg-primary/20'}`;
-            dot.onclick = () => {
-                const scrollLeft = i * getScrollAmount();
-                carousel.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-            };
-            dotsContainer.appendChild(dot);
-        }
-
-        // Update Dots on Scroll
-        carousel.addEventListener('scroll', () => {
-            const scrollPos = carousel.scrollLeft;
-            const itemWidth = getScrollAmount();
-            const activeIndex = Math.round(scrollPos / itemWidth);
+        // --- DESKTOP ARROW LOGIC ---
+        if (prevBtn && nextBtn) {
             
-            Array.from(dotsContainer.children).forEach((dot, index) => {
-                dot.className = `h-2 w-2 rounded-full transition-colors ${index === activeIndex ? 'bg-primary' : 'bg-primary/20'}`;
+            // Calculate scroll distance (Card width + Gap)
+            const getScrollAmount = () => {
+                const card = carousel.querySelector('.snap-center');
+                // Scroll 1 card width + gap (24px)
+                return card ? (card.offsetWidth + 24) : 600;
+            };
+
+            nextBtn.addEventListener('click', () => {
+                carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
             });
-        });
-    })();
-	
-</script>
+
+            prevBtn.addEventListener('click', () => {
+                carousel.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+            });
+        }
+    })();	
     </script>
 
 </body>
