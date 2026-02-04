@@ -9,9 +9,10 @@ const cvHTML = `
             <span class="text-[10px] md:text-xs font-bold tracking-[0.3em] text-secondary uppercase mb-4 block">Professional Background</span>
             <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase">Curriculum Vitae</h2>
         </div>
-        <button class="btn-animate inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-accent transition-colors shadow-lg">
-            <i data-lucide="download" class="w-4 h-4"></i> Download PDF
-        </button>
+
+        <a href="assets/CV_Kendrick.pdf" target="_blank" class="nav-glass btn-animate inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-accent transition-colors shadow-lg cursor-pointer">
+            <i data-lucide="download" class="w-4 h-4"></i>Download CV
+        </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
