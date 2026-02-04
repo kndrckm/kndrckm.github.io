@@ -51,7 +51,7 @@
     /* 3. Hero Fix: Static Border & Centering */
     .hero-container {
         width: 100%;
-        border-radius: 0 0 40px 40px;
+        border-radius: 0 0 32px 32px;
         border: 1.5px solid rgba(255, 255, 255, 0.4);
         border-top: none;
         position: relative;
@@ -60,16 +60,16 @@
         box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
     }
     @media (min-width: 810px) {
-        .hero-container { border-radius: 0 0 64px 64px; }
+        .hero-container { border-radius: 0 0 40px 40px; }
     }
 
     /* 4. Full Rounding missing class */
-    .apple-corners-full { border-radius: 40px; overflow: hidden; }
-    @media (min-width: 768px) { .apple-corners-full { border-radius: 64px; } }
+    .apple-corners-full { border-radius: 32px; overflow: hidden; }
+    @media (min-width: 810px) { .apple-corners-full { border-radius: 40px; } }
 
     /* 5. Navigation & Effects */
     .nav-fixed { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 1000; width: fit-content; }
-    .nav-glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+    .nav-glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
     
     @keyframes mesh-float { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     .vision-mesh-animated { background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33); background-size: 400% 400%; animation: mesh-float 15s ease infinite; }
@@ -90,7 +90,7 @@
 </head>
 <body class="font-sans antialiased">
 
-<!-- GEOMETRICALLY ALIGNED NAVIGATION -->
+<!-- NAVIGATION -->
 <nav class="nav-fixed">
     <div class="nav-glass p-1.5 rounded-full flex items-center shadow-sm">
         
@@ -136,9 +136,10 @@
                         <span class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential & Commercial Design</span>
                         <div class="h-[3px] w-12 md:w-24 bg-white"></div>
                     </div>
-                    <h1 class="text-[11vw] sm:text-[9vw] md:text-[8vw] lg:text-[8rem] font-extrabold leading-[0.8] tracking-tighter uppercase mb-10">
-                        <span class="text-white">KEND</span><span class="text-white/40">.</span><span class="text-white">DESIGN</span><span class="text-white/40">.</span><br><span class="text-white/40">STUDIO</span>
-                    </h1>
+					<h1 class="text-[11vw] sm:text-[9vw] md:text-[8vw] lg:text-[8rem] font-extrabold leading-[0.8] tracking-tighter uppercase mb-10">
+					<span class="text-white">KEND</span><span class="text-white/40">.</span><span class="text-white">DESIGN</span><span class="text-white/40">.</span>
+					<span class="block text-white/40 tracking-[-0.04em]">STUDIO</span>
+					</h1>
                     <p id="hero-para" class="text-white/60 text-base md:text-xl max-w-2xl font-medium leading-relaxed">
                         Crafting spaces that breathe. Where light meets structure and form follows emotion.
                     </p>
@@ -149,7 +150,7 @@
 </section>
 
 <!-- FEATURED PROJECTS -->
-<section id="portfolio" class="py-32 md:py-48">
+<section id="portfolio" class="py-24 md:py-48 -scroll-mt-24">
     <div class="site-container">
         <div class="mb-20"><span class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-4 block">Selected Works</span><h2 class="text-5xl md:text-7xl font-black text-primary tracking-tight uppercase">Featured Projects</h2></div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-14">
@@ -174,7 +175,7 @@
 </section>
 
 <!-- CV SECTION -->
-<section id="cv" class="py-32 md:py-48 bg-transparent"></section>
+<section id="cv" class="py-24 md:py-48 bg-transparent -scroll-mt-24">
 
 <!-- FOOTER / CTA -->
 <section class="py-32 md:py-48">
@@ -196,7 +197,7 @@
                 </a>
 
                 <div class="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 max-w-6xl mx-auto">
-                    <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">© 2026 KEND.ESAIN STUDIO</p>
+                    <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">© 2026 KENDRICK MARZUKI</p>
                     <div class="flex gap-10">
                         <a href="https://linkedin.com/in/kendrick-marzuki" target="_blank" class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm hover:scale-105">
                              <div class="p-2 rounded-xl bg-white/10 hover:bg-[#0077B5] transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></div> LinkedIn
@@ -222,7 +223,7 @@
         window.addEventListener('scroll', () => {
             let scrollY = window.scrollY;
             let windowHeight = window.innerHeight;
-            overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.8), 0.85);
+            overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.6), 0.85);
             heroPara.style.opacity = Math.max(1 - (scrollY / (windowHeight / 2.5)), 0);
         });
 
