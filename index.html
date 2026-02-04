@@ -151,9 +151,17 @@
     <div class="w-full h-full">
         <div id="hero-spotlight-container" class="hero-container sticky top-0 h-screen overflow-hidden group">
             
-            <video id="hero-img" autoplay muted playsinline poster="assets/hero.webp"
-				class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-90">
-				<source id="video-source" src="assets/hero.mp4" type="video/mp4"></video>
+            <div id="video-wrapper" class="absolute inset-0 w-full h-full">
+				<video id="hero-img" autoplay muted playsinline poster="assets/hero.webp"
+				class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-90 z-10">
+				<source src="assets/hero.mp4" type="video/mp4">
+				</video>
+
+				<video id="hero-img-next" muted playsinline preload="auto"
+				class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-90 opacity-0 z-0">
+				<source src="assets/hero2.mp4" type="video/mp4">
+				</video>
+			</div>
 				
 				<!-- <img id="hero-img" src="assets/hero.webp" 
 					class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2]" alt="Hero" 
@@ -165,7 +173,7 @@
 
                 <div class="absolute inset-0 bg-black/0 z-5 pointer-events-none"></div>
 
-                <canvas id="hero-spotlight-canvas" class="absolute inset-0 w-full h-full z-10 pointer-events-none mix-blend-overlay"></canvas>
+                <canvas id="hero-spotlight-canvas" class="absolute inset-0 w-full h-full z-30 pointer-events-none mix-blend-overlay"></canvas>
             </div>
 
 			<div class="fixed inset-0 flex flex-col justify-end px-8 pb-12 md:px-16 md:pb-20 z-0 pointer-events-none">
@@ -372,10 +380,11 @@
 
 			// --- B. PARALLAX VISUALS (HERO ONLY) ---
 			if (scrollY <= windowHeight) {
-			if (heroImg) {heroImg.style.transform = `translateY(-${scrollY * 0.05}px) scale(1.2)`;}            
-			if (heroForeground) {heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);}
-			if (overlay) {overlay.style.opacity = Math.min(scrollY / (windowHeight * 1), 0.85);}}
-		});
+			// Gerakkan kedua video secara bersamaan agar transisi tetap sinkron
+			[video1, video2].forEach(vid => {if (vid) {vid.style.transform = `translateY(-${scrollY * 0.05}px) scale(1.2)`;}});
+				if (heroForeground) {heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);}
+					if (overlay) {overlay.style.opacity = Math.min(scrollY / (windowHeight * 1), 0.85);}
+			}
 		
         // 3. OBSERVERS
         const observer = new IntersectionObserver((entries) => {
@@ -520,36 +529,35 @@
         }
     })();	
 	
-	// 7. Jeda video hero section
-	const video = document.getElementById('hero-img');
-	const source = document.getElementById('video-source');
+	// 7. JEDA VIDEO HERO DENGAN SEAMLESS TRANSITION
+	const video1 = document.getElementById('hero-img');
+	const video2 = document.getElementById('hero-img-next');
 
 	let loopCount = 0;
 	const maxLoops = 2;
-	const videoLoopSrc = 'assets/hero.mp4'; // Video yang loop 3x
-	const videoFinalSrc = 'assets/hero2.mp4'; // Video yang putar sekali saja
 
-	if (video) {
-		video.addEventListener('ended', () => {
-			loopCount++;
+		if (video1 && video2) {
+		video1.addEventListener('ended', () => {
+        loopCount++;
 
-			if (loopCount < maxLoops) {
-				// JEDA ANTAR LOOP (misal 2 detik)
-				setTimeout(() => {
-					video.play();
-				}, 2000); 
-			} else if (loopCount === maxLoops) {
-				// GANTI KE VIDEO KEDUA (Hanya jalan sekali)
-				source.setAttribute('src', videoFinalSrc);
-				video.load(); // Reload video dengan source baru
-				video.play();
-			} else {
-            // Video kedua sudah selesai, tidak melakukan apa-apa (berhenti di frame terakhir)
-            console.log("sudah selesai.");
+        if (loopCount < maxLoops) {
+            // JEDA ANTAR LOOP VIDEO 1 (2 detik)
+            setTimeout(() => {
+                video1.play();
+            }, 2000); 
+        } 
+        else if (loopCount === maxLoops) {
+            // TRANSISI SEAMLESS KE VIDEO 2
+            video2.play().then(() => {
+                video2.style.opacity = "1";
+                // Gunakan z-20 agar tetap di bawah Canvas (z-30)
+                video2.style.zIndex = "20"; 
+                video1.style.opacity = "0";
+                video1.style.zIndex = "10";
+            });
         }
     });
 }
-	
     </script>
 
 </body>
