@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>kend.design.studio</title>
     
+    <link rel="icon" type="image/png" href="assets/KM-icon.png">
+    <link rel="apple-touch-icon" href="assets/KM-icon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,6 +88,10 @@
     .project-card { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .project-card.pop-up-active { opacity: 1; transform: translateY(0) scale(1); }
 
+	/* 8. Hide Scrollbar for Carousel */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+	
 </style>
 	
 </head>
@@ -152,24 +159,85 @@
 <!-- FEATURED PROJECTS -->
 <section id="portfolio" class="py-24 md:py-48 -scroll-mt-24">
     <div class="site-container">
-        <div class="mb-20"><span class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-4 block">Selected Works</span><h2 class="text-5xl md:text-7xl font-black text-primary tracking-tight uppercase">Featured Projects</h2></div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-14">
-            <!-- Project 1 -->
-            <div class="project-card md:col-span-2 group cursor-pointer">
-                <div class="relative overflow-hidden apple-corners-full bg-zinc-200 aspect-[16/10] md:h-[550px] mb-6 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2600" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-10 md:p-16"><span class="text-[10px] font-bold tracking-[0.3em] text-white/60 uppercase mb-2">Batam, Indonesia</span><h4 class="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter">Pentagon Apartment</h4></div>
-                </div>
-                <div class="flex justify-between items-center px-6"><h3 class="text-xl md:text-2xl font-bold tracking-tight">Pentagon Apartment Tower C</h3><span class="text-sm font-bold text-secondary">2025</span></div>
+        
+        <div class="mb-10 flex items-end justify-between md:mb-14">
+            <div class="flex flex-col gap-4">
+                <span class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-2 block">Selected Works</span>
+                <h2 class="text-4xl md:text-7xl font-black text-primary tracking-tight uppercase">Featured Projects</h2>
             </div>
-            <!-- Project 2 -->
-            <div class="project-card md:col-span-1 group cursor-pointer">
-                <div class="relative overflow-hidden apple-corners-full bg-zinc-200 aspect-[4/5] md:h-[550px] mb-6 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2600" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-10"><span class="text-[10px] font-bold tracking-[0.3em] text-white/60 uppercase mb-2">Jakarta, Indonesia</span><h4 class="text-3xl font-black text-white uppercase tracking-tighter">MRT CP201 Monas</h4></div>
-                </div>
-                <div class="flex justify-between items-center px-6"><h3 class="text-xl md:text-2xl font-bold tracking-tight">Jakarta MRT CP201</h3><span class="text-sm font-bold text-secondary">2024</span></div>
+            
+            <div class="hidden shrink-0 gap-3 md:flex">
+                <button id="prev-slide" class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95">
+                    <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                </button>
+                <button id="next-slide" class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95">
+                    <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                </button>
             </div>
+        </div>
+
+        <div class="w-full relative">
+            
+            <div id="project-carousel" class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-12 no-scrollbar p-10">
+                
+                <div class="min-w-[85vw] md:min-w-[600px] snap-center">
+                   <a href="#" class="group block relative h-[500px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-ios-card transition-all duration-500 hover:shadow-[0_12px_12px_rgba(0,0,0,0.3)] hover:-translate-y-2">
+                        
+                        <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2600" 
+                             class="absolute h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Pentagon">
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+                        
+                        <div class="absolute bottom-0 left-0 p-8 md:p-12 w-full text-white">
+                            <span class="block text-[10px] md:text-xs font-bold tracking-[0.2em] text-white/70 uppercase mb-3">
+                                Batam, Indonesia
+                            </span>
+                            <h3 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">
+                                Pentagon Apartment
+                            </h3>
+                        </div>
+                   </a>
+                </div>
+
+                <div class="min-w-[85vw] md:min-w-[600px] snap-center">
+                   <a href="#" class="group block relative h-[500px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-ios-card transition-all duration-500 hover:shadow-[0_12px_12px_rgba(0,0,0,0.3)] hover:-translate-y-2">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2600" 
+                             class="absolute h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="MRT">
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+                        
+                        <div class="absolute bottom-0 left-0 p-8 md:p-12 w-full text-white">
+                            <span class="block text-[10px] md:text-xs font-bold tracking-[0.2em] text-white/70 uppercase mb-3">
+                                Jakarta, Indonesia
+                            </span>
+                            <h3 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">
+                                MRT CP201 Monas
+                            </h3>
+                        </div>
+                   </a>
+                </div>
+
+                <div class="min-w-[85vw] md:min-w-[600px] snap-center">
+                   <a href="#" class="group block relative h-[500px] md:h-[650px] w-full overflow-hidden rounded-[2.5rem] shadow-ios-card transition-all duration-500 hover:shadow-[0_12px_12px_rgba(0,0,0,0.3)] hover:-translate-y-2">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600" 
+                             class="absolute h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Villa">
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+                        
+                        <div class="absolute bottom-0 left-0 p-8 md:p-12 w-full text-white">
+                            <span class="block text-[10px] md:text-xs font-bold tracking-[0.2em] text-white/70 uppercase mb-3">
+                                Bali, Indonesia
+                            </span>
+                            <h3 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">
+                                Private Villa
+                            </h3>
+                        </div>
+                   </a>
+                </div>
+
+            </div>
+            
+            <div class="flex justify-center gap-2 mt-4" id="carousel-dots"></div>
         </div>
     </div>
 </section>
@@ -338,9 +406,61 @@
             brightness: 0.5,
             color: '#ffffff'
         });
-
     })();
-		
+	
+		// 6. Carousel Logic
+		(function() {
+        const carousel = document.getElementById('project-carousel');
+        const prevBtn = document.getElementById('prev-slide');
+        const nextBtn = document.getElementById('next-slide');
+        const dotsContainer = document.getElementById('carousel-dots');
+
+        if (!carousel) return;
+
+        // Scroll Amount (Card Width + Gap)
+        const getScrollAmount = () => {
+            // Calculate width of first card + gap (24px)
+            const card = carousel.querySelector('div');
+            return card.offsetWidth + 24;
+        };
+
+        // Button Listeners
+        nextBtn.addEventListener('click', () => {
+            carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+        });
+
+        prevBtn.addEventListener('click', () => {
+            carousel.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+        });
+
+        // Dots Logic (Optional)
+        const items = carousel.children;
+        const totalItems = items.length;
+        
+        // Create Dots
+        for (let i = 0; i < totalItems; i++) {
+            const dot = document.createElement('button');
+            dot.className = `h-2 w-2 rounded-full transition-colors ${i === 0 ? 'bg-primary' : 'bg-primary/20'}`;
+            dot.onclick = () => {
+                const scrollLeft = i * getScrollAmount();
+                carousel.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            };
+            dotsContainer.appendChild(dot);
+        }
+
+        // Update Dots on Scroll
+        carousel.addEventListener('scroll', () => {
+            const scrollPos = carousel.scrollLeft;
+            const itemWidth = getScrollAmount();
+            const activeIndex = Math.round(scrollPos / itemWidth);
+            
+            Array.from(dotsContainer.children).forEach((dot, index) => {
+                dot.className = `h-2 w-2 rounded-full transition-colors ${index === activeIndex ? 'bg-primary' : 'bg-primary/20'}`;
+            });
+        });
+    })();
+	
+</script>
     </script>
 
 </body>
