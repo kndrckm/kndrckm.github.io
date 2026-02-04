@@ -1,10 +1,7 @@
-// This file protects your professional data. 
-// It is injected into the index.html #cv section automatically.
-
 const cvHTML = `
 <div class="site-container">
     
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-16 gap-6">
         <div>
             <span class="text-[10px] md:text-xs font-bold tracking-[0.3em] text-secondary uppercase mb-4 block">Professional Background</span>
             <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase">Curriculum Vitae</h2>
@@ -16,78 +13,6 @@ const cvHTML = `
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        <div class="lg:col-span-4 space-y-6">
-            
-            <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
-                <div class="flex items-center gap-3 mb-8">
-                    <i data-lucide="graduation-cap" class="w-5 h-5 text-accent"></i>
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Education</h3>
-                </div>
-                <div class="space-y-8">
-                    <div>
-                        <h4 class="font-bold text-primary leading-tight text-lg">Master of Business Administration (M.B.A.)</h4>
-                        <p class="text-secondary text-sm">Universitas Gadjah Mada</p>
-                        <p class="text-xs font-bold text-accent mt-1 tracking-tighter uppercase">2023 – 2025</p>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-primary leading-tight text-lg">Professional Degree – Architecture (Ar.)</h4>
-                        <p class="text-secondary text-sm">Universitas Gadjah Mada</p>
-                        <p class="text-xs font-bold text-accent mt-1 tracking-tighter uppercase">2021 – 2022</p>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-primary leading-tight text-lg">Bachelor of Engineering – Architecture</h4>
-                        <p class="text-secondary text-sm">Universitas Gadjah Mada</p>
-                        <p class="text-xs font-bold text-accent mt-1 tracking-tighter uppercase">2015 – 2019</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
-                <div class="flex items-center gap-3 mb-8">
-                    <i data-lucide="cpu" class="w-5 h-5 text-accent"></i>
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Tools & Skills</h3>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Ms. Office</span>
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Revit</span>
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">AutoCAD</span>
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Rhino</span>
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">SketchUp</span>
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">3Ds Max</span>
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Naviswork</span>
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Stata 17</span>
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">SPSS</span>
-                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Adobe Suite</span>
-                    
-                    <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Team Coordination</span>
-                    <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Stakeholder Management</span>			
-                    <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Data Analysis</span>
-                    <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Strategic Thinking</span>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
-                <div class="flex items-center gap-3 mb-8">
-                    <i data-lucide="trophy" class="w-5 h-5 text-accent"></i>
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Achievement</h3>
-                </div>
-                <div class="space-y-6 text-sm">
-                    <div class="flex gap-4">
-                        <span class="font-black text-primary">2025</span>
-                        <p class="text-secondary font-medium tracking-tight">Secure Architecture Package – PT. AMF, Batam</p>
-                    </div>
-                    <div class="flex gap-4">
-                        <span class="font-black text-primary">2021</span>
-                        <p class="text-secondary font-medium tracking-tight">2nd Place – Jati Campus Design Competition</p>
-                    </div>
-                    <div class="flex gap-4">
-                        <span class="font-black text-primary">2019</span>
-                        <p class="text-secondary font-medium tracking-tight">4th Place – IKN Masterplan Design Competition</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="lg:col-span-8 bg-white rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 border border-black/5 shadow-ios-card">
             <div class="flex items-center gap-3 mb-12">
@@ -164,6 +89,79 @@ const cvHTML = `
                 </div>
 
             </div>
+        </div>
+
+        <div class="lg:col-span-4 space-y-6">
+            
+            <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
+                <div class="flex items-center gap-3 mb-8">
+                    <i data-lucide="graduation-cap" class="w-5 h-5 text-accent"></i>
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Education</h3>
+                </div>
+                <div class="space-y-8">
+                    <div>
+                        <h4 class="font-bold text-primary leading-tight text-lg">Master of Business Administration (M.B.A.)</h4>
+                        <p class="text-secondary text-sm">Universitas Gadjah Mada</p>
+                        <p class="text-xs font-bold text-accent mt-1 tracking-tighter uppercase">2023 – 2025</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-primary leading-tight text-lg">Professional Degree – Architecture (Ar.)</h4>
+                        <p class="text-secondary text-sm">Universitas Gadjah Mada</p>
+                        <p class="text-xs font-bold text-accent mt-1 tracking-tighter uppercase">2021 – 2022</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-primary leading-tight text-lg">Bachelor of Engineering – Architecture</h4>
+                        <p class="text-secondary text-sm">Universitas Gadjah Mada</p>
+                        <p class="text-xs font-bold text-accent mt-1 tracking-tighter uppercase">2015 – 2019</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
+                <div class="flex items-center gap-3 mb-8">
+                    <i data-lucide="cpu" class="w-5 h-5 text-accent"></i>
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Tools & Skills</h3>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Ms. Office</span>
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Revit</span>
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">AutoCAD</span>
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Rhino</span>
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">SketchUp</span>
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">3Ds Max</span>
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Naviswork</span>
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Stata 17</span>
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">SPSS</span>
+                    <span class="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Adobe Suite</span>
+                    
+                    <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Team Coordination</span>
+                    <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Stakeholder Management</span>          
+                    <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Data Analysis</span>
+                    <span class="px-3 py-1.5 bg-accent text-white rounded-lg text-[10px] font-bold uppercase tracking-tighter">Strategic Thinking</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2rem] p-8 md:p-10 border border-black/5 shadow-ios-card">
+                <div class="flex items-center gap-3 mb-8">
+                    <i data-lucide="trophy" class="w-5 h-5 text-accent"></i>
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Achievement</h3>
+                </div>
+                <div class="space-y-6 text-sm">
+                    <div class="flex gap-4">
+                        <span class="font-black text-primary">2025</span>
+                        <p class="text-secondary font-medium tracking-tight">Secure Architecture Package – PT. AMF, Batam</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="font-black text-primary">2021</span>
+                        <p class="text-secondary font-medium tracking-tight">2nd Place – Jati Campus Design Competition</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="font-black text-primary">2019</span>
+                        <p class="text-secondary font-medium tracking-tight">4th Place – IKN Masterplan Design Competition</p>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>

@@ -93,7 +93,7 @@
     .vision-mesh-animated { background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33); background-size: 400% 400%; animation: mesh-float 15s ease infinite; }
     
 	/* #scroll-overlay { background-color: black; opacity: 0; pointer-events: none; } Fades image into page background */
-    #scroll-overlay { background-color: #EDEFF2; opacity: 0; pointer-events: none; }
+    #scroll-overlay { background-color: #000000; opacity: 0; pointer-events: none; }
 
     .exp-details { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
     
@@ -133,6 +133,7 @@
         </div>
         
         <div class="hidden md:flex items-center gap-1 mx-1">
+		    <a href="#scope" class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">Scope</a>
             <a href="#portfolio" class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">Projects</a>
             <a href="#cv" class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">About</a>
         </div>
@@ -151,9 +152,13 @@
         <div id="hero-spotlight-container" class="hero-container sticky top-0 h-screen overflow-hidden group">
             
             <div class="absolute inset-0">
-                <img id="hero-img" src="assets/hero.webp" 
+                <video id="hero-img" autoplay muted playsinline poster="assets/hero.webp"
+				class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-90">
+				<source src="assets/hero.mp4" type="video/mp4"></video>
+				
+				<!-- <img id="hero-img" src="assets/hero.webp" 
 					class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2]" alt="Hero" 
-                     onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'">
+                     onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'"> -->
                 
                 <div id="scroll-overlay" class="absolute inset-0 z-10"></div>
                 <div class="absolute inset-0 white-gloss z-5"></div>
@@ -179,6 +184,72 @@
                     </p>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- SCOPE SECTION -->
+<section id="scope" class="relative z-10 bg-[#EDEFF2] pt-24 md:pt-48 -scroll-mt-24">
+    <div class="site-container">
+        
+        <div class="mb-10 md:mb-14">
+            <span class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-2 block">Scope of work</span>
+            <h2 class="text-4xl md:text-7xl font-black text-primary tracking-tight uppercase">Project Typology</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <div class="group relative w-full aspect-square rounded-[2rem] overflow-hidden cursor-pointer shadow-ios-card hover:shadow-ios-deep transition-all duration-500">
+                <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1200" 
+                     class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Residential">
+                
+                <div class="absolute inset-0 bg-black/50 transition-opacity duration-500 group-hover:bg-black/40"></div>
+                
+                <div class="absolute bottom-0 left-0 p-8 w-full flex flex-col justify-end h-full">
+                    <div class="mb-4 text-white/90 transform transition-transform duration-500 group-hover:-translate-y-2">
+                        <i data-lucide="home" class="w-10 h-10 stroke-[1.5]"></i>
+                    </div>
+                    <h3 class="text-3xl font-black text-white uppercase mb-2 tracking-tighter translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Residential</h3>
+                    <p class="text-white/70 text-sm font-medium leading-relaxed opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
+                        Crafting private sanctuaries where timeless architecture meets daily living. Form follows emotion.
+                    </p>
+                </div>
+            </div>
+
+            <div class="group relative w-full aspect-square rounded-[2rem] overflow-hidden cursor-pointer shadow-ios-card hover:shadow-ios-deep transition-all duration-500">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200" 
+                     class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Commercial">
+                
+                <div class="absolute inset-0 bg-black/50 transition-opacity duration-500 group-hover:bg-black/40"></div>
+                
+                <div class="absolute bottom-0 left-0 p-8 w-full flex flex-col justify-end h-full">
+                    <div class="mb-4 text-white/90 transform transition-transform duration-500 group-hover:-translate-y-2">
+                        <i data-lucide="building-2" class="w-10 h-10 stroke-[1.5]"></i>
+                    </div>
+                    <h3 class="text-3xl font-black text-white uppercase mb-2 tracking-tighter translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Commercial</h3>
+                    <p class="text-white/70 text-sm font-medium leading-relaxed opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
+                        Precise environments designed for productivity and impact. Architecture that elevates brand identity.
+                    </p>
+                </div>
+            </div>
+
+            <div class="group relative w-full aspect-square rounded-[2rem] overflow-hidden cursor-pointer shadow-ios-card hover:shadow-ios-deep transition-all duration-500">
+                <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200" 
+                     class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Interior">
+                
+                <div class="absolute inset-0 bg-black/50 transition-opacity duration-500 group-hover:bg-black/40"></div>
+                
+                <div class="absolute bottom-0 left-0 p-8 w-full flex flex-col justify-end h-full">
+                    <div class="mb-4 text-white/90 transform transition-transform duration-500 group-hover:-translate-y-2">
+                        <i data-lucide="armchair" class="w-10 h-10 stroke-[1.5]"></i>
+                    </div>
+                    <h3 class="text-3xl font-black text-white uppercase mb-2 tracking-tighter translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Interior</h3>
+                    <p class="text-white/70 text-sm font-medium leading-relaxed opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
+                        Curating atmospheres through texture, light, and flow. The subtle art of inhabiting space.
+                    </p>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
@@ -257,56 +328,44 @@
         document.getElementById('cv').innerHTML = cvHTML;
         lucide.createIcons();
 
-		// 2. SCROLL MANAGER: PARALLAX & SNAP SCROLLING (Hero <-> Portfolio <-> CV)
+		// 2. SCROLL MANAGER: PARALLAX & SNAP SCROLLING (Hero <-> Scope <-> Portfolio <-> CV)
         const overlay = document.getElementById('scroll-overlay');
         const heroImg = document.getElementById('hero-img');
         const heroForeground = document.getElementById('hero-foreground');
         // Sections
         const heroSection = document.getElementById('hero');
+        const scopeSection = document.getElementById('scope');
         const portfolioSection = document.getElementById('portfolio');
         const cvSection = document.getElementById('cv');
-
-        let isAutoScrolling = false; let lastScrollY = window.scrollY;
+        let isAutoScrolling = false;
+        let lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {let scrollY = window.scrollY;let windowHeight = window.innerHeight;
-            
-            // Detect Direction: Positive = Down, Negative = Up
+            // Detect Direction
             let direction = scrollY > lastScrollY ? 'down' : 'up'; lastScrollY = scrollY;
 
-            // --- A. SNAP SCROLL LOGIC ---
-            if (!isAutoScrolling) { const cvRect = cvSection.getBoundingClientRect();
+            // --- SNAP SCROLL LOGIC ---
+            if (!isAutoScrolling) {
+                const portfolioRect = portfolioSection.getBoundingClientRect();
+                const cvRect = cvSection.getBoundingClientRect();
 
-                // TRANSITION 1: HERO <-> PORTFOLIO
-                // a. DOWN: Hero -> Portfolio Trigger: Passed 60% of the screen height
-                if (direction === 'down' && scrollY > (windowHeight * 0.5) && scrollY < windowHeight) {
-                    isAutoScrolling = true;
-                    portfolioSection.scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => { isAutoScrolling = false; }, 800);}
+                // 1. HERO <-> SCOPE Down: Trigger at 30% scroll
+                if (direction === 'down' && scrollY > (windowHeight * 0.5) && scrollY < windowHeight) {isAutoScrolling = true;
+                    scopeSection.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { isAutoScrolling = false; }, 800);}
 
-                // b. UP: Portfolio -> Hero Trigger: When Hero becomes 15% visible again (scroll is less than 60% of height)
-                else if (direction === 'up' && scrollY < (windowHeight * 0.50) && scrollY > 50) {
-                    isAutoScrolling = true;
-                    heroSection.scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => { isAutoScrolling = false; }, 800);}
+                // 2. SCOPE <-> PORTFOLIO Down: Portfolio enters bottom 20%
+                else if (direction === 'down' && portfolioRect.top < (windowHeight * 0.5) && portfolioRect.top > 0) {isAutoScrolling = true;
+                    portfolioSection.scrollIntoView({ behavior: 'smooth' }); setTimeout(() => { isAutoScrolling = false; }, 800); }
 
-                // TRANSITION 2: PORTFOLIO <-> CV
-                // a. DOWN: Portfolio -> CV Trigger: When CV top comes into the bottom 20% of the screen
-                else if (direction === 'down' && cvRect.top < (windowHeight * 0.50) && cvRect.top > 0) {
-                    isAutoScrolling = true;
-                    cvSection.scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => { isAutoScrolling = false; }, 800);}
+                // 3. PORTFOLIO <-> CV Down: CV enters bottom 20%
+                else if (direction === 'down' && cvRect.top < (windowHeight * 0.8) && cvRect.top > 0) {isAutoScrolling = true;
+                    cvSection.scrollIntoView({ behavior: 'smooth' });setTimeout(() => { isAutoScrolling = false; }, 800);}
 
-                // b. UP: CV -> Portfolio Trigger: When CV is pushed down past 20% of screen
-                else if (direction === 'up' && cvRect.top > (windowHeight * 0.50) && cvRect.top < windowHeight) {
-                    isAutoScrolling = true;
-                    portfolioSection.scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => { isAutoScrolling = false; }, 800);} }
-
-            // --- B. PARALLAX VISUALS (HERO ONLY) ---
-            if (scrollY <= windowHeight) {if (heroImg) {heroImg.style.transform = `translateY(-${scrollY * 0.5}px) scale(1.25)`;}            
-                if (heroForeground) {
-                     // Fades out faster (by 40% of scroll) so it's gone before the snap
-                     heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);}
-                if (overlay) {overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.4), 0.85);} }
+            }
+            // --- PARALLAX VISUALS (HERO ONLY) ---
+            if (scrollY <= windowHeight) {
+                if (heroImg) { heroImg.style.transform = `translateY(-${scrollY * 0.05}px) scale(1.2)`; }            
+                if (heroForeground) { heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0); }
+                if (overlay) { overlay.style.opacity = Math.min(scrollY / (windowHeight * 1), 0.85); }}
         });
 		
         // 3. OBSERVERS
@@ -410,7 +469,7 @@
         // a. HERO SPOTLIGHT (Bigger & Brighter for impact)
         new Spotlight('hero-spotlight-container', 'hero-spotlight-canvas', {
             radius: 500,
-            brightness: 0.1, 
+            brightness: 0.2, 
             color: '#ffffff'
         });
 
@@ -451,6 +510,18 @@
             });
         }
     })();	
+	
+	// 7. Jeda video hero section
+	const video = document.getElementById('hero-img');
+	if (video) {
+    video.addEventListener('ended', () => {
+        // Berikan jeda dalam milidetik (contoh: 3000 = 3 detik)
+        setTimeout(() => {
+            video.play();
+        }, 2000); 
+    });
+}
+	
     </script>
 
 </body>
