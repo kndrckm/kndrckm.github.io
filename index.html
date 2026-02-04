@@ -151,10 +151,9 @@
     <div class="w-full h-full">
         <div id="hero-spotlight-container" class="hero-container sticky top-0 h-screen overflow-hidden group">
             
-            <div class="absolute inset-0">
-                <video id="hero-img" autoplay muted playsinline poster="assets/hero.webp"
+            <video id="hero-img" autoplay muted playsinline poster="assets/hero.webp"
 				class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-90">
-				<source src="assets/hero.mp4" type="video/mp4"></video>
+				<source id="video-source" src="assets/hero.mp4" type="video/mp4"></video>
 				
 				<!-- <img id="hero-img" src="assets/hero.webp" 
 					class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2]" alt="Hero" 
@@ -513,12 +512,31 @@
 	
 	// 7. Jeda video hero section
 	const video = document.getElementById('hero-img');
+	const source = document.getElementById('video-source');
+
+	let loopCount = 0;
+	const maxLoops = 2;
+	const videoLoopSrc = 'assets/hero.mp4'; // Video yang loop 3x
+	const videoFinalSrc = 'assets/hero2.mp4'; // Video yang putar sekali saja
+
 	if (video) {
-    video.addEventListener('ended', () => {
-        // Berikan jeda dalam milidetik (contoh: 3000 = 3 detik)
-        setTimeout(() => {
-            video.play();
-        }, 2000); 
+		video.addEventListener('ended', () => {
+			loopCount++;
+
+			if (loopCount < maxLoops) {
+				// JEDA ANTAR LOOP (misal 2 detik)
+				setTimeout(() => {
+					video.play();
+				}, 2000); 
+			} else if (loopCount === maxLoops) {
+				// GANTI KE VIDEO KEDUA (Hanya jalan sekali)
+				source.setAttribute('src', videoFinalSrc);
+				video.load(); // Reload video dengan source baru
+				video.play();
+			} else {
+            // Video kedua sudah selesai, tidak melakukan apa-apa (berhenti di frame terakhir)
+            console.log("sudah selesai.");
+        }
     });
 }
 	
