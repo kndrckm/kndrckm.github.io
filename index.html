@@ -41,86 +41,116 @@
     /* 1. Global Frame Background */
     body { background-color: #EDEFF2; margin: 0; color: #1D1D1F; overflow-x: hidden; }
 
-    /* 2. Universal Site Container (The Frame) */
+    /* 2. Universal Site Container */
     .site-container {
-        max-width: 1440px;
         margin-left: auto;
         margin-right: auto;
-        width: calc(100% - 48px); /* 24px gutter on mobile */
-    }
-    @media (min-width: 810px) {
-        .site-container { width: calc(100% - 80px); } /* 40px gutter on tablet/desktop */
+        width: 88%; 
+        max-width: 100%;
+        padding: 0;
+        box-sizing: border-box;
     }
 
-    /* 3. Hero Fix: Full Screen Immersive (No Borders/Shadows) */
-    .hero-container {
-        width: 100%;
-        position: relative;
-        overflow: hidden;
-        background: #000;
+    @media (min-width: 810px) {
+        .site-container { width: 90%; max-width: none; } 
     }
+
+    @media (min-width: 1600px) {
+        .site-container { max-width: 1800px; width: 85%; }
+    }
+
+    /* 3. Hero Fix */
+    .hero-container { width: 100%; position: relative; overflow: hidden; background: #000; }
     
-    /* 4. Full Rounding missing class */
     .apple-corners-full { border-radius: 32px; overflow: hidden; }
     @media (min-width: 810px) { .apple-corners-full { border-radius: 40px; } }
 
-	/* 5. Navigation: Liquid Edge & Line Effect */
+    /* 4. Navigation */
     .nav-fixed { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 1000; width: fit-content; }
-    
     .nav-glass { 
-        /* a. Minimal Background (Almost transparent) */
         background: rgba(255, 255, 255, 0.70); 
-    
-        /* b. The "Liquid" Blur */
-        backdrop-filter: blur(5px); 
-        -webkit-backdrop-filter: blur(5px); 
- 
-        /* c. The "Line & Edge" (Crisp border + Inner Glow) */
+        backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); 
         border: 1.5px solid rgba(255, 255, 255, 0.2); 
         box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.1); 
-
-        /* d. Animation Settings */
-        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy "pop" effect */ }
-
-		/* e. Hover/Click Animation (Scale 1.05) */
-		.nav-glass:hover, .nav-glass:active {
-			transform: scale(1.01);
-			border-color: rgba(255, 255, 255, 0.5); /* Line gets brighter */
-			box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2); /* Glass gets glossier */
-			background: rgba(255, 255, 255, 0.70); }
-	
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); 
+    }
+    .nav-glass:hover, .nav-glass:active {
+        transform: scale(1.01);
+        border-color: rgba(255, 255, 255, 0.5); 
+        box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2); 
+    }
+    
     @keyframes mesh-float { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     .vision-mesh-animated { background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33); background-size: 400% 400%; animation: mesh-float 15s ease infinite; }
     
-	/* #scroll-overlay { background-color: black; opacity: 0; pointer-events: none; } Fades image into page background */
     #scroll-overlay { background-color: #000000; opacity: 0; pointer-events: none; }
-
     .exp-details { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
     
     @media (max-width: 1023px) { .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; } }
     @media (min-width: 1024px) { .is-revealed .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; } }
+
+    /* --- 5. NEW BENTO GRID STYLES --- */
     
-    .image-overlay-base { background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 100%); }
-    .white-gloss { background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 50%); pointer-events: none; }
-    .project-card { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
-    .project-card.pop-up-active { opacity: 1; transform: translateY(0) scale(1); }
-	
-	/* 7. CAROUSEL: ALWAYS ACTIVE UNDER 1440px */
-    @media (max-width: 1440px) {
-        /* 1. Make Text & Gradient Visible */
-        .project-card-link .hover-reveal {opacity: 1 !important;}
-        /* 2. Lift the Card & Add Shadow */
-        .project-card-link {box-shadow: 0 12px 12px rgba(0,0,0,0.3) !important; transform: translateY(-8px) !important;}
-        /* 3. Zoom the Image Slightly */
-        .project-card-link img {transform: scale(1.05);}
+    /* The Grid Container */
+    .bento-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 100%;
     }
 
-	/* 8. Hide Scrollbar for Carousel */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-	
+    /* Desktop: Turn into 3 columns with fixed height to allow vertical resizing */
+    @media (min-width: 1024px) {
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            height: 750px; /* Crucial: Fixed height allows the children to grow/shrink relatively */
+        }
+    }
+
+    /* The Columns (holding 2 projects each) */
+    .bento-col {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        height: 100%; /* Fill the grid cell */
+    }
+    
+    /* Mobile: Ensure columns have minimum height so they don't collapse */
+    @media (max-width: 1023px) {
+        .bento-col { height: 800px; } /* Stacked columns are tall on mobile */
+    }
+
+    /* The Project Card */
+    .bento-card {
+        flex: 1; /* Default: Share space equally (50/50) */
+        position: relative;
+        border-radius: 2rem;
+        overflow: hidden;
+        /* The Smooth Push Animation */
+        transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
+        cursor: pointer;
+        min-height: 150px; /* Safety min-height */
+    }
+
+    /* INTERACTION: The "Push" Effect (Desktop Only) */
+    @media (min-width: 1024px) {
+        /* When hovering a card, it grows to 3 fractions (75%), squishing the other (1 fraction = 25%) */
+        .bento-card:hover {
+            flex: 3; 
+        }
+        
+        /* Optional: Darken the non-hovered sibling slightly for focus */
+        .bento-col:hover .bento-card:not(:hover) {
+            filter: brightness(0.9);
+        }
+    }
+
+    .project-gradient {
+        background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
+    }
 </style>
-	
+
 </head>
 <body class="font-sans antialiased">
 
