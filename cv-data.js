@@ -1,7 +1,7 @@
 const cvHTML = `
 <div class="site-container">
     
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-16 gap-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-16 gap-6 reveal-text">
         <div>
             <span class="text-[10px] md:text-xs font-bold tracking-[0.3em] text-secondary uppercase mb-4 block">Professional Background</span>
             <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase">Curriculum Vitae</h2>
@@ -15,7 +15,7 @@ const cvHTML = `
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         <div class="lg:col-span-8 bg-white rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 border border-black/5 shadow-ios-card">
-            <div class="flex items-center gap-3 mb-12">
+            <div class="flex items-center gap-3 mb-12 reveal-text">
                 <i data-lucide="briefcase" class="w-5 h-5 text-accent"></i>
                 <h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Experience</h3>
             </div>
@@ -23,10 +23,10 @@ const cvHTML = `
             <div class="space-y-0 timeline-container">
                 
                 <!-- Item 1 -->
-                <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0">
+                <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0 reveal-text">
                     <!-- Logo Hover (Desktop only) -->
                     <div class="hidden md:flex absolute -left-28 top-0 w-20 h-20 bg-white rounded-2xl border border-black/5 shadow-ios-card items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-2 z-10 overflow-hidden">
-                        <img src="assets/companies/logo-amf.svg" class="w-full h-full object-contain p-2" alt="AMF Logo">
+                        <img src="assets/companies/logo-amf.svg" class="w-full h-full object-contain" alt="AMF Logo">
                     </div>
 
                     <div class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent group-hover:border-accent transition-all duration-300"></div>
@@ -48,7 +48,7 @@ const cvHTML = `
                 <!-- Item 2 -->
                 <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0">
                     <div class="hidden md:flex absolute -left-28 top-0 w-20 h-20 bg-white rounded-2xl border border-black/5 shadow-ios-card items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-2 z-10 overflow-hidden">
-                        <img src="assets/companies/logo-shimizu.svg" class="w-full h-full object-contain p-2" alt="Shimizu Logo">
+                        <img src="assets/companies/logo-shimizu.svg" class="w-full h-full object-contain" alt="Shimizu Logo">
                     </div>
 
                     <div class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent group-hover:border-accent transition-all duration-300"></div>
@@ -70,7 +70,7 @@ const cvHTML = `
                 <!-- Item 3 -->
                 <div class="exp-item relative pl-10 pb-12 group cursor-pointer border-l-2 border-zinc-100 last:border-0 last:pb-0">
                     <div class="hidden md:flex absolute -left-28 top-0 w-20 h-20 bg-white rounded-2xl border border-black/5 shadow-ios-card items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-2 z-10 overflow-hidden">
-                        <img src="assets/companies/logo-pdw.svg" class="w-full h-full object-contain p-2" alt="PDW Logo">
+                        <img src="assets/companies/logo-pdw.svg" class="w-full h-full object-contain" alt="PDW Logo">
                     </div>
 
                     <div class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent group-hover:border-accent transition-all duration-300"></div>
@@ -89,9 +89,9 @@ const cvHTML = `
                 </div>
 
                 <!-- Item 4 -->
-                <div class="exp-item relative pl-10 group cursor-pointer border-l-2 border-zinc-100 last:border-0 pb-1">
+                <div class="exp-item relative pl-10 group cursor-pointer border-l-2 border-zinc-100 last:border-0 pb-1 reveal-text">
                     <div class="hidden md:flex absolute -left-28 top-0 w-20 h-20 bg-white rounded-2xl border border-black/5 shadow-ios-card items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-2 z-10 overflow-hidden">
-                        <img src="assets/companies/logo-dpe.svg" class="w-full h-full object-contain p-2" alt="DPE Logo">
+                        <img src="assets/companies/logo-dpe.svg" class="w-full h-full object-contain" alt="DPE Logo">
                     </div>
 
                     <div class="absolute -left-[9px] top-2 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 group-hover:bg-accent group-hover:border-accent transition-all duration-300"></div>

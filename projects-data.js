@@ -4,7 +4,7 @@ const rawProjectData = [
         title: "Student Apartment",
         location: "Semarang, Indonesia",
         category: "Residential",
-        image: "assets/apartment_1.webp",
+        image: "assets/projects/apartment_1.webp",
         focus: "object-[65%_center]",
         link: "#"
     },

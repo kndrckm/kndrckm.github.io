@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KEND.DESIGN.STUDIO | Architecture & Interior Design Portfolio</title>
+    <title>kend.design.studio</title>
 
     <!-- SEO Meta Tags -->
     <meta name="description" content="kend.design.studio architecture & interior design portfolio, based in indonesia">
@@ -28,6 +28,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- LINK TO YOUR EXTERNAL DATA FILE -->
@@ -97,6 +100,24 @@
         .apple-corners-full {
             border-radius: 32px;
             overflow: hidden;
+        }
+
+        /* Reveal Animation */
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .reveal-text.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-text.revealed-no-anim {
+            transition: none !important;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         @media (min-width: 810px) {
@@ -352,7 +373,7 @@
 
             <div class="fixed inset-0 flex flex-col justify-end pb-12 md:pb-20 z-0 pointer-events-none">
                 <div id="hero-foreground" style="visibility: hidden; opacity: 0;"
-                    class="w-[88%] md:w-[90%] 2xl:w-[85%] max-w-[1800px] mx-auto pointer-events-auto will-change-transform">
+                    class="select-none w-[88%] md:w-[90%] 2xl:w-[85%] max-w-[1800px] mx-auto pointer-events-auto will-change-transform">
                     <div class="flex items-center gap-4 mb-4">
                         <span class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential
                             & Commercial Design</span>
@@ -377,7 +398,7 @@
     <section id="scope" class="relative z-10 bg-[#EDEFF2] pt-24 md:pt-48 -scroll-mt-24">
         <div class="site-container">
 
-            <div class="mb-10 md:mb-14">
+            <div class="mb-10 md:mb-14 reveal-text">
                 <span
                     class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-2 block">Scope
                     of work</span>
@@ -387,7 +408,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <div
-                    class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer">
+                    class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer reveal-text">
                     <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1200"
                         class="absolute inset-0 w-full h-full object-cover" alt="Residential">
 
@@ -406,7 +427,7 @@
                 </div>
 
                 <div
-                    class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer">
+                    class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer reveal-text">
                     <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200"
                         class="absolute inset-0 w-full h-full object-cover" alt="Commercial">
 
@@ -425,7 +446,7 @@
                 </div>
 
                 <div
-                    class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer">
+                    class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer reveal-text">
                     <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200"
                         class="absolute inset-0 w-full h-full object-cover" alt="Interior">
 
@@ -451,7 +472,7 @@
     <section id="portfolio" class="relative z-10 bg-[#EDEFF2] pt-24 md:pt-48 -scroll-mt-24">
         <div class="site-container">
 
-            <div class="mb-10 flex items-end justify-between md:mb-14">
+            <div class="mb-10 flex items-end justify-between md:mb-14 reveal-text">
                 <div class="flex flex-col gap-4">
                     <span
                         class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-2 block">Selected
@@ -477,7 +498,8 @@
         <!-- Full-width carousel section outside container -->
         <div class="w-full relative overflow-hidden">
 
-            <div id="project-carousel" class="flex flex-col overflow-x-auto scroll-smooth no-scrollbar pb-8">
+            <div id="project-carousel"
+                class="flex flex-col overflow-x-auto scroll-smooth no-scrollbar pb-8 reveal-text">
                 <!-- Loading Skeleton (replaced by JS) -->
                 <div id="carousel-skeleton" class="flex flex-col h-[400px] md:h-[550px] gap-4 px-[6%]">
                     <div class="flex gap-4 h-1/2">
@@ -517,9 +539,26 @@
                     class="absolute inset-0 w-full h-full z-0 pointer-events-none mix-blend-overlay"></canvas>
 
                 <div class="relative z-10">
-                    <h2 class="text-4xl md:text-6xl font-medium text-white tracking-tighter mb-8">Have a vision in mind?
+                    <h2
+                        class="reveal-text text-4xl md:text-6xl font-medium text-white tracking-tighter mb-8 flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center gap-x-[0.25em] gap-y-1 w-full">
+                        <span class="md:text-right">Have a</span>
+                        <div id="rotator-mask"
+                            class="h-[1.2em] overflow-hidden relative grid place-items-center text-accent transition-all duration-500 ease-in-out md:mx-auto">
+                            <div id="text-rotator" class="text-center w-max transform translate-y-0">
+                                <span class="block h-[1.2em] leading-[1.2em] px-1">vision</span>
+                                <span class="block h-[1.2em] leading-[1.2em] px-1">idea</span>
+                                <span class="block h-[1.2em] leading-[1.2em] px-1">project</span>
+                                <span class="block h-[1.2em] leading-[1.2em] px-1">question</span>
+                                <span class="block h-[1.2em] leading-[1.2em] px-1">dream</span>
+                                <span class="block h-[1.2em] leading-[1.2em] px-1">concept</span>
+                                <span class="block h-[1.2em] leading-[1.2em] px-1">vision</span>
+                            </div>
+                        </div>
+                        <span class="md:text-left">in mind?</span>
                     </h2>
-                    <p class="text-white/60 text-base md:text-xl font-light mb-12 italic">Let's create something
+
+                    <p class="reveal-text text-white/60 text-base md:text-xl font-light mb-12 italic">Let's create
+                        something
                         timeless together.</p>
 
                     <a href="https://wa.me/6281390200075" target="_blank"
@@ -532,17 +571,17 @@
                     </a>
 
                     <div
-                        class="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 max-w-6xl mx-auto">
-                        <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">© <span
-                                id="footer-year"></span> KENDRICK MARZUKI</p>
-                        <div class="flex gap-10">
+                        class="pt-10 border-t border-white/10 flex flex-col items-center justify-center gap-6 max-w-6xl mx-auto reveal-text">
+
+                        <div class="flex gap-6">
                             <a href="https://linkedin.com/in/kendrick-marzuki" target="_blank"
                                 class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm hover:scale-105">
                                 <div class="p-2 rounded-xl bg-white/10 hover:bg-[#0077B5] transition-colors"><i
                                         data-lucide="linkedin" class="w-4 h-4"></i></div> LinkedIn
                             </a>
-
                         </div>
+                        <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">© <span
+                                id="footer-year"></span> KENDRICK MARZUKI</p>
                     </div>
                 </div>
             </div>
@@ -688,6 +727,8 @@
                     this.mouseX = -1000;
                     this.mouseY = -1000;
                     this.trackDocument = config.trackDocument || false;
+                    this.isVisible = false;
+                    this.animationFrameId = null;
 
                     this.init();
                 }
@@ -697,13 +738,41 @@
                     window.addEventListener('resize', () => this.resize());
 
                     if (this.trackDocument) {
-                        // Track mouse across entire document for hero spotlight
                         document.addEventListener('mousemove', (e) => this.handleDocumentMove(e));
                     } else {
                         this.container.addEventListener('mousemove', (e) => this.handleMove(e));
                         this.container.addEventListener('mouseleave', () => this.handleLeave());
                     }
-                    this.draw();
+
+                    // Performance: Stop animation when not visible
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                this.isVisible = true;
+                                this.startAnimation();
+                            } else {
+                                this.isVisible = false;
+                                this.stopAnimation();
+                            }
+                        });
+                    }, { threshold: 0 });
+
+                    observer.observe(this.container);
+                }
+
+                startAnimation() {
+                    if (!this.animationFrameId) {
+                        this.draw();
+                    }
+                }
+
+                stopAnimation() {
+                    if (this.animationFrameId) {
+                        cancelAnimationFrame(this.animationFrameId);
+                        this.animationFrameId = null;
+                        const dpr = window.devicePixelRatio || 1;
+                        this.ctx.clearRect(0, 0, this.canvas.width / dpr, this.canvas.height / dpr);
+                    }
                 }
 
                 resize() {
@@ -714,11 +783,11 @@
                     this.ctx.scale(dpr, dpr);
                     this.canvas.style.width = `${rect.width}px`;
                     this.canvas.style.height = `${rect.height}px`;
+                    this.draw();
                 }
 
                 handleDocumentMove(e) {
                     const rect = this.container.getBoundingClientRect();
-                    // Check if mouse is within the vertical bounds of the container (hero section)
                     if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
                         this.mouseX = e.clientX - rect.left;
                         this.mouseY = e.clientY - rect.top;
@@ -745,8 +814,11 @@
                 }
 
                 draw() {
-                    const width = this.canvas.width / (window.devicePixelRatio || 1);
-                    const height = this.canvas.height / (window.devicePixelRatio || 1);
+                    if (!this.isVisible) return;
+
+                    const dpr = window.devicePixelRatio || 1;
+                    const width = this.canvas.width / dpr;
+                    const height = this.canvas.height / dpr;
 
                     this.ctx.clearRect(0, 0, width, height);
 
@@ -763,7 +835,7 @@
                         this.ctx.fillStyle = gradient;
                         this.ctx.fillRect(0, 0, width, height);
                     }
-                    requestAnimationFrame(() => this.draw());
+                    this.animationFrameId = requestAnimationFrame(() => this.draw());
                 }
             }
 
@@ -801,6 +873,89 @@
                 }
             });
         }
+
+        // 7. FOOTER TEXT ROTATOR
+        const textRotator = document.getElementById('text-rotator');
+        const rotatorMask = document.getElementById('rotator-mask');
+
+        if (textRotator && rotatorMask) {
+            const rotChildren = textRotator.children;
+            const rotTotal = rotChildren.length - 1;
+            let rotIndex = 0;
+
+            // Set Width Helper
+            const setWidth = (idx) => {
+                if (rotChildren[idx]) {
+                    rotatorMask.style.width = rotChildren[idx].offsetWidth + 'px';
+                }
+            };
+
+            // Initial set
+            setTimeout(() => setWidth(0), 100);
+
+            setInterval(() => {
+                rotIndex++;
+
+                // Animate Width
+                setWidth(rotIndex);
+
+                // Animate Scroll
+                textRotator.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                textRotator.style.transform = `translateY(calc(-${rotIndex} * 1.2em))`;
+
+                if (rotIndex === rotTotal) {
+                    setTimeout(() => {
+                        textRotator.style.transition = 'none';
+                        rotIndex = 0;
+                        textRotator.style.transform = `translateY(0)`;
+                        setWidth(0);
+                    }, 500);
+                }
+            }, 5000);
+        }
+
+        // 8. SMART SCROLL REVEAL
+        const initScrollReveal = () => {
+            const revealElements = document.querySelectorAll('.reveal-text:not(.revealed):not(.revealed-no-anim)');
+
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+            revealElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    el.classList.add('revealed-no-anim');
+                    setTimeout(() => el.classList.add('revealed'), 10);
+                } else {
+                    revealObserver.observe(el);
+                }
+            });
+        };
+
+        window.addEventListener('load', initScrollReveal);
+        window.initScrollReveal = initScrollReveal;
+
+        // 9. INIT PANNELLUM 360
+        window.addEventListener('load', () => {
+             // Delay slightly to ensure layout is capable
+             setTimeout(() => {
+                 pannellum.viewer('panorama-1', {
+                    "type": "equirectangular",
+                    "panorama": "https://pannellum.org/images/alma.jpg",
+                    "autoLoad": true,
+                    "autoRotate": -2,
+                    "compass": false,
+                    "showControls": true
+                });
+             }, 500);
+        });
+
     </script>
 
 </body>
