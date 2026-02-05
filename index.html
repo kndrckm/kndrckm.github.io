@@ -41,7 +41,7 @@
     /* 1. Global Frame Background */
     body { background-color: #EDEFF2; margin: 0; color: #1D1D1F; overflow-x: hidden; }
 
-    /* 2. Universal Site Container */
+    /* 2. Universal Site Container (Fluid & Responsive) */
     .site-container {
         margin-left: auto;
         margin-right: auto;
@@ -67,6 +67,7 @@
 
     /* 4. Navigation */
     .nav-fixed { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 1000; width: fit-content; }
+    
     .nav-glass { 
         background: rgba(255, 255, 255, 0.70); 
         backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); 
@@ -89,9 +90,7 @@
     @media (max-width: 1023px) { .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; } }
     @media (min-width: 1024px) { .is-revealed .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; } }
 
-    /* --- 5. NEW BENTO GRID STYLES --- */
-    
-    /* The Grid Container */
+    /* --- 5. BENTO GRID STYLES --- */
     .bento-grid {
         display: flex;
         flex-direction: column;
@@ -99,57 +98,47 @@
         width: 100%;
     }
 
-    /* Desktop: Turn into 3 columns with fixed height to allow vertical resizing */
+    /* Desktop: 3 columns, fixed height for expansion logic */
     @media (min-width: 1024px) {
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            height: 750px; /* Crucial: Fixed height allows the children to grow/shrink relatively */
+            height: 750px; 
         }
     }
 
-    /* The Columns (holding 2 projects each) */
     .bento-col {
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
-        height: 100%; /* Fill the grid cell */
+        height: 100%; 
     }
     
-    /* Mobile: Ensure columns have minimum height so they don't collapse */
     @media (max-width: 1023px) {
-        .bento-col { height: 800px; } /* Stacked columns are tall on mobile */
+        .bento-col { height: 800px; } 
     }
 
-    /* The Project Card */
     .bento-card {
-        flex: 1; /* Default: Share space equally (50/50) */
+        flex: 1; 
         position: relative;
         border-radius: 2rem;
         overflow: hidden;
-        /* The Smooth Push Animation */
         transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
         cursor: pointer;
-        min-height: 150px; /* Safety min-height */
+        min-height: 150px; 
     }
 
-    /* INTERACTION: The "Push" Effect (Desktop Only) */
+    /* Desktop Interaction: Expand on hover (75/25 ratio) */
     @media (min-width: 1024px) {
-        /* When hovering a card, it grows to 3 fractions (75%), squishing the other (1 fraction = 25%) */
-        .bento-card:hover {
-            flex: 3; 
-        }
-        
-        /* Optional: Darken the non-hovered sibling slightly for focus */
-        .bento-col:hover .bento-card:not(:hover) {
-            filter: brightness(0.9);
-        }
+        .bento-card:hover { flex: 3; }
+        .bento-col:hover .bento-card:not(:hover) { filter: brightness(0.9); }
     }
 
     .project-gradient {
         background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
     }
 </style>
+
 
 </head>
 <body class="font-sans antialiased">
@@ -360,98 +349,95 @@
     </div>
 </section>
 
-    <script>
-        // 1. INJECT CV DATA FROM EXTERNAL FILE
-        document.getElementById('cv').innerHTML = cvHTML;
-        lucide.createIcons();
+<script>
+    // 1. INJECT CV DATA FROM EXTERNAL FILE
+    document.getElementById('cv').innerHTML = cvHTML;
+    lucide.createIcons();
 
-		// 2. SCROLL MANAGER: PARALLAX & SNAP SCROLLING (Hero <-> Scope <-> Portfolio <-> CV)
-		const overlay = document.getElementById('scroll-overlay');
-const vid1 = document.getElementById('hero-img'); // Definisi global
-const vid2 = document.getElementById('hero-img-next');
-const heroForeground = document.getElementById('hero-foreground');
+    // 2. SCROLL MANAGER: PARALLAX & SNAP SCROLLING
+    const overlay = document.getElementById('scroll-overlay');
+    const vid1 = document.getElementById('hero-img'); 
+    const vid2 = document.getElementById('hero-img-next');
+    const heroForeground = document.getElementById('hero-foreground');
 
-const heroSection = document.getElementById('hero');
-const scopeSection = document.getElementById('scope');
-const portfolioSection = document.getElementById('portfolio');
-const cvSection = document.getElementById('cv');
+    const heroSection = document.getElementById('hero');
+    const scopeSection = document.getElementById('scope');
+    const portfolioSection = document.getElementById('portfolio');
+    const cvSection = document.getElementById('cv');
 
-let isAutoScrolling = false;
-let lastScrollY = window.scrollY;
+    let isAutoScrolling = false;
+    let lastScrollY = window.scrollY;
 
-window.addEventListener('scroll', () => {
-    let scrollY = window.scrollY;
-    let windowHeight = window.innerHeight;
-    let isDesktopLarge = window.innerWidth >= 1440;
+    window.addEventListener('scroll', () => {
+        let scrollY = window.scrollY;
+        let windowHeight = window.innerHeight;
+        let isDesktopLarge = window.innerWidth >= 1440;
 
-    let direction = scrollY > lastScrollY ? 'down' : 'up'; 
-    lastScrollY = scrollY;
+        let direction = scrollY > lastScrollY ? 'down' : 'up'; 
+        lastScrollY = scrollY;
 
-    // --- A. SNAP SCROLL LOGIC ---
-    if (!isAutoScrolling && isDesktopLarge) {
-        const portfolioRect = portfolioSection.getBoundingClientRect();
-        const cvRect = cvSection.getBoundingClientRect();
+        // --- A. SNAP SCROLL LOGIC ---
+        if (!isAutoScrolling && isDesktopLarge) {
+            const portfolioRect = portfolioSection.getBoundingClientRect();
+            const cvRect = cvSection.getBoundingClientRect();
 
-        if (direction === 'down' && scrollY > (windowHeight * 0.5) && scrollY < windowHeight) {
-            isAutoScrolling = true;
-            scopeSection.scrollIntoView({ behavior: 'smooth' }); 
-            setTimeout(() => { isAutoScrolling = false; }, 800);
-        }
-        else if (direction === 'down' && portfolioRect.top < (windowHeight * 0.5) && portfolioRect.top > 0) {
-            isAutoScrolling = true;
-            portfolioSection.scrollIntoView({ behavior: 'smooth' }); 
-            setTimeout(() => { isAutoScrolling = false; }, 800);
-        }
-        else if (direction === 'down' && cvRect.top < (windowHeight * 0.8) && cvRect.top > 0) {
-            isAutoScrolling = true;
-            cvSection.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => { isAutoScrolling = false; }, 800);
-        }
-    }
-
-    // --- B. PARALLAX VISUALS & SHADOW EFFECT ---
-    if (scrollY <= windowHeight) {
-        // Gerakkan kedua video
-        [vid1, vid2].forEach(v => {
-            if (v) v.style.transform = `translateY(-${scrollY * 0.05}px) scale(1.2)`;
-        });
-
-        if (heroForeground) {
-            heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);
-        }
-
-        // EFEK SHADOW: Overlay menggelap lebih pekat saat mendekati Scope section
-        if (overlay) {
-            // Mengubah opacity menjadi lebih gelap (max 0.9) untuk efek bayangan transisi
-            overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.8), 0.9);
-        }
-    }
-});
-		
-        // 3. OBSERVERS 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('pop-up-active'); observer.unobserve(entry.target); } });
-        }, { threshold: 0.15 });
-        document.querySelectorAll('.project-card').forEach(card => observer.observe(card));
-
-		// 4. CV REVEAL LOGIC (Desktop Only)
-		setTimeout(() => {
-		document.querySelectorAll('.exp-item').forEach(item => {
-        const reveal = () => {
-            // Only trigger interaction if screen is Desktop size (>= 1024px)
-            if (window.innerWidth >= 1024) {
-                item.classList.add('is-revealed');
+            if (direction === 'down' && scrollY > (windowHeight * 0.5) && scrollY < windowHeight) {
+                isAutoScrolling = true;
+                scopeSection.scrollIntoView({ behavior: 'smooth' }); 
+                setTimeout(() => { isAutoScrolling = false; }, 800);
             }
-        };
+            else if (direction === 'down' && portfolioRect.top < (windowHeight * 0.5) && portfolioRect.top > 0) {
+                isAutoScrolling = true;
+                portfolioSection.scrollIntoView({ behavior: 'smooth' }); 
+                setTimeout(() => { isAutoScrolling = false; }, 800);
+            }
+            else if (direction === 'down' && cvRect.top < (windowHeight * 0.8) && cvRect.top > 0) {
+                isAutoScrolling = true;
+                cvSection.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => { isAutoScrolling = false; }, 800);
+            }
+        }
 
-        item.addEventListener('mouseenter', reveal);
-        item.addEventListener('click', reveal);
+        // --- B. PARALLAX VISUALS ---
+        if (scrollY <= windowHeight) {
+            // Parallax the video
+            [vid1, vid2].forEach(v => {
+                if (v) v.style.transform = `translateY(-${scrollY * 0.05}px) scale(1.2)`;
+            });
+
+            // RESTORED: Fade out the hero text
+            if (heroForeground) {
+                heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);
+            }
+
+            // Darken the video slightly as we scroll
+            if (overlay) {
+                overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.8), 0.9);
+            }
+        }
     });
-}, 100);
+    
+    // 3. OBSERVERS 
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('pop-up-active'); observer.unobserve(entry.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.project-card').forEach(card => observer.observe(card));
 
-		// 5. Footer spotlight effect
-	(function() {
-        // Reusable Spotlight Class
+    // 4. CV REVEAL LOGIC (Desktop Only)
+    setTimeout(() => {
+        document.querySelectorAll('.exp-item').forEach(item => {
+            const reveal = () => {
+                if (window.innerWidth >= 1024) {
+                    item.classList.add('is-revealed');
+                }
+            };
+            item.addEventListener('mouseenter', reveal);
+            item.addEventListener('click', reveal);
+        });
+    }, 100);
+
+    // 5. Footer spotlight effect
+    (function() {
         class Spotlight {
             constructor(containerId, canvasId, config) {
                 this.container = document.getElementById(containerId);
@@ -524,76 +510,40 @@ window.addEventListener('scroll', () => {
             }
         }
 
-        // --- INSTANCES ---
-
-        // a. HERO SPOTLIGHT (Bigger & Brighter for impact)
         new Spotlight('hero-spotlight-container', 'hero-spotlight-canvas', {
             radius: 500,
             brightness: 0.2, 
             color: '#ffffff'
         });
 
-        // b. FOOTER SPOTLIGHT (Standard settings)
         new Spotlight('footer-spotlight-container', 'footer-spotlight-canvas', {
             radius: 500,
             brightness: 0.5,
             color: '#ffffff'
         });
     })();
-	
-	// 6. Carousel Logic (Desktop Arrows Only)
-    (function() {
-        // --- SELECTORS ---
-        const carousel = document.getElementById('project-carousel');
-        const prevBtn = document.getElementById('prev-slide');
-        const nextBtn = document.getElementById('next-slide');
-        
-        // Safety Check
-        if (!carousel) return;
+    
+    // 6. VIDEO LOOP LOGIC
+    let loopCount = 0;
+    const maxLoops = 2;
 
-        // --- DESKTOP ARROW LOGIC ---
-        if (prevBtn && nextBtn) {
-            
-            // Calculate scroll distance (Card width + Gap)
-            const getScrollAmount = () => {
-                const card = carousel.querySelector('.snap-center');
-                // Scroll 1 card width + gap (24px)
-                return card ? (card.offsetWidth + 24) : 600;
-            };
-
-            nextBtn.addEventListener('click', () => {
-                carousel.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
-            });
-
-            prevBtn.addEventListener('click', () => {
-                carousel.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
-            });
-        }
-    })();	
-	
-	// 7. JEDA VIDEO HERO DENGAN SEAMLESS TRANSITION
-	let loopCount = 0;
-const maxLoops = 2;
-
-if (vid1 && vid2) {
-    vid1.addEventListener('ended', () => {
-        loopCount++;
-        if (loopCount < maxLoops) {
-            // Jeda 2 detik sebelum loop lagi
-            setTimeout(() => { vid1.play(); }, 2000); 
-        } 
-        else if (loopCount === maxLoops) {
-            // Pindah ke video kedua
-            vid2.play().then(() => {
-                vid2.style.opacity = "1";
-                vid2.style.zIndex = "20"; 
-                vid1.style.opacity = "0";
-                vid1.style.zIndex = "10";
-            });
-        }
-    });
-}
-    </script>
+    if (vid1 && vid2) {
+        vid1.addEventListener('ended', () => {
+            loopCount++;
+            if (loopCount < maxLoops) {
+                setTimeout(() => { vid1.play(); }, 2000); 
+            } 
+            else if (loopCount === maxLoops) {
+                vid2.play().then(() => {
+                    vid2.style.opacity = "1";
+                    vid2.style.zIndex = "20"; 
+                    vid1.style.opacity = "0";
+                    vid1.style.zIndex = "10";
+                });
+            }
+        });
+    }
+</script>
 
 </body>
 </html>
