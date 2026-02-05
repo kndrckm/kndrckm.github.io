@@ -1,23 +1,39 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kend.design.studio</title>
-    
+    <title>KEND.DESIGN.STUDIO | Architecture & Interior Design Portfolio</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="kend.design.studio architecture & interior design portfolio, based in indonesia">
+    <meta name="keywords"
+        content="kend.design.studio, architecture, interior design, residential design, commercial design, Indonesia, Kendrick Marzuki, portfolio, architect">
+    <meta name="author" content="Kendrick Marzuki">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph (Facebook/LinkedIn) -->
+    <meta property="og:title" content="kend.design.studio">
+    <meta property="og:description"
+        content="Crafting spaces that breathe. Residential & Commercial Design Studio by Kendrick Marzuki.">
+    <meta property="og:url" content="https://kndrckm.github.io">
+    <meta property="og:type" content="website">
+
     <link rel="icon" type="image/png" href="assets/KM-icon.png">
     <link rel="apple-touch-icon" href="assets/KM-icon.png">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <!-- LINK TO YOUR EXTERNAL DATA FILE -->
     <script src="cv-data.js"></script>
-	<script src="projects-data.js" defer></script>
-    
+    <script src="projects-data.js" defer></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -37,513 +53,756 @@
         }
     </script>
 
-<style>
-    /* 1. Global Frame Background */
-    body { background-color: #EDEFF2; margin: 0; color: #1D1D1F; overflow-x: hidden; }
-
-    /* 2. Universal Site Container (Fluid & Responsive) */
-    .site-container {
-        margin-left: auto;
-        margin-right: auto;
-        width: 88%; 
-        max-width: 100%;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    @media (min-width: 810px) {
-        .site-container { width: 90%; max-width: none; } 
-    }
-
-    @media (min-width: 1600px) {
-        .site-container { max-width: 1800px; width: 85%; }
-    }
-
-    /* 3. Hero Fix */
-    .hero-container { width: 100%; position: relative; overflow: hidden; background: #000; }
-    
-    .apple-corners-full { border-radius: 32px; overflow: hidden; }
-    @media (min-width: 810px) { .apple-corners-full { border-radius: 40px; } }
-
-    /* 4. Navigation */
-    .nav-fixed { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 1000; width: fit-content; }
-    
-    .nav-glass { 
-        background: rgba(255, 255, 255, 0.70); 
-        backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); 
-        border: 1.5px solid rgba(255, 255, 255, 0.2); 
-        box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.1); 
-        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); 
-    }
-    .nav-glass:hover, .nav-glass:active {
-        transform: scale(1.01);
-        border-color: rgba(255, 255, 255, 0.5); 
-        box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2); 
-    }
-    
-    @keyframes mesh-float { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-    .vision-mesh-animated { background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33); background-size: 400% 400%; animation: mesh-float 15s ease infinite; }
-    
-    #scroll-overlay { background-color: #000000; opacity: 0; pointer-events: none; }
-    .exp-details { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-    
-    @media (max-width: 1023px) { .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; } }
-    @media (min-width: 1024px) { .is-revealed .exp-details { max-height: 1000px; opacity: 1; margin-top: 1.5rem; } }
-
-    /* --- 5. BENTO GRID STYLES --- */
-    .bento-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        width: 100%;
-    }
-
-    /* Desktop: 3 columns, fixed height for expansion logic */
-    @media (min-width: 1024px) {
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            height: 750px; 
+    <style>
+        /* 1. Global Frame Background */
+        body {
+            background-color: #EDEFF2;
+            margin: 0;
+            color: #1D1D1F;
+            overflow-x: hidden;
         }
-    }
 
-    .bento-col {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        height: 100%; 
-    }
-    
-    @media (max-width: 1023px) {
-        .bento-col { height: 800px; } 
-    }
+        /* 2. Universal Site Container (Fluid & Responsive) */
+        .site-container {
+            margin-left: auto;
+            margin-right: auto;
+            width: 88%;
+            max-width: 100%;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .bento-card {
-        flex: 1; 
-        position: relative;
-        border-radius: 2rem;
-        overflow: hidden;
-        transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
-        cursor: pointer;
-        min-height: 150px; 
-    }
+        @media (min-width: 810px) {
+            .site-container {
+                width: 90%;
+                max-width: none;
+            }
+        }
 
-    /* Desktop Interaction: Expand on hover (75/25 ratio) */
-    @media (min-width: 1024px) {
-        .bento-card:hover { flex: 3; }
-        .bento-col:hover .bento-card:not(:hover) { filter: brightness(0.9); }
-    }
+        @media (min-width: 1600px) {
+            .site-container {
+                max-width: 1800px;
+                width: 85%;
+            }
+        }
 
-    .project-gradient {
-        background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
-    }
-</style>
+        /* 3. Hero Fix */
+        .hero-container {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .apple-corners-full {
+            border-radius: 32px;
+            overflow: hidden;
+        }
+
+        @media (min-width: 810px) {
+            .apple-corners-full {
+                border-radius: 40px;
+            }
+        }
+
+        /* 4. Navigation */
+        .nav-fixed {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: fit-content;
+        }
+
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.70);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-glass:hover,
+        .nav-glass:active {
+            transform: scale(1.01);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes mesh-float {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .vision-mesh-animated {
+            background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33);
+            background-size: 400% 400%;
+            animation: mesh-float 15s ease infinite;
+        }
+
+        #scroll-overlay {
+            background-color: #000000;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .exp-details {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (max-width: 1023px) {
+            .exp-details {
+                max-height: 1000px;
+                opacity: 1;
+                margin-top: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .is-revealed .exp-details {
+                max-height: 1000px;
+                opacity: 1;
+                margin-top: 1.5rem;
+            }
+        }
+
+        /* --- 5. BENTO GRID STYLES --- */
+        .bento-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        /* Desktop: 3 columns, fixed height for expansion logic */
+        @media (min-width: 1024px) {
+            .bento-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                height: 750px;
+            }
+        }
+
+        .bento-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        @media (max-width: 1023px) {
+            .bento-col {
+                height: 800px;
+            }
+        }
+
+        .bento-card {
+            flex: 1;
+            position: relative;
+            border-radius: 2rem;
+            overflow: hidden;
+            transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
+            cursor: pointer;
+            min-height: 150px;
+        }
+
+        /* Desktop Interaction: Expand on hover (75/25 ratio) */
+        @media (min-width: 1024px) {
+            .bento-card:hover {
+                flex: 3;
+            }
+
+            .bento-col:hover .bento-card:not(:hover) {
+                filter: brightness(0.9);
+            }
+        }
+
+        .project-gradient {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0) 100%);
+        }
+
+        /* Hide scrollbar utility */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-shimmer 1.5s infinite;
+            border-radius: 1.5rem;
+        }
+
+        @keyframes skeleton-shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+    </style>
 
 
 </head>
+
 <body class="font-sans antialiased">
 
-<!-- NAVIGATION -->
-<nav class="nav-fixed">
-    <div class="nav-glass p-1.5 rounded-full flex items-center shadow-sm">
-        
-        <div class="pl-5 pr-2">
-            <a href="#hero" class="font-black tracking-tighter text-primary text-base hover:text-accent uppercase leading-none cursor-pointer">KEND.</a>
-        </div>
-        
-        <div class="hidden md:flex items-center gap-1 mx-1">
-		    <a href="#scope" class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">Scope</a>
-            <a href="#portfolio" class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">Projects</a>
-            <a href="#cv" class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">About</a>
-        </div>
+    <!-- NAVIGATION -->
+    <nav class="nav-fixed">
+        <div class="nav-glass p-1.5 rounded-full flex items-center shadow-sm">
 
-        <a href="https://wa.me/6281390200075" target="_blank"
-           class="group bg-primary hover:bg-[#25D366] text-white pl-6 pr-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-500 hover:shadow-[0_0_25px_rgba(37,211,102,0.4)] active:scale-95">
-    <svg class="w-4 h-4 transition-colors duration-500 fill-current group-hover:text-white" viewBox="0 0 24 24">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.63 1.438h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-    </svg>Contact</a>
+            <div class="pl-5 pr-2">
+                <a href="#hero"
+                    class="font-black tracking-tighter text-primary text-base hover:text-accent uppercase leading-none cursor-pointer">KEND.</a>
+            </div>
+
+            <div class="hidden md:flex items-center gap-1 mx-1">
+                <a href="#scope"
+                    class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">Scope</a>
+                <a href="#portfolio"
+                    class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">Projects</a>
+                <a href="#cv"
+                    class="px-4 py-1.5 text-sm font-semibold text-secondary hover:text-accent transition-all duration-300 transform">About</a>
+            </div>
+
+            <!-- Mobile Hamburger Button -->
+            <button id="mobile-menu-btn"
+                class="md:hidden p-2 ml-2 mr-1 rounded-full hover:bg-black/5 transition-colors">
+                <i data-lucide="menu" class="w-5 h-5 text-primary" id="menu-icon"></i>
+                <i data-lucide="x" class="w-5 h-5 text-primary hidden" id="close-icon"></i>
+            </button>
+
+            <a href="https://wa.me/6281390200075" target="_blank"
+                class="group bg-primary hover:bg-[#25D366] text-white pl-4 pr-3 md:pl-6 md:pr-5 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-1.5 md:gap-2 transition-all duration-500 hover:shadow-[0_0_25px_rgba(37,211,102,0.4)] active:scale-95">
+                <svg class="w-3.5 h-3.5 md:w-4 md:h-4 transition-colors duration-500 fill-current group-hover:text-white"
+                    viewBox="0 0 24 24">
+                    <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.63 1.438h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>Contact</a>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobile-menu" class="fixed top-20 left-1/2 -translate-x-1/2 z-[999] w-[90%] max-w-sm hidden md:hidden">
+        <div class="nav-glass rounded-3xl p-4 shadow-ios-deep">
+            <div class="flex flex-col gap-2">
+                <a href="#scope"
+                    class="mobile-nav-link px-4 py-3 text-base font-bold text-primary hover:bg-black/5 rounded-xl transition-all">Scope
+                    of Work</a>
+                <a href="#portfolio"
+                    class="mobile-nav-link px-4 py-3 text-base font-bold text-primary hover:bg-black/5 rounded-xl transition-all">Projects</a>
+                <a href="#cv"
+                    class="mobile-nav-link px-4 py-3 text-base font-bold text-primary hover:bg-black/5 rounded-xl transition-all">About</a>
+            </div>
+        </div>
     </div>
-</nav>
 
-<!-- HERO SECTION -->
-<section id="hero" class="relative w-full h-[100vh] bg-[#EDEFF2]">
-    <div class="w-full h-full">
-        <div id="hero-spotlight-container" class="hero-container sticky top-0 h-screen overflow-hidden group">
-            
-            <div id="video-wrapper" class="absolute inset-0 w-full h-full">
-				<video id="hero-img" autoplay muted playsinline poster="assets/hero.webp"
-				class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-90 z-10">
-				<source src="assets/hero.mp4" type="video/mp4">
-				</video>
+    <!-- HERO SECTION -->
+    <section id="hero" class="relative w-full h-[100vh] bg-[#EDEFF2]">
+        <div class="w-full h-full">
+            <div id="hero-spotlight-container" class="hero-container sticky top-0 h-screen overflow-hidden group">
 
-				<video id="hero-img-next" muted playsinline preload="auto"
-				class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-90 opacity-0 z-0">
-				<source src="assets/hero2.mp4" type="video/mp4">
-				</video>
-			</div>
-				
-				<!-- <img id="hero-img" src="assets/hero.webp" 
+                <div id="video-wrapper" class="absolute inset-0 w-full h-full">
+                    <video id="hero-img" autoplay muted playsinline poster="assets/hero.webp"
+                        class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-[0.6] z-10">
+                        <source src="assets/hero.mp4" type="video/mp4">
+                    </video>
+
+                    <video id="hero-img-next" muted playsinline preload="auto"
+                        class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-[0.6] opacity-0 z-0">
+                        <source src="assets/hero2.mp4" type="video/mp4">
+                    </video>
+                </div>
+
+                <!-- <img id="hero-img" src="assets/hero.webp" 
 					class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2]" alt="Hero" 
                      onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600'"> -->
-                
+
                 <div id="scroll-overlay" class="absolute inset-0 z-10"></div>
                 <div class="absolute inset-0 white-gloss z-5"></div>
                 <div class="absolute inset-0 image-overlay-base z-0"></div>
 
                 <div class="absolute inset-0 bg-black/0 z-5 pointer-events-none"></div>
 
-                <canvas id="hero-spotlight-canvas" class="absolute inset-0 w-full h-full z-30 pointer-events-none mix-blend-overlay"></canvas>
+                <canvas id="hero-spotlight-canvas"
+                    class="absolute inset-0 w-full h-full z-30 pointer-events-none mix-blend-overlay"></canvas>
             </div>
 
-			<div class="fixed inset-0 flex flex-col justify-end px-8 pb-12 md:px-16 md:pb-20 z-0 pointer-events-none">
-                <div id="hero-foreground" class="w-full max-w-[1440px] mx-auto pointer-events-auto will-change-transform"> 
+            <div class="fixed inset-0 flex flex-col justify-end pb-12 md:pb-20 z-0 pointer-events-none">
+                <div id="hero-foreground" style="visibility: hidden; opacity: 0;"
+                    class="w-[88%] md:w-[90%] 2xl:w-[85%] max-w-[1800px] mx-auto pointer-events-auto will-change-transform">
                     <div class="flex items-center gap-4 mb-4">
-                        <span class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential & Commercial Design</span>
+                        <span class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential
+                            & Commercial Design</span>
                         <div class="h-[3px] w-12 md:w-24 bg-white"></div>
                     </div>
-					<h1 class="text-[11vw] sm:text-[9vw] md:text-[8vw] lg:text-[8rem] font-extrabold leading-[0.8] tracking-tighter uppercase mb-10">
-					<span class="text-white">KEND</span><span class="text-white/40">.</span><span class="text-white">DESIGN</span><span class="text-white/40">.</span>
-					<span class="block text-white/40 tracking-[-0.04em]">STUDIO</span>
-					</h1>
-                    <p id="hero-para" class="text-white/60 text-base md:text-xl max-w-2xl font-medium leading-relaxed">
+                    <h1
+                        class="text-[11vw] sm:text-[9vw] md:text-[7vw] lg:text-[6rem] font-extrabold leading-[0.8] tracking-tighter uppercase mb-6">
+                        <span class="text-white">KEND</span><span class="text-white/40">.</span><span
+                            class="text-white">DESIGN</span><span class="text-white/40">.</span>
+                        <span class="block text-white/40 tracking-[-0.04em]">STUDIO</span>
+                    </h1>
+                    <p id="hero-para" class="text-white/60 text-base md:text-lg max-w-2xl font-medium leading-relaxed">
                         Crafting spaces that breathe. Where light meets structure and form follows emotion.
                     </p>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-<!-- SCOPE SECTION -->
-<section id="scope" class="relative z-10 bg-[#EDEFF2] pt-24 md:pt-48 -scroll-mt-24">
-    <div class="site-container">
-        
-        <div class="mb-10 md:mb-14">
-            <span class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-2 block">Scope of work</span>
-            <h2 class="text-4xl md:text-7xl font-black text-primary tracking-tight uppercase">Project Typology</h2>
         </div>
+    </section>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <div class="group relative w-full aspect-square rounded-[2rem] overflow-hidden cursor-pointer shadow-ios-card hover:shadow-ios-deep transition-all duration-500">
-                <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1200" 
-                     class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Residential">
-                
-                <div class="absolute inset-0 bg-black/50 transition-opacity duration-500 group-hover:bg-black/40"></div>
-                
-                <div class="absolute bottom-0 left-0 p-8 w-full flex flex-col justify-end h-full">
-                    <div class="mb-4 text-white/90 transform transition-transform duration-500 group-hover:-translate-y-2">
-                        <i data-lucide="home" class="w-10 h-10 stroke-[1.5]"></i>
+    <!-- SCOPE SECTION -->
+    <section id="scope" class="relative z-10 bg-[#EDEFF2] pt-24 md:pt-48 -scroll-mt-24">
+        <div class="site-container">
+
+            <div class="mb-10 md:mb-14">
+                <span
+                    class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-2 block">Scope
+                    of work</span>
+                <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase">Project Typology</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <div
+                    class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1200"
+                        class="absolute inset-0 w-full h-full object-cover" alt="Residential">
+
+                    <div class="absolute inset-0 bg-black/50"></div>
+
+                    <div class="absolute bottom-0 left-0 p-6 md:p-8 w-full">
+                        <div class="mb-3 text-white/90">
+                            <i data-lucide="home" class="w-8 h-8 stroke-[1.5]"></i>
+                        </div>
+                        <h3 class="text-2xl md:text-3xl font-black text-white uppercase mb-2 tracking-tighter">
+                            Residential</h3>
+                        <p class="text-white/70 text-xs md:text-sm font-medium leading-relaxed">
+                            Private sanctuaries where architecture meets living.
+                        </p>
                     </div>
-                    <h3 class="text-3xl font-black text-white uppercase mb-2 tracking-tighter translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Residential</h3>
-                    <p class="text-white/70 text-sm font-medium leading-relaxed opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
-                        Crafting private sanctuaries where timeless architecture meets daily living. Form follows emotion.
-                    </p>
+                </div>
+
+                <div
+                    class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200"
+                        class="absolute inset-0 w-full h-full object-cover" alt="Commercial">
+
+                    <div class="absolute inset-0 bg-black/50"></div>
+
+                    <div class="absolute bottom-0 left-0 p-6 md:p-8 w-full">
+                        <div class="mb-3 text-white/90">
+                            <i data-lucide="building-2" class="w-8 h-8 stroke-[1.5]"></i>
+                        </div>
+                        <h3 class="text-2xl md:text-3xl font-black text-white uppercase mb-2 tracking-tighter">
+                            Commercial</h3>
+                        <p class="text-white/70 text-xs md:text-sm font-medium leading-relaxed">
+                            Environments designed for productivity and impact.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200"
+                        class="absolute inset-0 w-full h-full object-cover" alt="Interior">
+
+                    <div class="absolute inset-0 bg-black/50"></div>
+
+                    <div class="absolute bottom-0 left-0 p-6 md:p-8 w-full">
+                        <div class="mb-3 text-white/90">
+                            <i data-lucide="armchair" class="w-8 h-8 stroke-[1.5]"></i>
+                        </div>
+                        <h3 class="text-2xl md:text-3xl font-black text-white uppercase mb-2 tracking-tighter">
+                            Interior</h3>
+                        <p class="text-white/70 text-xs md:text-sm font-medium leading-relaxed">
+                            Curating atmospheres through texture, light, and flow.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED PROJECTS -->
+    <section id="portfolio" class="relative z-10 bg-[#EDEFF2] pt-24 md:pt-48 -scroll-mt-24">
+        <div class="site-container">
+
+            <div class="mb-10 flex items-end justify-between md:mb-14">
+                <div class="flex flex-col gap-4">
+                    <span
+                        class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-2 block">Selected
+                        Works</span>
+                    <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase">Featured Projects
+                    </h2>
+                </div>
+
+                <div class="hidden shrink-0 gap-3 md:flex">
+                    <button id="prev-slide"
+                        class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95">
+                        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                    </button>
+                    <button id="next-slide"
+                        class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95">
+                        <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                    </button>
                 </div>
             </div>
 
-            <div class="group relative w-full aspect-square rounded-[2rem] overflow-hidden cursor-pointer shadow-ios-card hover:shadow-ios-deep transition-all duration-500">
-                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200" 
-                     class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Commercial">
-                
-                <div class="absolute inset-0 bg-black/50 transition-opacity duration-500 group-hover:bg-black/40"></div>
-                
-                <div class="absolute bottom-0 left-0 p-8 w-full flex flex-col justify-end h-full">
-                    <div class="mb-4 text-white/90 transform transition-transform duration-500 group-hover:-translate-y-2">
-                        <i data-lucide="building-2" class="w-10 h-10 stroke-[1.5]"></i>
+        </div>
+
+        <!-- Full-width carousel section outside container -->
+        <div class="w-full relative overflow-hidden">
+
+            <div id="project-carousel" class="flex flex-col overflow-x-auto scroll-smooth no-scrollbar pb-8">
+                <!-- Loading Skeleton (replaced by JS) -->
+                <div id="carousel-skeleton" class="flex flex-col h-[400px] md:h-[550px] gap-4 px-[6%]">
+                    <div class="flex gap-4 h-1/2">
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
                     </div>
-                    <h3 class="text-3xl font-black text-white uppercase mb-2 tracking-tighter translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Commercial</h3>
-                    <p class="text-white/70 text-sm font-medium leading-relaxed opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
-                        Precise environments designed for productivity and impact. Architecture that elevates brand identity.
-                    </p>
+                    <div class="flex gap-4 h-1/2">
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
+                        <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="group relative w-full aspect-square rounded-[2rem] overflow-hidden cursor-pointer shadow-ios-card hover:shadow-ios-deep transition-all duration-500">
-                <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200" 
-                     class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Interior">
-                
-                <div class="absolute inset-0 bg-black/50 transition-opacity duration-500 group-hover:bg-black/40"></div>
-                
-                <div class="absolute bottom-0 left-0 p-8 w-full flex flex-col justify-end h-full">
-                    <div class="mb-4 text-white/90 transform transition-transform duration-500 group-hover:-translate-y-2">
-                        <i data-lucide="armchair" class="w-10 h-10 stroke-[1.5]"></i>
-                    </div>
-                    <h3 class="text-3xl font-black text-white uppercase mb-2 tracking-tighter translate-y-4 group-hover:translate-y-0 transition-transform duration-500">Interior</h3>
-                    <p class="text-white/70 text-sm font-medium leading-relaxed opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-75">
-                        Curating atmospheres through texture, light, and flow. The subtle art of inhabiting space.
-                    </p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-<!-- FEATURED PROJECTS -->
-<section id="portfolio" class="relative z-10 bg-[#EDEFF2] pt-24 md:pt-48 -scroll-mt-24">
-    <div class="site-container">
-        
-        <div class="mb-10 flex items-end justify-between md:mb-14">
-            <div class="flex flex-col gap-4">
-                <span class="text-[10px] md:text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-2 block">Selected Works</span>
-                <h2 class="text-4xl md:text-7xl font-black text-primary tracking-tight uppercase">Featured Projects</h2>
-            </div>
-            
-            <div class="hidden shrink-0 gap-3 md:flex">
-                <button id="prev-slide" class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95">
-                    <i data-lucide="arrow-left" class="w-6 h-6"></i>
-                </button>
-                <button id="next-slide" class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95">
-                    <i data-lucide="arrow-right" class="w-6 h-6"></i>
-                </button>
+            <div class="site-container">
+                <div class="flex justify-center gap-2 mt-4" id="carousel-dots"></div>
             </div>
         </div>
+    </section>
 
-        <div class="w-full relative">
-            
-<div id="project-carousel" class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-12 no-scrollbar p-10">
-</div>
-            
-            <div class="flex justify-center gap-2 mt-4" id="carousel-dots"></div>
-        </div>
-    </div>
-</section>
+    <!-- CV SECTION -->
+    <section id="cv" class="pt-24 md:pt-48 bg-transparent -scroll-mt-0">
+    </section>
 
-<!-- CV SECTION -->
-<section id="cv" class="pt-24 mt:pt-48 bg-transparent -scroll-mt-0">
-</section>
+    <!-- FOOTER / CTA -->
+    <section class="pt-24 md:pt-48 pb-12 md:pb-12">
+        <div class="site-container">
+            <div id="footer-spotlight-container"
+                class="vision-mesh-animated relative w-full overflow-hidden rounded-[3rem] md:rounded-[5rem] py-12 md:py-24 px-6 text-center shadow-ios-deep group">
 
-<!-- FOOTER / CTA -->
-<section class="pt-24 md:pt-48 pb-12 md:pb-12">
-    <div class="site-container">
-        <div id="footer-spotlight-container" class="vision-mesh-animated relative w-full overflow-hidden rounded-[3rem] md:rounded-[5rem] py-12 md:py-24 px-6 text-center shadow-ios-deep group">
-            
-            <canvas id="footer-spotlight-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none mix-blend-overlay"></canvas>
+                <canvas id="footer-spotlight-canvas"
+                    class="absolute inset-0 w-full h-full z-0 pointer-events-none mix-blend-overlay"></canvas>
 
-            <div class="relative z-10">
-                <h2 class="text-4xl md:text-7xl font-medium text-white tracking-tighter mb-8">Have a vision in mind?</h2>
-                <p class="text-white/60 text-base md:text-xl font-light mb-12 italic">Let's create something timeless together.</p>
-                
-                <a href="https://wa.me/6281390200075" target="_blank"
-                   class="inline-flex items-center gap-5 bg-white text-primary pl-10 pr-3 py-3.5 rounded-full font-black text-xl transition-all duration-500 hover:scale-110 shadow-2xl group/btn mb-20">
-                    Start a Project 
-                    <div class="bg-black rounded-full p-3 text-white transition-all duration-500 group-hover/btn:bg-accent group-hover/btn:rotate-45">
-                        <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
-                    </div>
-                </a>
+                <div class="relative z-10">
+                    <h2 class="text-4xl md:text-6xl font-medium text-white tracking-tighter mb-8">Have a vision in mind?
+                    </h2>
+                    <p class="text-white/60 text-base md:text-xl font-light mb-12 italic">Let's create something
+                        timeless together.</p>
 
-                <div class="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 max-w-6xl mx-auto">
-                    <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">© 2026 KENDRICK MARZUKI</p>
-                    <div class="flex gap-10">
-                        <a href="https://linkedin.com/in/kendrick-marzuki" target="_blank" class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm hover:scale-105">
-                             <div class="p-2 rounded-xl bg-white/10 hover:bg-[#0077B5] transition-colors"><i data-lucide="linkedin" class="w-4 h-4"></i></div> LinkedIn
-                        </a>
-                        <a href="https://www.instagram.com/kndrckm/" target="_blank" class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm hover:scale-105">
-                            <div class="p-2 rounded-xl bg-white/10 hover:bg-[#E4405F] transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></div> Instagram
-                        </a>
+                    <a href="https://wa.me/6281390200075" target="_blank"
+                        class="inline-flex items-center gap-5 bg-white text-primary pl-10 pr-3 py-3.5 rounded-full font-black text-xl transition-all duration-500 hover:scale-110 shadow-2xl group/btn mb-20">
+                        Start a Project
+                        <div
+                            class="bg-black rounded-full p-3 text-white transition-all duration-500 group-hover/btn:bg-accent group-hover/btn:rotate-45">
+                            <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
+                        </div>
+                    </a>
+
+                    <div
+                        class="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8 max-w-6xl mx-auto">
+                        <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.2em]">© <span
+                                id="footer-year"></span> KENDRICK MARZUKI</p>
+                        <div class="flex gap-10">
+                            <a href="https://linkedin.com/in/kendrick-marzuki" target="_blank"
+                                class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm hover:scale-105">
+                                <div class="p-2 rounded-xl bg-white/10 hover:bg-[#0077B5] transition-colors"><i
+                                        data-lucide="linkedin" class="w-4 h-4"></i></div> LinkedIn
+                            </a>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<script>
-    // 1. INJECT CV DATA FROM EXTERNAL FILE
-    document.getElementById('cv').innerHTML = cvHTML;
-    lucide.createIcons();
+    <script>
+        // 1. INJECT CV DATA FROM EXTERNAL FILE
+        document.getElementById('cv').innerHTML = cvHTML;
+        lucide.createIcons();
 
-    // 2. SCROLL MANAGER: PARALLAX & SNAP SCROLLING
-    const overlay = document.getElementById('scroll-overlay');
-    const vid1 = document.getElementById('hero-img'); 
-    const vid2 = document.getElementById('hero-img-next');
-    const heroForeground = document.getElementById('hero-foreground');
+        // 1b. SET FOOTER YEAR DYNAMICALLY
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-    const heroSection = document.getElementById('hero');
-    const scopeSection = document.getElementById('scope');
-    const portfolioSection = document.getElementById('portfolio');
-    const cvSection = document.getElementById('cv');
+        // 1c. MOBILE MENU TOGGLE
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
 
-    let isAutoScrolling = false;
-    let lastScrollY = window.scrollY;
-
-    window.addEventListener('scroll', () => {
-        let scrollY = window.scrollY;
-        let windowHeight = window.innerHeight;
-        let isDesktopLarge = window.innerWidth >= 1440;
-
-        let direction = scrollY > lastScrollY ? 'down' : 'up'; 
-        lastScrollY = scrollY;
-
-        // --- A. SNAP SCROLL LOGIC ---
-        if (!isAutoScrolling && isDesktopLarge) {
-            const portfolioRect = portfolioSection.getBoundingClientRect();
-            const cvRect = cvSection.getBoundingClientRect();
-
-            if (direction === 'down' && scrollY > (windowHeight * 0.5) && scrollY < windowHeight) {
-                isAutoScrolling = true;
-                scopeSection.scrollIntoView({ behavior: 'smooth' }); 
-                setTimeout(() => { isAutoScrolling = false; }, 800);
-            }
-            else if (direction === 'down' && portfolioRect.top < (windowHeight * 0.5) && portfolioRect.top > 0) {
-                isAutoScrolling = true;
-                portfolioSection.scrollIntoView({ behavior: 'smooth' }); 
-                setTimeout(() => { isAutoScrolling = false; }, 800);
-            }
-            else if (direction === 'down' && cvRect.top < (windowHeight * 0.8) && cvRect.top > 0) {
-                isAutoScrolling = true;
-                cvSection.scrollIntoView({ behavior: 'smooth' });
-                setTimeout(() => { isAutoScrolling = false; }, 800);
-            }
-        }
-
-        // --- B. PARALLAX VISUALS ---
-        if (scrollY <= windowHeight) {
-            // Parallax the video
-            [vid1, vid2].forEach(v => {
-                if (v) v.style.transform = `translateY(-${scrollY * 0.05}px) scale(1.2)`;
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                const isOpen = !mobileMenu.classList.contains('hidden');
+                if (isOpen) {
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
+                } else {
+                    mobileMenu.classList.remove('hidden');
+                    menuIcon.classList.add('hidden');
+                    closeIcon.classList.remove('hidden');
+                }
             });
 
-            // RESTORED: Fade out the hero text
-            if (heroForeground) {
-                heroForeground.style.opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);
-            }
-
-            // Darken the video slightly as we scroll
-            if (overlay) {
-                overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.8), 0.9);
-            }
-        }
-    });
-    
-    // 3. OBSERVERS 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('pop-up-active'); observer.unobserve(entry.target); } });
-    }, { threshold: 0.15 });
-    document.querySelectorAll('.project-card').forEach(card => observer.observe(card));
-
-    // 4. CV REVEAL LOGIC (Desktop Only)
-    setTimeout(() => {
-        document.querySelectorAll('.exp-item').forEach(item => {
-            const reveal = () => {
-                if (window.innerWidth >= 1024) {
-                    item.classList.add('is-revealed');
-                }
-            };
-            item.addEventListener('mouseenter', reveal);
-            item.addEventListener('click', reveal);
-        });
-    }, 100);
-
-    // 5. Footer spotlight effect
-    (function() {
-        class Spotlight {
-            constructor(containerId, canvasId, config) {
-                this.container = document.getElementById(containerId);
-                this.canvas = document.getElementById(canvasId);
-                this.config = config;
-                
-                if (!this.container || !this.canvas) return;
-
-                this.ctx = this.canvas.getContext('2d');
-                this.mouseX = -1000;
-                this.mouseY = -1000;
-
-                this.init();
-            }
-
-            init() {
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-                this.container.addEventListener('mousemove', (e) => this.handleMove(e));
-                this.container.addEventListener('mouseleave', () => this.handleLeave());
-                this.draw();
-            }
-
-            resize() {
-                const rect = this.container.getBoundingClientRect();
-                const dpr = window.devicePixelRatio || 1;
-                this.canvas.width = rect.width * dpr;
-                this.canvas.height = rect.height * dpr;
-                this.ctx.scale(dpr, dpr);
-                this.canvas.style.width = `${rect.width}px`;
-                this.canvas.style.height = `${rect.height}px`;
-            }
-
-            handleMove(e) {
-                const rect = this.container.getBoundingClientRect();
-                this.mouseX = e.clientX - rect.left;
-                this.mouseY = e.clientY - rect.top;
-            }
-
-            handleLeave() {
-                this.mouseX = -1000;
-                this.mouseY = -1000;
-            }
-
-            hexToRgb(hex) {
-                const bigint = parseInt(hex.replace('#', ''), 16);
-                return `${(bigint >> 16) & 255},${(bigint >> 8) & 255},${bigint & 255}`;
-            }
-
-            draw() {
-                const width = this.canvas.width / (window.devicePixelRatio || 1);
-                const height = this.canvas.height / (window.devicePixelRatio || 1);
-                
-                this.ctx.clearRect(0, 0, width, height);
-
-                if (this.mouseX !== -1000 && this.mouseY !== -1000) {
-                    const rgb = this.hexToRgb(this.config.color);
-                    const gradient = this.ctx.createRadialGradient(
-                        this.mouseX, this.mouseY, 0,
-                        this.mouseX, this.mouseY, this.config.radius
-                    );
-                    
-                    gradient.addColorStop(0, `rgba(${rgb}, ${this.config.brightness})`);
-                    gradient.addColorStop(1, 'rgba(255,255,255,0)');
-
-                    this.ctx.fillStyle = gradient;
-                    this.ctx.fillRect(0, 0, width, height);
-                }
-                requestAnimationFrame(() => this.draw());
-            }
-        }
-
-        new Spotlight('hero-spotlight-container', 'hero-spotlight-canvas', {
-            radius: 500,
-            brightness: 0.2, 
-            color: '#ffffff'
-        });
-
-        new Spotlight('footer-spotlight-container', 'footer-spotlight-canvas', {
-            radius: 500,
-            brightness: 0.5,
-            color: '#ffffff'
-        });
-    })();
-    
-    // 6. VIDEO LOOP LOGIC
-    let loopCount = 0;
-    const maxLoops = 2;
-
-    if (vid1 && vid2) {
-        vid1.addEventListener('ended', () => {
-            loopCount++;
-            if (loopCount < maxLoops) {
-                setTimeout(() => { vid1.play(); }, 2000); 
-            } 
-            else if (loopCount === maxLoops) {
-                vid2.play().then(() => {
-                    vid2.style.opacity = "1";
-                    vid2.style.zIndex = "20"; 
-                    vid1.style.opacity = "0";
-                    vid1.style.zIndex = "10";
+            // Close menu when clicking a link
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
                 });
+            });
+        }
+
+        // 2. SCROLL MANAGER: PARALLAX & SNAP SCROLLING
+        const overlay = document.getElementById('scroll-overlay');
+        const vid1 = document.getElementById('hero-img');
+        const vid2 = document.getElementById('hero-img-next');
+        const heroForeground = document.getElementById('hero-foreground');
+
+        const heroSection = document.getElementById('hero');
+        const scopeSection = document.getElementById('scope');
+        const portfolioSection = document.getElementById('portfolio');
+        const cvSection = document.getElementById('cv');
+
+        let isAutoScrolling = false;
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            let scrollY = window.scrollY;
+            let windowHeight = window.innerHeight;
+            let isDesktopLarge = window.innerWidth >= 1440;
+
+            let direction = scrollY > lastScrollY ? 'down' : 'up';
+            lastScrollY = scrollY;
+
+
+
+            // --- B. PARALLAX VISUALS ---
+            if (scrollY <= windowHeight) {
+                // Parallax the video
+                [vid1, vid2].forEach(v => {
+                    if (v) v.style.transform = `translateY(-${scrollY * 0.05}px) scale(1.2)`;
+                });
+
+                // RESTORED: Fade out the hero text
+                if (heroForeground) {
+                    const opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);
+                    heroForeground.style.opacity = opacity;
+                    // Ensure it is completely hidden from render tree when scrolled past to prevent bleed-through
+                    heroForeground.style.visibility = opacity <= 0.01 ? 'hidden' : 'visible';
+                }
+
+                // Darken the video slightly as we scroll
+                if (overlay) {
+                    overlay.style.opacity = Math.min(scrollY / (windowHeight * 0.8), 0.9);
+                }
+            } else {
+                // When below hero section, ensure hero text is hidden
+                if (heroForeground) {
+                    heroForeground.style.opacity = 0;
+                    heroForeground.style.visibility = 'hidden';
+                }
             }
         });
-    }
-</script>
+
+        // Initial visibility check on page load (in case page is refreshed while scrolled down)
+        (function initHeroVisibility() {
+            const scrollY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            if (heroForeground) {
+                if (scrollY < windowHeight * 0.4) {
+                    const opacity = Math.max(1 - (scrollY / (windowHeight * 0.4)), 0);
+                    heroForeground.style.opacity = opacity;
+                    heroForeground.style.visibility = opacity <= 0.01 ? 'hidden' : 'visible';
+                } else {
+                    heroForeground.style.opacity = 0;
+                    heroForeground.style.visibility = 'hidden';
+                }
+            }
+        })();
+
+        // 3. OBSERVERS 
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('pop-up-active'); observer.unobserve(entry.target); } });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.project-card').forEach(card => observer.observe(card));
+
+        // 4. CV REVEAL LOGIC (Desktop Only)
+        setTimeout(() => {
+            document.querySelectorAll('.exp-item').forEach(item => {
+                const reveal = () => {
+                    if (window.innerWidth >= 1024) {
+                        item.classList.add('is-revealed');
+                    }
+                };
+                item.addEventListener('mouseenter', reveal);
+                item.addEventListener('click', reveal);
+            });
+        }, 100);
+
+        // 5. Footer spotlight effect
+        (function () {
+            class Spotlight {
+                constructor(containerId, canvasId, config) {
+                    this.container = document.getElementById(containerId);
+                    this.canvas = document.getElementById(canvasId);
+                    this.config = config;
+
+                    if (!this.container || !this.canvas) return;
+
+                    this.ctx = this.canvas.getContext('2d');
+                    this.mouseX = -1000;
+                    this.mouseY = -1000;
+                    this.trackDocument = config.trackDocument || false;
+
+                    this.init();
+                }
+
+                init() {
+                    this.resize();
+                    window.addEventListener('resize', () => this.resize());
+
+                    if (this.trackDocument) {
+                        // Track mouse across entire document for hero spotlight
+                        document.addEventListener('mousemove', (e) => this.handleDocumentMove(e));
+                    } else {
+                        this.container.addEventListener('mousemove', (e) => this.handleMove(e));
+                        this.container.addEventListener('mouseleave', () => this.handleLeave());
+                    }
+                    this.draw();
+                }
+
+                resize() {
+                    const rect = this.container.getBoundingClientRect();
+                    const dpr = window.devicePixelRatio || 1;
+                    this.canvas.width = rect.width * dpr;
+                    this.canvas.height = rect.height * dpr;
+                    this.ctx.scale(dpr, dpr);
+                    this.canvas.style.width = `${rect.width}px`;
+                    this.canvas.style.height = `${rect.height}px`;
+                }
+
+                handleDocumentMove(e) {
+                    const rect = this.container.getBoundingClientRect();
+                    // Check if mouse is within the vertical bounds of the container (hero section)
+                    if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                        this.mouseX = e.clientX - rect.left;
+                        this.mouseY = e.clientY - rect.top;
+                    } else {
+                        this.mouseX = -1000;
+                        this.mouseY = -1000;
+                    }
+                }
+
+                handleMove(e) {
+                    const rect = this.container.getBoundingClientRect();
+                    this.mouseX = e.clientX - rect.left;
+                    this.mouseY = e.clientY - rect.top;
+                }
+
+                handleLeave() {
+                    this.mouseX = -1000;
+                    this.mouseY = -1000;
+                }
+
+                hexToRgb(hex) {
+                    const bigint = parseInt(hex.replace('#', ''), 16);
+                    return `${(bigint >> 16) & 255},${(bigint >> 8) & 255},${bigint & 255}`;
+                }
+
+                draw() {
+                    const width = this.canvas.width / (window.devicePixelRatio || 1);
+                    const height = this.canvas.height / (window.devicePixelRatio || 1);
+
+                    this.ctx.clearRect(0, 0, width, height);
+
+                    if (this.mouseX !== -1000 && this.mouseY !== -1000) {
+                        const rgb = this.hexToRgb(this.config.color);
+                        const gradient = this.ctx.createRadialGradient(
+                            this.mouseX, this.mouseY, 0,
+                            this.mouseX, this.mouseY, this.config.radius
+                        );
+
+                        gradient.addColorStop(0, `rgba(${rgb}, ${this.config.brightness})`);
+                        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+
+                        this.ctx.fillStyle = gradient;
+                        this.ctx.fillRect(0, 0, width, height);
+                    }
+                    requestAnimationFrame(() => this.draw());
+                }
+            }
+
+            new Spotlight('hero-spotlight-container', 'hero-spotlight-canvas', {
+                radius: 500,
+                brightness: 0.3,
+                color: '#ffffff',
+                trackDocument: true  // Track across entire document
+            });
+
+            new Spotlight('footer-spotlight-container', 'footer-spotlight-canvas', {
+                radius: 500,
+                brightness: 0.5,
+                color: '#ffffff'
+            });
+        })();
+
+        // 6. VIDEO LOOP LOGIC
+        let loopCount = 0;
+        const maxLoops = 2;
+
+        if (vid1 && vid2) {
+            vid1.addEventListener('ended', () => {
+                loopCount++;
+                if (loopCount < maxLoops) {
+                    setTimeout(() => { vid1.play(); }, 2000);
+                }
+                else if (loopCount === maxLoops) {
+                    vid2.play().then(() => {
+                        vid2.style.opacity = "1";
+                        vid2.style.zIndex = "20";
+                        vid1.style.opacity = "0";
+                        vid1.style.zIndex = "10";
+                    });
+                }
+            });
+        }
+    </script>
 
 </body>
+
 </html>
