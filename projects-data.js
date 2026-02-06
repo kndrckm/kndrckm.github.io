@@ -5,16 +5,18 @@ const rawProjectData = [
         location: "Batam, Indonesia",
         category: "Residential",
         image: "assets/projects/kavling12_1.webp",
+        video: "assets/kavling12.mp4",
         focus: "object-[50%_center]",
         link: "project-kavling12.html"
     },
     {
-        title: "Student Apartment",
-        location: "Semarang, Indonesia",
+        title: "A home",
+        location: "Bogor, Indonesia",
         category: "Residential",
-        image: "assets/projects/apartment_1.webp",
-        focus: "object-[65%_center]",
-        link: "#"
+        image: "assets/projects/Ahome_1.webp",
+        video: "assets/ahome.mp4",
+        focus: "object-[50%_center]",
+        link: "project-ahome.html"
     },
     {
         title: "MRT CP201 Monas",
@@ -92,19 +94,25 @@ const projectData = [
     const createCard = (project) => `
         <div class="project-card relative w-full overflow-hidden rounded-[1.5rem] cursor-pointer select-none pointer-events-auto group">
             <a href="${project.link}" draggable="false" class="block w-full h-full relative">
-                <img src="${project.image}" draggable="false"
+                <img src="${project.image}" loading="lazy" draggable="false"
                     class="absolute h-full w-full object-cover ${project.focus || 'object-center'} transition-transform duration-1000 group-hover:scale-105" 
                     alt="${project.title}">
                 
-                <div class="absolute inset-0 project-gradient opacity-60 transition-opacity duration-500 hover:opacity-40"></div>
+                ${project.video ? `
+                    <video data-src="${project.video}" preload="none" muted loop playsinline
+                        class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 z-10 pointer-events-none">
+                    </video>
+                ` : ''}
+
+                <div class="absolute inset-0 project-gradient opacity-60 transition-opacity duration-500 hover:opacity-40 z-20"></div>
                 
-                <div class="absolute top-4 left-4 md:top-5 md:left-5">
+                <div class="absolute top-4 left-4 md:top-5 md:left-5 z-30">
                     <span class="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest text-primary shadow-sm">
                         ${project.category || 'Architecture'}
                     </span>
                 </div>
 
-                <div class="absolute bottom-0 left-0 p-4 md:p-6 w-full text-white">
+                <div class="absolute bottom-0 left-0 p-4 md:p-6 w-full text-white z-30">
                     <span class="block text-[8px] md:text-[10px] font-bold tracking-[0.2em] text-white/70 uppercase mb-1">
                         ${project.location}
                     </span>
@@ -155,6 +163,26 @@ const projectData = [
     }
 
     container.innerHTML = `<div class="project-carousel-wrapper flex gap-4 h-[400px] md:h-[550px] overflow-x-auto snap-x snap-mandatory scroll-smooth">${columnsHTML}</div>`;
+
+    // C2. VIDEO HOVER LOGIC
+    const cards = container.querySelectorAll('.project-card');
+    cards.forEach(card => {
+        const video = card.querySelector('video');
+        if (video) {
+            card.addEventListener('mouseenter', () => {
+                // Lazy load video stream on play
+                if (!video.src && video.dataset.src) {
+                    video.src = video.dataset.src;
+                    video.load();
+                }
+                video.play().catch(e => console.log('Video play failed:', e));
+            });
+            card.addEventListener('mouseleave', () => {
+                video.pause();
+                video.currentTime = 0;
+            });
+        }
+    });
 
     // D. SCROLL LOGIC FOR 2-ROW LAYOUT
     // D. SCROLL LOGIC FOR COLUMN LAYOUT

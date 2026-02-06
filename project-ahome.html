@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Home | KEND.DESIGN.STUDIO</title>
+    <meta name="description" content="A Home Residential Project - KEND.DESIGN.STUDIO">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Pannellum 360 Viewer -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#1D1D1F',
+                        secondary: '#6E6E73',
+                        accent: '#007AFF', // Azure blue-ish
+                        'azure-light': '#F5F7FA',
+                    },
+                    boxShadow: {
+                        'soft-xl': '0 20px 40px -10px rgba(0,0,0,0.05)',
+                        'floating': '0 30px 60px -15px rgba(0,0,0,0.1)',
+                        'ios-deep': '0 30px 60px -12px rgba(0,0,0,0.4)',
+                    },
+                    keyframes: {
+                        'wiggle-vertical': {
+                            '0%, 100%': { transform: 'translateY(-50%)' },
+                            '25%': { transform: 'translateY(calc(-50% - 5px))' },
+                            '75%': { transform: 'translateY(calc(-50% + 5px))' },
+                        }
+                    },
+                    animation: {
+                        'wiggle-scroll': 'wiggle-vertical 0.5s ease-in-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F2F4F8;
+            margin: 0;
+            color: #1D1D1F;
+            overflow-x: hidden;
+        }
+
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .reveal-text.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-text.revealed-no-anim {
+            transition: none !important;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.70);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1.5px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 2. Universal Site Container (From Index.html) */
+        .site-container {
+            margin-left: auto;
+            margin-right: auto;
+            width: 88%;
+            max-width: 100%;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @media (min-width: 810px) {
+            .site-container {
+                width: 90%;
+                max-width: none;
+            }
+        }
+
+        @media (min-width: 1600px) {
+            .site-container {
+                max-width: 1800px;
+                width: 85%;
+            }
+        }
+
+        /* Nav Override */
+        .nav-fixed {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: fit-content;
+        }
+
+        /* FOOTER ANIMATION FIX */
+        @keyframes mesh-float {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .vision-mesh-animated {
+            background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33);
+            background-size: 400% 400%;
+            animation: mesh-float 15s ease infinite;
+        }
+
+        /* HERO POP ANIMATION */
+        @keyframes pop-in {
+            0% {
+                opacity: 0;
+                transform: scale(0.96) translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .animate-pop {
+            animation: pop-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            /* Hidden init */
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased selection:bg-accent selection:text-white">
+
+    <!-- MODULAR NAV -->
+    <div id="layout-nav"></div>
+
+    <!-- HERO SECTION (Existing Width: 96% - Kept as requested) -->
+    <!-- HERO SECTION (Existing Width: 96% - Kept as requested) -->
+    <div
+        class="animate-pop relative w-[96%] mx-auto mt-4 h-[85vh] md:h-[92vh] rounded-[2.5rem] overflow-hidden shadow-floating group">
+
+        <!-- Day/Night Switcher Button (VERTICAL RIGHT with Sliding Knob) -->
+        <!-- Switch Removed -->
+
+        <!-- Images -->
+        <img id="hero-day" src="assets/projects/ahome_2.webp"
+            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out z-10 select-none">
+
+
+        <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-20 pointer-events-none">
+        </div>
+
+        <!-- INTERACTIVE DOOR BUTTON (Center Building) -->
+        <!-- INTERACTIVE DOOR BUTTON (Center Building) -->
+        <!-- INTERACTIVE DOOR BUTTON (Center Building) -->
+        <!-- Invisible Hotspot over the wooden door -->
+        <a href="#gallery" id="door-hotspot" class="absolute top-[54%] left-[53%] w-[6%] h-[20%] z-30 cursor-none">
+        </a>
+
+        <!-- BIG TITLE OVERLAY -->
+        <!-- Logic: Hero is 96%, Content is 90% (desktop). Difference is 6%, split side is 3%. 
+             So applying padding-left: 3% relative to hero width brings it alignment to site-container.
+             Better yet: Use a container inside this absolute div that matches site metrics. -->
+        <div class="absolute bottom-32 md:bottom-40 w-full z-30 pointer-events-none">
+            <!-- Alignment Wrapper: Calculated to match .site-container width relative to the 96% Hero parent -->
+            <!-- Mobile: 88/96 = 91.66% | Desktop: 90/96 = 93.75% | Large: 85/96 = 88.54% -->
+            <div class="w-[91.66%] md:w-[93.75%] 2xl:w-[88.54%] max-w-[1800px] mx-auto">
+                <h1 class="text-[10vw] md:text-[6.5vw] font-black text-white tracking-tighter leading-none reveal-text">
+                    A <span class="text-white/80">Home</span>
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- OVERLAPPING INFO CARD (Replaced w-[90%] with site-container) -->
+    <section class="relative z-40 -mt-24 mb-32 reveal-text">
+        <div class="site-container nav-glass rounded-[2.5rem] p-8 md:p-14">
+
+            <!-- Metadata Grid -->
+            <!-- Metadata Grid -->
+            <div class="grid grid-cols-3 gap-8 pb-12 border-b border-black/5">
+                <div>
+                    <span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Area
+                        Size</span>
+                    <h4 class="text-lg font-bold text-primary">180 sq m</h4>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Year</span>
+                    <h4 class="text-lg font-bold text-primary">2025</h4>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Style</span>
+                    <h4 class="text-lg font-bold text-primary">Modern Tropical</h4>
+                </div>
+            </div>
+
+            <!-- Philosophy Section -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pt-12">
+                <div class="md:col-span-4">
+                    <h3 class="text-2xl font-black text-primary mb-4 tracking-tight">Design Philosophy</h3>
+                    <p class="text-secondary text-sm leading-relaxed mb-8">
+                        Kavling 12 is envisioned as a blank canvas—a structural framework that allows users the freedom
+                        to express themselves through material and color.
+                    </p>
+                    <div class="bg-white/50 border border-white/50 rounded-2xl p-4 flex items-center gap-4">
+                        <div class="bg-white p-2.5 rounded-xl text-accent shadow-sm">
+                            <i data-lucide="wind" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-primary">Passive Design</span>
+                            <span class="text-[11px] text-secondary">Optimized Air & Light</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-8">
+                    <h2 class="text-2xl md:text-4xl font-bold text-accent mb-6 leading-tight">
+                        "A home designed to breathe and evolve with you."
+                    </h2>
+                    <p class="text-secondary leading-relaxed mb-6">
+                        Beyond its flexible aesthetic, the core strength of Kavling 12 lies in its performance. The
+                        massing is strategically carved to capture prevailing winds and filter natural sunlight deep
+                        into the living spaces.
+                    </p>
+                    <p class="text-secondary leading-relaxed">
+                        This approach ensures that while the facade remains an adaptable canvas for the owner's taste,
+                        the comfort and energy efficiency of the home remain absolute and timeless.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- GALLERY GRID (Replaced width with site-container) -->
+    <!-- GALLERY GRID (Replaced with 360 Panorama) -->
+    <section id="gallery" class="site-container mb-40 reveal-text">
+        <div class="relative w-full h-[500px] md:h-[700px] rounded-[2.5rem] overflow-hidden shadow-2xl group">
+            <div id="panorama" class="w-full h-full"></div>
+
+            <!-- Custom Overlay / Badge -->
+            <div class="absolute top-6 left-6 z-10 pointer-events-none">
+                <span
+                    class="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-widest text-primary shadow-sm">
+                    360° Virtual Tour
+                </span>
+            </div>
+
+            <!-- Instructions -->
+            <div
+                class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <span
+                    class="px-4 py-2 bg-black/50 backdrop-blur-md rounded-full text-white text-xs font-medium border border-white/20">
+                    Click & Drag to Explore
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEXT PROJECT (Replaced width with site-container) -->
+
+
+    <!-- CUSTOM CURSOR ELEMENT -->
+    <div id="door-cursor"
+        class="fixed hidden pointer-events-none z-[9999] text-white bg-black/20 backdrop-blur-md p-3 rounded-full border border-white/50 shadow-2xl transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-75">
+        <i data-lucide="door-open" class="w-6 h-6"></i>
+    </div>
+
+    <!-- MODULAR FOOTER -->
+    <div id="layout-footer"></div>
+
+    <!-- SCRIPTS -->
+    <script src="layout.js"></script>
+    <script>
+        initLayout(false);
+
+        function toggleHero(mode) {
+            const dayImg = document.getElementById('hero-day');
+            const nightImg = document.getElementById('hero-night');
+
+            const knob = document.getElementById('hero-knob');
+            const iconDay = document.getElementById('hero-icon-day');
+            const iconNight = document.getElementById('hero-icon-night');
+
+            if (mode === 'night') {
+                nightImg.style.opacity = '1';
+                // Move Knob Down (4rem approx to bottom)
+                knob.style.transform = 'translateY(4rem)';
+
+                iconDay.classList.remove('text-primary');
+                iconDay.classList.add('text-white/50');
+
+                iconNight.classList.remove('text-white/50');
+                iconNight.classList.add('text-primary');
+
+            } else {
+                nightImg.style.opacity = '0';
+                knob.style.transform = 'translateY(0)';
+
+                iconDay.classList.remove('text-white/50');
+                iconDay.classList.add('text-primary');
+
+                iconNight.classList.remove('text-primary');
+                iconNight.classList.add('text-white/50');
+            }
+        }
+
+        let galleryLightsOn = true;
+        // Function toggleGalleryLights removed (Gallery replaced by Panorama)
+
+        // Custom Door Cursor Logic
+        const doorHotspot = document.getElementById('door-hotspot');
+        const doorCursor = document.getElementById('door-cursor');
+
+        if (doorHotspot && doorCursor) {
+            doorHotspot.addEventListener('mouseenter', () => {
+                doorCursor.classList.remove('hidden');
+                doorCursor.classList.add('flex');
+            });
+
+            doorHotspot.addEventListener('mouseleave', () => {
+                doorCursor.classList.add('hidden');
+                doorCursor.classList.remove('flex');
+            });
+
+            doorHotspot.addEventListener('mousemove', (e) => {
+                doorCursor.style.left = `${e.clientX}px`;
+                doorCursor.style.top = `${e.clientY}px`;
+            });
+        }
+
+        let isWiggling = false;
+        window.addEventListener('scroll', () => {
+            if (!isWiggling) {
+                const btnContainer = document.getElementById('hero-switch-container');
+                if (btnContainer) {
+                    isWiggling = true;
+                    btnContainer.classList.add('animate-wiggle-scroll');
+                    setTimeout(() => {
+                        btnContainer.classList.remove('animate-wiggle-scroll');
+                        isWiggling = false;
+                    }, 500);
+                }
+            }
+        });
+
+        window.addEventListener('load', () => {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
+
+            // Initialize Pannellum
+            pannellum.viewer('panorama', {
+                "type": "cubemap",
+                "cubeMap": [
+                    "assets/projects/front.jpg",
+                    "assets/projects/right.jpg",
+                    "assets/projects/back.jpg",
+                    "assets/projects/left.jpg",
+                    "assets/projects/up.jpg",
+                    "assets/projects/down.jpg"
+                ],
+                "autoLoad": true,
+                "compass": false,
+                "hfov": 100
+            });
+        });
+    </script>
+</body>
+
+</html>
