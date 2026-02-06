@@ -14,7 +14,7 @@
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Pannellum 360 Viewer -->
+    <!-- Pannellum -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 
@@ -26,7 +26,7 @@
                     colors: {
                         primary: '#1D1D1F',
                         secondary: '#6E6E73',
-                        accent: '#007AFF', // Azure blue-ish
+                        accent: '#007AFF',
                         'azure-light': '#F5F7FA',
                     },
                     boxShadow: {
@@ -67,12 +67,6 @@
             transform: translateY(0);
         }
 
-        .reveal-text.revealed-no-anim {
-            transition: none !important;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
         .nav-glass {
             background: rgba(255, 255, 255, 0.70);
             backdrop-filter: blur(20px);
@@ -81,13 +75,9 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
         }
 
-        .hide-scroll::-webkit-scrollbar {
-            display: none;
-        }
-
-        .hide-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        /* Pannellum Override */
+        .pnlm-container {
+            font-family: 'Inter', sans-serif;
         }
 
         /* 2. Universal Site Container (From Index.html) */
@@ -161,7 +151,6 @@
         .animate-pop {
             animation: pop-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
-            /* Hidden init */
         }
     </style>
 </head>
@@ -171,37 +160,24 @@
     <!-- MODULAR NAV -->
     <div id="layout-nav"></div>
 
-    <!-- HERO SECTION (Existing Width: 96% - Kept as requested) -->
-    <!-- HERO SECTION (Existing Width: 96% - Kept as requested) -->
+    <!-- HERO SECTION (Kavling Style: Full Width + Overlap) -->
     <div
         class="animate-pop relative w-[96%] mx-auto mt-4 h-[85vh] md:h-[92vh] rounded-[2.5rem] overflow-hidden shadow-floating group">
 
-        <!-- Day/Night Switcher Button (VERTICAL RIGHT with Sliding Knob) -->
-        <!-- Switch Removed -->
-
-        <!-- Images -->
+        <!-- Image -->
         <img id="hero-day" src="assets/projects/ahome_2.webp"
-            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out z-10 select-none">
+            class="absolute inset-0 w-full h-full object-cover object-center z-10 select-none">
 
-
+        <!-- Gradient Overlay -->
         <div
             class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-20 pointer-events-none">
         </div>
 
-        <!-- INTERACTIVE DOOR BUTTON (Center Building) -->
-        <!-- INTERACTIVE DOOR BUTTON (Center Building) -->
-        <!-- INTERACTIVE DOOR BUTTON (Center Building) -->
-        <!-- Invisible Hotspot over the wooden door -->
-        <a href="#gallery" id="door-hotspot" class="absolute top-[54%] left-[53%] w-[6%] h-[20%] z-30 cursor-none">
-        </a>
+        <!-- Hotspot -->
+        <a href="#gallery" id="door-hotspot" class="absolute top-[54%] left-[70%] w-[8%] h-[20%] z-30 cursor-none"></a>
 
-        <!-- BIG TITLE OVERLAY -->
-        <!-- Logic: Hero is 96%, Content is 90% (desktop). Difference is 6%, split side is 3%. 
-             So applying padding-left: 3% relative to hero width brings it alignment to site-container.
-             Better yet: Use a container inside this absolute div that matches site metrics. -->
+        <!-- BIG TITLE OVERLAY (Kavling Style Padding) -->
         <div class="absolute bottom-32 md:bottom-40 w-full z-30 pointer-events-none">
-            <!-- Alignment Wrapper: Calculated to match .site-container width relative to the 96% Hero parent -->
-            <!-- Mobile: 88/96 = 91.66% | Desktop: 90/96 = 93.75% | Large: 85/96 = 88.54% -->
             <div class="w-[91.66%] md:w-[93.75%] 2xl:w-[88.54%] max-w-[1800px] mx-auto">
                 <h1 class="text-[10vw] md:text-[6.5vw] font-black text-white tracking-tighter leading-none reveal-text">
                     A <span class="text-white/80">Home</span>
@@ -210,64 +186,74 @@
         </div>
     </div>
 
-    <!-- OVERLAPPING INFO CARD (Replaced w-[90%] with site-container) -->
-    <!-- OVERLAPPING INFO CARD (Right Aligned Single Card) -->
-    <section class="relative z-40 -mt-24 mb-32 reveal-text site-container pointer-events-none">
-        <div class="flex justify-end">
-            <!-- The Card (Pointer events auto to allow interaction if needed) -->
-            <div class="w-full md:w-[480px] bg-white rounded-[2.5rem] p-8 md:p-10 shadow-floating pointer-events-auto">
+    <!-- OVERLAPPING INFO CARD -->
+    <section class="relative z-40 -mt-24 mb-32 reveal-text">
+        <div class="site-container nav-glass rounded-[2.5rem] p-8 md:p-14">
 
-                <!-- Header Icon & Title -->
-                <div class="flex items-start justify-between mb-6">
-                    <div>
-                        <h3 class="text-2xl font-black text-primary tracking-tight mb-1">Generational Wellbeing</h3>
-                        <p class="text-xs font-bold text-accent uppercase tracking-widest">Modern Tropical</p>
-                    </div>
-                    <div class="bg-accent/10 p-3 rounded-2xl text-accent">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-                        </svg>
+            <!-- Metadata Grid -->
+            <div class="grid grid-cols-3 gap-8 pb-12 border-b border-black/5">
+                <div>
+                    <span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Area
+                        Size</span>
+                    <h4 class="text-lg font-bold text-primary">130 sqm</h4>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Year</span>
+                    <h4 class="text-lg font-bold text-primary">2024</h4>
+                </div>
+                <div>
+                    <span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Style</span>
+                    <h4 class="text-lg font-bold text-primary">Modern Tropical</h4>
+                </div>
+            </div>
+
+            <!-- Philosophy Section -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pt-12">
+                <div class="md:col-span-4">
+                    <h3 class="text-2xl font-black text-primary mb-4 tracking-tight">Design Philosophy</h3>
+
+                    <!-- Wellbeing Highlight (Icon Only - White Circle) -->
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="bg-white p-3 rounded-full text-accent shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-accent uppercase tracking-widest">Wellbeing</span>
+                            <span class="text-[11px] text-secondary font-medium">Generational Harmony</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Specs Grid -->
-                <div class="grid grid-cols-2 gap-4 mb-8 border-b border-black/5 pb-8">
-                    <div>
-                        <span class="block text-[10px] text-secondary uppercase font-bold mb-1">Area Size</span>
-                        <span class="block text-primary font-bold">130 sqm</span>
-                    </div>
-                    <div>
-                        <span class="block text-[10px] text-secondary uppercase font-bold mb-1">Year</span>
-                        <span class="block text-primary font-bold">2024</span>
-                    </div>
-                </div>
-
-                <!-- Description -->
-                <div class="space-y-4">
-                    <p class="text-secondary text-sm leading-relaxed">
+                <div class="md:col-span-8">
+                    <!-- Description -->
+                    <p class="text-secondary leading-relaxed mb-6 text-lg">
                         Designed to accommodate the project owner's elderly mother, this home prioritizes accessibility
                         on the first floor while maintaining a seamless flow.
                     </p>
-                    <p class="text-secondary text-sm leading-relaxed">
+                    <p class="text-secondary leading-relaxed text-lg">
                         The architecture invites natural windflow and sunlight to fill the interiors, anchored by a koi
                         pond at the intersection of spaces and lush pot greeneries—creating a sanctuary for the
                         wellbeing of the owner and their mother.
                     </p>
                 </div>
-
             </div>
+
         </div>
     </section>
 
-    <!-- GALLERY GRID (Replaced width with site-container) -->
-    <!-- GALLERY GRID (Replaced with 360 Panorama) -->
+    <!-- GALLERY GRID (360 + 2x2) -->
     <section id="gallery" class="site-container mb-40 reveal-text">
-        <div class="relative w-full h-[500px] md:h-[700px] rounded-[2.5rem] overflow-hidden shadow-2xl group">
+
+        <!-- 360 Panorama -->
+        <div class="relative w-full h-[500px] md:h-[700px] rounded-[2.5rem] overflow-hidden shadow-2xl group mb-6">
             <div id="panorama" class="w-full h-full"></div>
 
-            <!-- Custom Overlay / Badge -->
+            <!-- Badge -->
             <div class="absolute top-6 left-6 z-10 pointer-events-none">
                 <span
                     class="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-widest text-primary shadow-sm">
@@ -275,50 +261,70 @@
                 </span>
             </div>
 
-            <!-- Instructions -->
-            <!-- Custom Control Bar (Glassmorphism) -->
+            <!-- Control Bar -->
             <div
-                class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div
-                    class="flex items-center gap-1 p-1.5 bg-black/30 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl">
-                    <button onclick="window.viewer.setHfov(window.viewer.getHfov() - 10)"
-                        class="p-2.5 hover:bg-white/20 rounded-full text-white transition-all hover:scale-105 active:scale-95"
-                        aria-label="Zoom In">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14" />
-                            <path d="M12 5v14" />
-                        </svg>
-                    </button>
-                    <button onclick="window.viewer.setHfov(window.viewer.getHfov() + 10)"
-                        class="p-2.5 hover:bg-white/20 rounded-full text-white transition-all hover:scale-105 active:scale-95"
-                        aria-label="Zoom Out">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14" />
-                        </svg>
-                    </button>
-
-                    <div class="w-px h-4 bg-white/20 mx-1"></div>
-
-                    <button onclick="window.viewer.toggleFullscreen()"
-                        class="p-2.5 hover:bg-white/20 rounded-full text-white transition-all hover:scale-105 active:scale-95"
-                        aria-label="Fullscreen">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-                            <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-                            <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-                            <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-                        </svg>
-                    </button>
-                </div>
+                class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 p-2 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-lg z-10 hover:bg-white/20 transition-colors">
+                <button onmousedown="window.viewer.setHfov(window.viewer.getHfov() - 10)"
+                    class="p-2 text-white hover:text-accent transition-colors" title="Zoom In">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" x2="16.65" y1="21" y2="16.65" />
+                        <line x1="11" x2="11" y1="8" y2="14" />
+                        <line x1="8" x2="14" y1="11" y2="11" />
+                    </svg>
+                </button>
+                <button onmousedown="window.viewer.setHfov(window.viewer.getHfov() + 10)"
+                    class="p-2 text-white hover:text-accent transition-colors" title="Zoom Out">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" x2="16.65" y1="21" y2="16.65" />
+                        <line x1="8" x2="14" y1="11" y2="11" />
+                    </svg>
+                </button>
+                <div class="w-px bg-white/20 mx-1"></div>
+                <button onclick="window.viewer.toggleFullscreen()"
+                    class="p-2 text-white hover:text-accent transition-colors" title="Fullscreen">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+                    </svg>
+                </button>
             </div>
         </div>
+
+        <!-- Alternating Grid (Row 1: 30/70, Row 2: 70/30) -->
+        <div class="grid grid-cols-1 md:grid-cols-10 gap-4 md:gap-6 mt-6">
+            <!-- Row 1 Left (30%) -->
+            <div
+                class="md:col-span-3 h-[350px] md:h-[500px] rounded-[2.5rem] overflow-hidden shadow-floating reveal-text group">
+                <img src="assets/projects/ahome_3.webp" loading="lazy"
+                    class="w-full h-full object-cover scale-110 transition-transform duration-700 group-hover:scale-115 select-none">
+            </div>
+            <!-- Row 1 Right (70%) -->
+            <div
+                class="md:col-span-7 h-[350px] md:h-[500px] rounded-[2.5rem] overflow-hidden shadow-floating reveal-text group">
+                <img src="assets/projects/ahome_4.webp" loading="lazy"
+                    class="w-full h-full object-cover scale-110 transition-transform duration-700 group-hover:scale-115 select-none">
+            </div>
+
+            <!-- Row 2 Left (70%) -->
+            <div
+                class="md:col-span-7 h-[350px] md:h-[500px] rounded-[2.5rem] overflow-hidden shadow-floating reveal-text group">
+                <img src="assets/projects/ahome_5.webp" loading="lazy"
+                    class="w-full h-full object-cover scale-110 transition-transform duration-700 group-hover:scale-115 select-none">
+            </div>
+            <!-- Row 2 Right (30%) -->
+            <div
+                class="md:col-span-3 h-[350px] md:h-[500px] rounded-[2.5rem] overflow-hidden shadow-floating reveal-text group">
+                <img src="assets/projects/ahome_6.webp" loading="lazy"
+                    class="w-full h-full object-cover scale-110 transition-transform duration-700 group-hover:scale-115 select-none">
+            </div>
+        </div>
+
     </section>
-
-    <!-- NEXT PROJECT (Replaced width with site-container) -->
-
 
     <!-- CUSTOM CURSOR ELEMENT -->
     <div id="door-cursor"
@@ -334,39 +340,17 @@
     <script>
         initLayout(false);
 
-        function toggleHero(mode) {
-            const dayImg = document.getElementById('hero-day');
-            const nightImg = document.getElementById('hero-night');
-
-            const knob = document.getElementById('hero-knob');
-            const iconDay = document.getElementById('hero-icon-day');
-            const iconNight = document.getElementById('hero-icon-night');
-
-            if (mode === 'night') {
-                nightImg.style.opacity = '1';
-                // Move Knob Down (4rem approx to bottom)
-                knob.style.transform = 'translateY(4rem)';
-
-                iconDay.classList.remove('text-primary');
-                iconDay.classList.add('text-white/50');
-
-                iconNight.classList.remove('text-white/50');
-                iconNight.classList.add('text-primary');
-
-            } else {
-                nightImg.style.opacity = '0';
-                knob.style.transform = 'translateY(0)';
-
-                iconDay.classList.remove('text-white/50');
-                iconDay.classList.add('text-primary');
-
-                iconNight.classList.remove('text-primary');
-                iconNight.classList.add('text-white/50');
-            }
-        }
-
-        let galleryLightsOn = true;
-        // Function toggleGalleryLights removed (Gallery replaced by Panorama)
+        // Pannellum Init (Equirectangular)
+        window.addEventListener('load', function () {
+            pannellum.viewer('panorama', {
+                "type": "equirectangular",
+                "panorama": "assets/projects/ahome_pano.webp",
+                "autoLoad": true,
+                "compass": false,
+                "hfov": 100,
+                "showControls": false
+            });
+        });
 
         // Custom Door Cursor Logic
         const doorHotspot = document.getElementById('door-hotspot');
@@ -377,33 +361,17 @@
                 doorCursor.classList.remove('hidden');
                 doorCursor.classList.add('flex');
             });
-
             doorHotspot.addEventListener('mouseleave', () => {
                 doorCursor.classList.add('hidden');
                 doorCursor.classList.remove('flex');
             });
-
             doorHotspot.addEventListener('mousemove', (e) => {
                 doorCursor.style.left = `${e.clientX}px`;
                 doorCursor.style.top = `${e.clientY}px`;
             });
         }
 
-        let isWiggling = false;
-        window.addEventListener('scroll', () => {
-            if (!isWiggling) {
-                const btnContainer = document.getElementById('hero-switch-container');
-                if (btnContainer) {
-                    isWiggling = true;
-                    btnContainer.classList.add('animate-wiggle-scroll');
-                    setTimeout(() => {
-                        btnContainer.classList.remove('animate-wiggle-scroll');
-                        isWiggling = false;
-                    }, 500);
-                }
-            }
-        });
-
+        // Reveal Observer
         window.addEventListener('load', () => {
             const observer = new IntersectionObserver((entries, obs) => {
                 entries.forEach(entry => {
@@ -414,17 +382,6 @@
                 });
             }, { threshold: 0.1 });
             document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
-
-            // Initialize Pannellum
-            // Initialize Pannellum (Custom UI)
-            window.viewer = pannellum.viewer('panorama', {
-                "type": "equirectangular",
-                "panorama": "assets/projects/ahome_pano.webp",
-                "autoLoad": true,
-                "compass": true,
-                "hfov": 100,
-                "showControls": false
-            });
         });
     </script>
 </body>
