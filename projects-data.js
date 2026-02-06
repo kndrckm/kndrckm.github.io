@@ -13,7 +13,7 @@ const rawProjectData = [
         title: "A home",
         location: "Bogor, Indonesia",
         category: "Residential",
-        image: "assets/projects/Ahome_1.webp",
+        image: "assets/projects/ahome_1.webp",
         video: "assets/ahome.mp4",
         focus: "object-[50%_center]",
         link: "project-ahome.html"
