@@ -1,6 +1,14 @@
 // DATABASE: Add your projects here
 const rawProjectData = [
     {
+        title: "Kavling 12",
+        location: "Batam, Indonesia",
+        category: "Residential",
+        image: "assets/projects/kavling12_1.webp",
+        focus: "object-[50%_center]",
+        link: "project-kavling12.html"
+    },
+    {
         title: "Student Apartment",
         location: "Semarang, Indonesia",
         category: "Residential",
@@ -56,31 +64,34 @@ const projectData = [
     container.innerHTML = '';
 
     // Inject CSS for 2-row layout with 50:50 to 75:25 hover effect
+    // Inject CSS for COLUMN layout with 50:50 to 75:25 hover effect VERTICALLY
     const carouselStyle = document.createElement('style');
     carouselStyle.innerHTML = `
-        .project-row {
-            height: 50%;
-            transition: height 0.5s ease-out;
-        }
-        .project-carousel-wrapper:has(.project-card:hover) .project-row:has(.project-card:hover) {
-            height: 75%;
-        }
-        .project-carousel-wrapper:has(.project-card:hover) .project-row:not(:has(.project-card:hover)) {
-            height: 25%;
-        }
-        .project-card {
+        .project-column {
             transition: all 0.5s ease-out;
         }
-        /* Hide all scrollbars */
-        .project-row::-webkit-scrollbar { display: none; }
-        .project-row { -ms-overflow-style: none; scrollbar-width: none; }
+        .project-card {
+            flex: 1;
+            transition: flex 0.5s ease-out;
+            height: auto;
+        }
+        /* When hovering a column, expand the hovered card */
+        .project-column:hover .project-card:hover {
+            flex: 3;
+        }
+        .project-column:hover .project-card:not(:hover) {
+            flex: 1;
+        }
+        /* Mobile Scrollbar hiding */
+        .project-carousel-wrapper::-webkit-scrollbar { display: none; }
+        .project-carousel-wrapper { -ms-overflow-style: none; scrollbar-width: none; }
     `;
     document.head.appendChild(carouselStyle);
 
-    // B. CARD TEMPLATE - flexible height
+    // B. CARD TEMPLATE - purely structure
     const createCard = (project) => `
-        <div class="project-card snap-center shrink-0 w-[280px] md:w-[350px] h-full select-none pointer-events-auto">
-            <a href="${project.link}" draggable="false" class="group block w-full h-full relative overflow-hidden rounded-[1.5rem] cursor-pointer">
+        <div class="project-card relative w-full overflow-hidden rounded-[1.5rem] cursor-pointer select-none pointer-events-auto group">
+            <a href="${project.link}" draggable="false" class="block w-full h-full relative">
                 <img src="${project.image}" draggable="false"
                     class="absolute h-full w-full object-cover ${project.focus || 'object-center'} transition-transform duration-1000 group-hover:scale-105" 
                     alt="${project.title}">
@@ -111,13 +122,13 @@ const projectData = [
         </div>
     `;
 
-    // C. RENDER - 2 rows in a wrapper with fixed height
-    // Split data for 2 rows
+    // C. RENDER - Columns Layout
+    // Split data for 2 items per column
     const halfLength = Math.ceil(rawProjectData.length / 2);
     const row1Data = rawProjectData.slice(0, halfLength);
     const row2Data = rawProjectData.slice(halfLength);
 
-    // Duplicate based on screen size (less on mobile for performance)
+    // Duplicate based on screen size
     const isMobile = window.innerWidth < 768;
     const duplicateCount = isMobile ? 3 : 8;
 
@@ -127,68 +138,57 @@ const projectData = [
         return result;
     };
 
-    const row1Projects = duplicateArray(row1Data, duplicateCount);
-    const row2Projects = duplicateArray(row2Data, duplicateCount);
+    const topItems = duplicateArray(row1Data, duplicateCount);
+    const bottomItems = duplicateArray(row2Data, duplicateCount);
 
-    let row1HTML = '<div class="project-row flex gap-4 overflow-x-auto scroll-smooth no-scrollbar">';
-    row1Projects.forEach(project => {
-        row1HTML += createCard(project);
-    });
-    row1HTML += '</div>';
+    let columnsHTML = '';
+    const totalCols = topItems.length;
 
-    let row2HTML = '<div class="project-row flex gap-4 overflow-x-auto scroll-smooth no-scrollbar">';
-    row2Projects.forEach(project => {
-        row2HTML += createCard(project);
-    });
-    row2HTML += '</div>';
+    for (let i = 0; i < totalCols; i++) {
+        const itemTop = topItems[i];
+        const itemBottom = bottomItems[i] || topItems[i]; // Fallback
 
-    container.innerHTML = `<div class="project-carousel-wrapper flex flex-col h-[400px] md:h-[550px] gap-4">${row1HTML}${row2HTML}</div>`;
+        columnsHTML += `<div class="project-column flex flex-col gap-4 h-full shrink-0 w-[280px] md:w-[350px] snap-center">`;
+        columnsHTML += createCard(itemTop);
+        columnsHTML += createCard(itemBottom);
+        columnsHTML += `</div>`;
+    }
+
+    container.innerHTML = `<div class="project-carousel-wrapper flex gap-4 h-[400px] md:h-[550px] overflow-x-auto snap-x snap-mandatory scroll-smooth">${columnsHTML}</div>`;
 
     // D. SCROLL LOGIC FOR 2-ROW LAYOUT
+    // D. SCROLL LOGIC FOR COLUMN LAYOUT
     const carouselWrapper = container.querySelector('.project-carousel-wrapper');
-    const row1Container = carouselWrapper.querySelector('.project-row:first-of-type');
-    const row2Container = carouselWrapper.querySelector('.project-row:last-of-type');
-    const rows = [row1Container, row2Container].filter(r => r);
 
     // 1. Initial Positioning (Middle of duplicated content)
     const cardWidth = 360; // approximate card + gap width
     const setInitialPos = () => {
-        rows.forEach(row => {
-            if (row) row.scrollLeft = row.scrollWidth / 3;
-        });
+        if (carouselWrapper) carouselWrapper.scrollLeft = carouselWrapper.scrollWidth / 3;
     };
     setTimeout(setInitialPos, 150);
 
-    // 2. Button Listeners - scroll both rows together
+    // 2. Button Listeners
     if (prevBtn) prevBtn.addEventListener('click', () => {
-        rows.forEach(row => {
-            if (row) row.scrollBy({ left: -cardWidth, behavior: 'smooth' });
-        });
+        if (carouselWrapper) carouselWrapper.scrollBy({ left: -cardWidth, behavior: 'smooth' });
     });
 
     if (nextBtn) nextBtn.addEventListener('click', () => {
-        rows.forEach(row => {
-            if (row) row.scrollBy({ left: cardWidth, behavior: 'smooth' });
-        });
+        if (carouselWrapper) carouselWrapper.scrollBy({ left: cardWidth, behavior: 'smooth' });
     });
 
-    // 3. KEYBOARD NAVIGATION - Arrow keys to scroll carousel
+    // 3. KEYBOARD NAVIGATION
     document.addEventListener('keydown', (e) => {
         // Check if carousel is in viewport
         const rect = container.getBoundingClientRect();
         const isInView = rect.top < window.innerHeight && rect.bottom > 0;
 
-        if (isInView) {
+        if (isInView && carouselWrapper) {
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
-                rows.forEach(row => {
-                    if (row) row.scrollBy({ left: -cardWidth, behavior: 'smooth' });
-                });
+                carouselWrapper.scrollBy({ left: -cardWidth, behavior: 'smooth' });
             } else if (e.key === 'ArrowRight') {
                 e.preventDefault();
-                rows.forEach(row => {
-                    if (row) row.scrollBy({ left: cardWidth, behavior: 'smooth' });
-                });
+                carouselWrapper.scrollBy({ left: cardWidth, behavior: 'smooth' });
             }
         }
     });
