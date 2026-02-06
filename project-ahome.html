@@ -211,61 +211,53 @@
     </div>
 
     <!-- OVERLAPPING INFO CARD (Replaced w-[90%] with site-container) -->
-    <section class="relative z-40 -mt-24 mb-32 reveal-text">
-        <div class="site-container nav-glass rounded-[2.5rem] p-8 md:p-14">
+    <!-- OVERLAPPING INFO CARD (Right Aligned Single Card) -->
+    <section class="relative z-40 -mt-24 mb-32 reveal-text site-container pointer-events-none">
+        <div class="flex justify-end">
+            <!-- The Card (Pointer events auto to allow interaction if needed) -->
+            <div class="w-full md:w-[480px] bg-white rounded-[2.5rem] p-8 md:p-10 shadow-floating pointer-events-auto">
 
-            <!-- Metadata Grid -->
-            <!-- Metadata Grid -->
-            <div class="grid grid-cols-3 gap-8 pb-12 border-b border-black/5">
-                <div>
-                    <span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Area
-                        Size</span>
-                    <h4 class="text-lg font-bold text-primary">180 sq m</h4>
-                </div>
-                <div>
-                    <span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Year</span>
-                    <h4 class="text-lg font-bold text-primary">2025</h4>
-                </div>
-                <div>
-                    <span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Style</span>
-                    <h4 class="text-lg font-bold text-primary">Modern Tropical</h4>
-                </div>
-            </div>
-
-            <!-- Philosophy Section -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pt-12">
-                <div class="md:col-span-4">
-                    <h3 class="text-2xl font-black text-primary mb-4 tracking-tight">Design Philosophy</h3>
-                    <p class="text-secondary text-sm leading-relaxed mb-8">
-                        Kavling 12 is envisioned as a blank canvas—a structural framework that allows users the freedom
-                        to express themselves through material and color.
-                    </p>
-                    <div class="bg-white/50 border border-white/50 rounded-2xl p-4 flex items-center gap-4">
-                        <div class="bg-white p-2.5 rounded-xl text-accent shadow-sm">
-                            <i data-lucide="wind" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <span class="block text-xs font-bold text-primary">Passive Design</span>
-                            <span class="text-[11px] text-secondary">Optimized Air & Light</span>
-                        </div>
+                <!-- Header Icon & Title -->
+                <div class="flex items-start justify-between mb-6">
+                    <div>
+                        <h3 class="text-2xl font-black text-primary tracking-tight mb-1">Generational Wellbeing</h3>
+                        <p class="text-xs font-bold text-accent uppercase tracking-widest">Modern Tropical</p>
+                    </div>
+                    <div class="bg-accent/10 p-3 rounded-2xl text-accent">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                        </svg>
                     </div>
                 </div>
-                <div class="md:col-span-8">
-                    <h2 class="text-2xl md:text-4xl font-bold text-accent mb-6 leading-tight">
-                        "A home designed to breathe and evolve with you."
-                    </h2>
-                    <p class="text-secondary leading-relaxed mb-6">
-                        Beyond its flexible aesthetic, the core strength of Kavling 12 lies in its performance. The
-                        massing is strategically carved to capture prevailing winds and filter natural sunlight deep
-                        into the living spaces.
+
+                <!-- Specs Grid -->
+                <div class="grid grid-cols-2 gap-4 mb-8 border-b border-black/5 pb-8">
+                    <div>
+                        <span class="block text-[10px] text-secondary uppercase font-bold mb-1">Area Size</span>
+                        <span class="block text-primary font-bold">130 sqm</span>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] text-secondary uppercase font-bold mb-1">Year</span>
+                        <span class="block text-primary font-bold">2024</span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="space-y-4">
+                    <p class="text-secondary text-sm leading-relaxed">
+                        Designed to accommodate the project owner's elderly mother, this home prioritizes accessibility
+                        on the first floor while maintaining a seamless flow.
                     </p>
-                    <p class="text-secondary leading-relaxed">
-                        This approach ensures that while the facade remains an adaptable canvas for the owner's taste,
-                        the comfort and energy efficiency of the home remain absolute and timeless.
+                    <p class="text-secondary text-sm leading-relaxed">
+                        The architecture invites natural windflow and sunlight to fill the interiors, anchored by a koi
+                        pond at the intersection of spaces and lush pot greeneries—creating a sanctuary for the
+                        wellbeing of the owner and their mother.
                     </p>
                 </div>
-            </div>
 
+            </div>
         </div>
     </section>
 
@@ -284,12 +276,43 @@
             </div>
 
             <!-- Instructions -->
+            <!-- Custom Control Bar (Glassmorphism) -->
             <div
-                class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <span
-                    class="px-4 py-2 bg-black/50 backdrop-blur-md rounded-full text-white text-xs font-medium border border-white/20">
-                    Click & Drag to Explore
-                </span>
+                class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div
+                    class="flex items-center gap-1 p-1.5 bg-black/30 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl">
+                    <button onclick="window.viewer.setHfov(window.viewer.getHfov() - 10)"
+                        class="p-2.5 hover:bg-white/20 rounded-full text-white transition-all hover:scale-105 active:scale-95"
+                        aria-label="Zoom In">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14" />
+                            <path d="M12 5v14" />
+                        </svg>
+                    </button>
+                    <button onclick="window.viewer.setHfov(window.viewer.getHfov() + 10)"
+                        class="p-2.5 hover:bg-white/20 rounded-full text-white transition-all hover:scale-105 active:scale-95"
+                        aria-label="Zoom Out">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14" />
+                        </svg>
+                    </button>
+
+                    <div class="w-px h-4 bg-white/20 mx-1"></div>
+
+                    <button onclick="window.viewer.toggleFullscreen()"
+                        class="p-2.5 hover:bg-white/20 rounded-full text-white transition-all hover:scale-105 active:scale-95"
+                        aria-label="Fullscreen">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                            <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                            <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                            <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -393,19 +416,14 @@
             document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
 
             // Initialize Pannellum
-            pannellum.viewer('panorama', {
-                "type": "cubemap",
-                "cubeMap": [
-                    "assets/projects/front.jpg",
-                    "assets/projects/right.jpg",
-                    "assets/projects/back.jpg",
-                    "assets/projects/left.jpg",
-                    "assets/projects/up.jpg",
-                    "assets/projects/down.jpg"
-                ],
+            // Initialize Pannellum (Custom UI)
+            window.viewer = pannellum.viewer('panorama', {
+                "type": "equirectangular",
+                "panorama": "assets/projects/ahome_pano.webp",
                 "autoLoad": true,
                 "compass": true,
-                "hfov": 100
+                "hfov": 100,
+                "showControls": false
             });
         });
     </script>

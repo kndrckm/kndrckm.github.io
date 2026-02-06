@@ -19,12 +19,12 @@ const rawProjectData = [
         link: "project-ahome.html"
     },
     {
-        title: "MRT CP201 Monas",
-        location: "Jakarta, Indonesia",
-        category: "Public Infrastructure",
+        title: "Boarding House",
+        location: "Yogyakarta, Indonesia",
+        category: "Commercial",
         image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2600",
         focus: "object-[50%_center]",
-        link: "#"
+        link: "project-boardinghouse.html"
     },
     {
         title: "Private Villa",
