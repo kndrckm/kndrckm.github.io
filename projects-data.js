@@ -27,12 +27,12 @@ const rawProjectData = [
         link: "project-boardinghouse.html"
     },
     {
-        title: "Private Villa",
-        location: "Bali, Indonesia",
-        category: "Hospitality",
+        title: "Kampus Jati",
+        location: "Padang, Indonesia",
+        category: "Commercial",
         image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2600",
         focus: "object-[50%_center]",
-        link: "#"
+        link: "project-kampusjati.html"
     },
     /* Add new projects here */
 ];
@@ -51,6 +51,8 @@ const projectData = [
     const container = document.getElementById('project-carousel');
     const prevBtn = document.getElementById('prev-slide');
     const nextBtn = document.getElementById('next-slide');
+    const prevBtnMobile = document.getElementById('prev-slide-mobile');
+    const nextBtnMobile = document.getElementById('next-slide-mobile');
 
     if (!container) return;
 
@@ -204,6 +206,15 @@ const projectData = [
         if (carouselWrapper) carouselWrapper.scrollBy({ left: cardWidth, behavior: 'smooth' });
     });
 
+    // Mobile Button Listeners
+    if (prevBtnMobile) prevBtnMobile.addEventListener('click', () => {
+        if (carouselWrapper) carouselWrapper.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+    });
+
+    if (nextBtnMobile) nextBtnMobile.addEventListener('click', () => {
+        if (carouselWrapper) carouselWrapper.scrollBy({ left: cardWidth, behavior: 'smooth' });
+    });
+
     // 3. KEYBOARD NAVIGATION
     document.addEventListener('keydown', (e) => {
         // Check if carousel is in viewport
@@ -280,15 +291,11 @@ const projectData = [
         if (currentCursorZone === 'left') {
             e.preventDefault();
             e.stopPropagation();
-            rows.forEach(row => {
-                if (row) row.scrollBy({ left: -cardWidth, behavior: 'smooth' });
-            });
+            if (carouselWrapper) carouselWrapper.scrollBy({ left: -cardWidth, behavior: 'smooth' });
         } else if (currentCursorZone === 'right') {
             e.preventDefault();
             e.stopPropagation();
-            rows.forEach(row => {
-                if (row) row.scrollBy({ left: cardWidth, behavior: 'smooth' });
-            });
+            if (carouselWrapper) carouselWrapper.scrollBy({ left: cardWidth, behavior: 'smooth' });
         }
         // If center zone, do nothing (let links work)
     }, true); // Use capture phase to intercept before links

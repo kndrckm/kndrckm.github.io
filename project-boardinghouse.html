@@ -5,7 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boarding House | KEND.DESIGN.STUDIO</title>
-    <meta name="description" content="Boarding House Commercial Project - KEND.DESIGN.STUDIO">
+    <meta name="description"
+        content="Boarding House - Commercial accommodation project in Yogyakarta, Indonesia. Modern Tropical design with passive cooling.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Boarding House | KEND.DESIGN.STUDIO">
+    <meta property="og:description" content="Commercial boarding house design in Yogyakarta, Indonesia.">
+    <meta property="og:image" content="https://kndrckm.github.io/assets/projects/kavling12_1.webp">
+    <meta property="og:url" content="https://kndrckm.github.io/project-boardinghouse.html">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Boarding House | KEND.DESIGN.STUDIO">
+    <meta name="twitter:description" content="Commercial boarding house design in Yogyakarta, Indonesia.">
+    <meta name="twitter:image" content="https://kndrckm.github.io/assets/projects/kavling12_1.webp">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": "Boarding House",
+        "description": "Commercial boarding house project in Yogyakarta, Indonesia",
+        "creator": {
+            "@type": "Person",
+            "name": "Kendrick Marzuki"
+        },
+        "dateCreated": "2025",
+        "locationCreated": "Yogyakarta, Indonesia"
+    }
+    </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -239,6 +269,18 @@
         </div>
     </div>
 
+    <!-- BREADCRUMB NAVIGATION -->
+    <nav class="site-container mt-6 mb-4" aria-label="Breadcrumb">
+        <ol class="breadcrumb flex items-center gap-2 text-xs font-semibold uppercase tracking-widest">
+            <li><a href="index.html" class="text-secondary hover:text-accent transition-colors">Home</a></li>
+            <li><span class="text-secondary/50">/</span></li>
+            <li><a href="index.html#portfolio" class="text-secondary hover:text-accent transition-colors">Projects</a>
+            </li>
+            <li><span class="text-secondary/50">/</span></li>
+            <li class="text-primary font-bold">Boarding House</li>
+        </ol>
+    </nav>
+
     <!-- OVERLAPPING INFO CARD (Replaced w-[90%] with site-container) -->
     <section class="relative z-40 -mt-24 mb-32 reveal-text">
         <div class="site-container nav-glass rounded-[2.5rem] p-8 md:p-14">
@@ -358,8 +400,8 @@
         </div>
     </section>
 
-    <!-- NEXT PROJECT (Replaced width with site-container) -->
-
+    <!-- PROJECT NAVIGATION (Rendered by JS) -->
+    <div id="project-navigation"></div>
 
     <!-- CUSTOM CURSOR ELEMENT -->
     <div id="door-cursor"
@@ -372,6 +414,7 @@
 
     <!-- SCRIPTS -->
     <script src="layout.js"></script>
+    <script src="project-nav.js"></script>
     <script>
         initLayout(false);
 
@@ -382,6 +425,14 @@
             const knob = document.getElementById('hero-knob');
             const iconDay = document.getElementById('hero-icon-day');
             const iconNight = document.getElementById('hero-icon-night');
+
+            // Hide "Try Me" tooltip after first interaction
+            const tooltip = document.querySelector('#hero-switch-container .nav-glass');
+            if (tooltip) {
+                tooltip.style.transition = 'opacity 0.3s ease';
+                tooltip.style.opacity = '0';
+                setTimeout(() => tooltip.remove(), 300);
+            }
 
             if (mode === 'night') {
                 nightImg.style.opacity = '1';

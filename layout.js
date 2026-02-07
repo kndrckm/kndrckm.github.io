@@ -32,7 +32,7 @@ const renderNav = (isIndexPage = false) => {
                 <i data-lucide="x" class="w-5 h-5 text-primary hidden" id="close-icon"></i>
             </button>
 
-            <a href="https://wa.me/6281390200075" target="_blank"
+            <a href="https://wa.me/6281390200075" target="_blank" rel="noopener noreferrer"
                 class="group bg-primary hover:bg-[#25D366] text-white pl-4 pr-3 md:pl-6 md:pr-5 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-1.5 md:gap-2 transition-all duration-500 hover:shadow-[0_0_25px_rgba(37,211,102,0.4)] active:scale-95 ml-2">
                 <svg class="w-3.5 h-3.5 md:w-4 md:h-4 transition-colors duration-500 fill-current group-hover:text-white"
                     viewBox="0 0 24 24">
@@ -43,7 +43,7 @@ const renderNav = (isIndexPage = false) => {
     </nav>
     
     <!-- Mobile Menu Dropdown -->
-    <div id="mobile-menu" class="fixed top-20 left-1/2 -translate-x-1/2 z-[999] w-[90%] max-w-sm hidden md:hidden">
+    <div id="mobile-menu" class="fixed top-20 left-1/2 -translate-x-1/2 z-[999] w-[90%] max-w-sm hidden md:hidden" aria-hidden="true">
         <div class="nav-glass rounded-3xl p-4 shadow-ios-deep">
             <div class="flex flex-col gap-2">
                 <a href="${linkPrefix}#scope"
@@ -96,7 +96,7 @@ const renderFooter = () => `
 
                 <div class="pt-0 flex flex-col items-center justify-center gap-6 max-w-6xl mx-auto reveal-text">
                     <div class="flex gap-6">
-                        <a href="https://linkedin.com/in/kendrick-marzuki" target="_blank"
+                <a href="https://linkedin.com/in/kendrick-marzuki" target="_blank" rel="noopener noreferrer"
                             class="flex items-center gap-3 text-white/70 hover:text-white transition-all font-black text-sm hover:scale-105">
                             <div class="p-2 rounded-xl bg-white/10 hover:bg-[#0077B5] transition-colors"><i
                                     data-lucide="linkedin" class="w-4 h-4"></i></div> LinkedIn
@@ -123,11 +123,15 @@ const initLayoutLogic = () => {
             if (isHidden) {
                 mobileMenu.classList.remove('hidden');
                 mobileMenu.classList.add('flex');
+                mobileMenu.setAttribute('aria-hidden', 'false');
+                mobileMenuBtn.setAttribute('aria-expanded', 'true');
                 menuIcon.classList.add('hidden');
                 closeIcon.classList.remove('hidden');
             } else {
                 mobileMenu.classList.add('hidden');
                 mobileMenu.classList.remove('flex');
+                mobileMenu.setAttribute('aria-hidden', 'true');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
                 menuIcon.classList.remove('hidden');
                 closeIcon.classList.add('hidden');
             }

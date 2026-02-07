@@ -5,7 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A Home | KEND.DESIGN.STUDIO</title>
-    <meta name="description" content="A Home Residential Project - KEND.DESIGN.STUDIO">
+    <meta name="description"
+        content="A Home - Accessible residence designed for multigenerational living in Bogor, Indonesia. 130 sq m Modern Tropical design.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="A Home | KEND.DESIGN.STUDIO">
+    <meta property="og:description" content="Accessible multigenerational home design in Bogor, Indonesia - 130 sq m.">
+    <meta property="og:image" content="https://kndrckm.github.io/assets/projects/ahome_1.webp">
+    <meta property="og:url" content="https://kndrckm.github.io/project-ahome.html">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="A Home | KEND.DESIGN.STUDIO">
+    <meta name="twitter:description" content="Accessible multigenerational home design in Bogor, Indonesia.">
+    <meta name="twitter:image" content="https://kndrckm.github.io/assets/projects/ahome_1.webp">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": "A Home",
+        "description": "Accessible multigenerational residence in Bogor, Indonesia",
+        "creator": {
+            "@type": "Person",
+            "name": "Kendrick Marzuki"
+        },
+        "dateCreated": "2024",
+        "locationCreated": "Bogor, Indonesia"
+    }
+    </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -185,6 +215,18 @@
         </div>
     </div>
 
+    <!-- BREADCRUMB NAVIGATION -->
+    <nav class="site-container mt-6 mb-4" aria-label="Breadcrumb">
+        <ol class="breadcrumb flex items-center gap-2 text-xs font-semibold uppercase tracking-widest">
+            <li><a href="index.html" class="text-secondary hover:text-accent transition-colors">Home</a></li>
+            <li><span class="text-secondary/50">/</span></li>
+            <li><a href="index.html#portfolio" class="text-secondary hover:text-accent transition-colors">Projects</a>
+            </li>
+            <li><span class="text-secondary/50">/</span></li>
+            <li class="text-primary font-bold">A Home</li>
+        </ol>
+    </nav>
+
     <!-- OVERLAPPING INFO CARD -->
     <section class="relative z-40 -mt-24 mb-32 reveal-text">
         <div class="site-container nav-glass rounded-[2.5rem] p-8 md:p-14">
@@ -325,6 +367,9 @@
 
     </section>
 
+    <!-- PROJECT NAVIGATION (Rendered by JS) -->
+    <div id="project-navigation"></div>
+
     <!-- CUSTOM CURSOR ELEMENT -->
     <div id="door-cursor"
         class="fixed hidden pointer-events-none z-[9999] text-white bg-black/20 backdrop-blur-md p-3 rounded-full border border-white/50 shadow-2xl transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-75">
@@ -336,6 +381,7 @@
 
     <!-- SCRIPTS -->
     <script src="layout.js"></script>
+    <script src="project-nav.js"></script>
     <script>
         initLayout(false);
 

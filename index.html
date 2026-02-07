@@ -19,6 +19,35 @@
         content="Crafting spaces that breathe. Residential & Commercial Design Studio by Kendrick Marzuki.">
     <meta property="og:url" content="https://kndrckm.github.io">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="https://kndrckm.github.io/assets/hero.webp">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="kend.design.studio">
+    <meta name="twitter:description"
+        content="Crafting spaces that breathe. Residential & Commercial Design Studio by Kendrick Marzuki.">
+    <meta name="twitter:image" content="https://kndrckm.github.io/assets/hero.webp">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "kend.design.studio",
+        "description": "Residential & Commercial Architecture and Interior Design Studio",
+        "url": "https://kndrckm.github.io",
+        "founder": {
+            "@type": "Person",
+            "name": "Kendrick Marzuki",
+            "jobTitle": "Architect",
+            "alumniOf": "Universitas Gadjah Mada"
+        },
+        "areaServed": "Indonesia",
+        "serviceType": ["Architecture", "Interior Design", "Residential Design", "Commercial Design"]
+    }
+    </script>
 
     <link rel="icon" type="image/png" href="assets/KM-icon.png">
     <link rel="apple-touch-icon" href="assets/KM-icon.png">
@@ -28,8 +57,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -298,14 +325,16 @@
         <div class="w-full h-full">
             <div id="hero-spotlight-container" class="hero-container sticky top-0 h-screen overflow-hidden group">
 
-                <div id="video-wrapper" class="absolute inset-0 w-full h-full">
-                    <video id="hero-img" autoplay muted playsinline poster="assets/hero.webp"
-                        class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-[0.6] z-10">
+                <div id="video-wrapper" class="absolute inset-0 w-full h-full video-loading">
+                    <video id="hero-img" autoplay muted playsinline poster="assets/hero.webp" loading="lazy"
+                        class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-[0.6] z-10"
+                        aria-label="Architectural showcase video of KEND Design Studio projects">
                         <source src="assets/hero.mp4" type="video/mp4">
                     </video>
 
-                    <video id="hero-img-next" muted playsinline preload="auto"
-                        class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-[0.6] opacity-0 z-0">
+                    <video id="hero-img-next" muted playsinline preload="none" loading="lazy"
+                        class="absolute top-0 w-full h-[120vh] object-cover transition-transform duration-75 ease-out will-change-transform scale-[1.2] brightness-[0.6] opacity-0 z-0"
+                        aria-label="Secondary architectural showcase video">
                         <source src="assets/hero2.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -327,20 +356,34 @@
             <div class="fixed inset-0 flex flex-col justify-end pb-12 md:pb-20 z-0 pointer-events-none">
                 <div id="hero-foreground" style="visibility: hidden; opacity: 0;"
                     class="select-none w-[88%] md:w-[90%] 2xl:w-[85%] max-w-[1800px] mx-auto pointer-events-auto will-change-transform">
-                    <div class="flex items-center gap-4 mb-4">
-                        <span class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential
-                            & Commercial Design</span>
-                        <div class="h-[3px] w-12 md:w-24 bg-white"></div>
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 w-full">
+                        <div class="flex-1 min-w-0 md:pr-8">
+                            <div class="flex items-center gap-4 mb-4">
+                                <span
+                                    class="text-[12px] md:text-sm font-bold tracking-[0.1em] text-white uppercase">Residential
+                                    & Commercial Design</span>
+                                <div class="h-[3px] w-12 md:w-24 bg-white"></div>
+                            </div>
+                            <h1
+                                class="text-[11vw] sm:text-[9vw] md:text-[7vw] lg:text-[6rem] font-extrabold leading-[0.8] tracking-tighter uppercase mb-6">
+                                <span class="text-white">KEND</span><span class="text-white/40">.</span><span
+                                    class="text-white">DESIGN</span><span class="text-white/40">.</span>
+                                <span class="block text-white/40 tracking-[-0.04em]">STUDIO</span>
+                            </h1>
+                            <p id="hero-para"
+                                class="text-white/60 text-base md:text-lg max-w-2xl font-medium leading-relaxed mb-0">
+                                Crafting spaces that breathe. Where light meets structure and form follows emotion.
+                            </p>
+                        </div>
+                        <a href="project-kavling12.html"
+                            class="group shrink-0 inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 hover:scale-105 md:mb-1">
+                            View Featured Project
+                            <div
+                                class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-accent group-hover:rotate-45">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </div>
+                        </a>
                     </div>
-                    <h1
-                        class="text-[11vw] sm:text-[9vw] md:text-[7vw] lg:text-[6rem] font-extrabold leading-[0.8] tracking-tighter uppercase mb-6">
-                        <span class="text-white">KEND</span><span class="text-white/40">.</span><span
-                            class="text-white">DESIGN</span><span class="text-white/40">.</span>
-                        <span class="block text-white/40 tracking-[-0.04em]">STUDIO</span>
-                    </h1>
-                    <p id="hero-para" class="text-white/60 text-base md:text-lg max-w-2xl font-medium leading-relaxed">
-                        Crafting spaces that breathe. Where light meets structure and form follows emotion.
-                    </p>
                 </div>
             </div>
         </div>
@@ -363,7 +406,8 @@
                 <div
                     class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer reveal-text">
                     <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1200"
-                        class="absolute inset-0 w-full h-full object-cover" alt="Residential">
+                        class="absolute inset-0 w-full h-full object-cover"
+                        alt="Modern residential interior with warm lighting and elegant furniture design">
 
                     <div class="absolute inset-0 bg-black/50"></div>
 
@@ -382,7 +426,8 @@
                 <div
                     class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer reveal-text">
                     <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200"
-                        class="absolute inset-0 w-full h-full object-cover" alt="Commercial">
+                        class="absolute inset-0 w-full h-full object-cover"
+                        alt="Contemporary commercial building with glass facade and modern architecture">
 
                     <div class="absolute inset-0 bg-black/50"></div>
 
@@ -401,7 +446,8 @@
                 <div
                     class="relative w-full h-[200px] md:h-[240px] rounded-[2rem] overflow-hidden shadow-ios-card hover:shadow-ios-deep hover:scale-[1.02] transition-all duration-500 cursor-pointer reveal-text">
                     <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200"
-                        class="absolute inset-0 w-full h-full object-cover" alt="Interior">
+                        class="absolute inset-0 w-full h-full object-cover"
+                        alt="Elegant interior design with curated furniture and natural lighting">
 
                     <div class="absolute inset-0 bg-black/50"></div>
 
@@ -435,12 +481,12 @@
                 </div>
 
                 <div class="hidden shrink-0 gap-3 md:flex">
-                    <button id="prev-slide"
-                        class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95">
+                    <button id="prev-slide" aria-label="Previous project slide"
+                        class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">
                         <i data-lucide="arrow-left" class="w-6 h-6"></i>
                     </button>
-                    <button id="next-slide"
-                        class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95">
+                    <button id="next-slide" aria-label="Next project slide"
+                        class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition-all duration-300 disabled:opacity-30 active:scale-95 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">
                         <i data-lucide="arrow-right" class="w-6 h-6"></i>
                     </button>
                 </div>
@@ -450,6 +496,14 @@
 
         <!-- Full-width carousel section outside container -->
         <div class="w-full relative overflow-hidden">
+
+            <!-- Carousel Fade Edge Hints -->
+            <div
+                class="carousel-fade-left absolute top-0 bottom-0 left-0 w-20 bg-gradient-to-r from-[#EDEFF2] to-transparent z-20 pointer-events-none">
+            </div>
+            <div
+                class="carousel-fade-right absolute top-0 bottom-0 right-0 w-20 bg-gradient-to-l from-[#EDEFF2] to-transparent z-20 pointer-events-none">
+            </div>
 
             <div id="project-carousel"
                 class="flex flex-col overflow-x-auto scroll-smooth no-scrollbar pb-8 reveal-text">
@@ -470,6 +524,18 @@
                         <div class="skeleton shrink-0 w-[280px] md:w-[350px] h-full"></div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Mobile Navigation Buttons (Float at bottom) -->
+            <div class="flex md:hidden justify-center gap-4 mt-2 mb-8 sticky bottom-6 z-30 pointer-events-none">
+                <button id="prev-slide-mobile" aria-label="Previous project slide"
+                    class="p-4 bg-white/80 backdrop-blur-md rounded-full shadow-lg text-primary pointer-events-auto active:scale-95 transition-transform border border-white/20">
+                    <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                </button>
+                <button id="next-slide-mobile" aria-label="Next project slide"
+                    class="p-4 bg-white/80 backdrop-blur-md rounded-full shadow-lg text-primary pointer-events-auto active:scale-95 transition-transform border border-white/20">
+                    <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                </button>
             </div>
 
             <div class="site-container">
@@ -766,21 +832,6 @@
 
         window.addEventListener('load', initScrollReveal);
         window.initScrollReveal = initScrollReveal;
-
-        // 9. INIT PANNELLUM 360
-        window.addEventListener('load', () => {
-            // Delay slightly to ensure layout is capable
-            setTimeout(() => {
-                pannellum.viewer('panorama-1', {
-                    "type": "equirectangular",
-                    "panorama": "https://pannellum.org/images/alma.jpg",
-                    "autoLoad": true,
-                    "autoRotate": -2,
-                    "compass": false,
-                    "showControls": true
-                });
-            }, 500);
-        });
 
     </script>
 

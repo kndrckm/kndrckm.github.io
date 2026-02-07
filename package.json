@@ -1,0 +1,12 @@
+{
+    "name": "kend-design-studio",
+    "version": "1.0.0",
+    "description": "KEND.DESIGN.STUDIO Portfolio Website",
+    "scripts": {
+        "dev": "npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+        "build": "npx tailwindcss -i ./src/input.css -o ./dist/output.css --minify"
+    },
+    "devDependencies": {
+        "tailwindcss": "^3.4.0"
+    }
+}
