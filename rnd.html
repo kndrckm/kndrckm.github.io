@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Comparison Tool (RND)</title>
+    <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #3b82f6;
+            --border-color: #333;
+            --drop-zone-bg: #2d2d2d;
+            --drop-zone-hover: #3d3d3d;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            padding: 1rem;
+            background-color: #252526;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            margin-right: auto;
+        }
+
+        .drop-zones {
+            display: flex;
+            gap: 10px;
+        }
+
+        .drop-zone {
+            width: 200px;
+            height: 60px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--drop-zone-bg);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            background-color: var(--drop-zone-hover);
+            border-color: var(--accent-color);
+        }
+
+        .drop-zone span {
+            font-size: 0.9rem;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        .drop-zone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .drop-zone img.preview {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: 1px solid #444;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            background-color: #444;
+        }
+
+        /* Viewer */
+        #viewer-container {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            background-color: #111;
+            /* Grid pattern for transparency */
+            background-image: linear-gradient(45deg, #222 25%, transparent 25%),
+                linear-gradient(-45deg, #222 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #222 75%),
+                linear-gradient(-45deg, transparent 75%, #222 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            cursor: grab;
+        }
+
+        #viewer-container.grabbing {
+            cursor: grabbing;
+        }
+
+        /* Layers */
+        .layer-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            /* Let events pass through to container for panning */
+        }
+
+        .image-content {
+            transform-origin: center center;
+            /* Will be set by JS */
+            max-width: none;
+            max-height: none;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Bottom Layer (Image 2 - Right) */
+        #layer-right {
+            z-index: 1;
+        }
+
+        /* Top Layer (Image 1 - Left) - Clipped */
+        #clipper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            /* Initial slider pos */
+            height: 100%;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        #layer-left {
+            width: 200vw;
+            /* Ensure it covers full width even when clipped */
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* The logic for layer-left needs to be: 
+           It must match layer-right exactly in position.
+           Since #clipper cuts the width, #layer-left is inside #clipper.
+           If #clipper is 50% width, #layer-left content needs to be offset? 
+           No, if #layer-left is fixed relative to viewport or ...
+           
+           Better approach for JS sync:
+           Both images are absolute centered.
+           #clipper is absolute, left:0, top:0, bottom:0, width: 50%.
+           Inside #clipper, #layer-left is FIXED relative to the viewer container? 
+           No, relative to clipper.
+           So #layer-left needs margin-left: k * width? No.
+           
+           If I pan the image, 'transform: translate(x,y)' is applied.
+           If #layer-left is inside #clipper, and I apply transform, it moves relative to #clipper.
+           Since #clipper is fixed at left:0, it works fine!
+           The only catch is the "center" of the image.
+           
+           Actually, let's use a simple trick:
+           #layer-right is width:100%, height:100% of viewer. Flex center img.
+           #clipper is width: 50%, left:0.
+           #layer-left is width: 100% OF VIEWER.
+           Use width: 100vw (or calc 100% of container width in JS) on #layer-left?
+           
+           Correction:
+           Make #layer-left have width equal to the viewer container width (e.g. 100%).
+           Since it is inside #clipper (which is 50%), it will overflow #clipper.
+           We just need to make sure #layer-left has the exact same dimensions and position as #layer-right.
+           So width: 200% (if clipper is 50%)? No, that changes as slider moves.
+           
+           Solution:
+           Set #layer-left width to 100vw (viewport width) or calculate dynamically?
+           Better: Use JS to set width of #layer-left to the container width. 
+           Or just use `width: 100vw; height: 100vh;` and assume full screen app?
+           This is an "internal html" flex app.
+           Let's use `width: 100%` on both layers, but for #layer-left inside #clipper,
+           we set `width` to `100 / (clipperWidth%) * 100 %`. 
+           Or simplified: 
+           Make #layer-left `position: fixed`? No.
+           
+           Let's go with the `clip-path` approach on a single full-width container for the top layer.
+           Much easier.
+        */
+
+        #layer-left-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            /* Clip path will be set by JS */
+            clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+        }
+
+        /* Slider Handle */
+        #slider-handle {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent-color);
+            cursor: col-resize;
+            z-index: 10;
+            margin-left: -2px;
+            /* center it */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #slider-handle::after {
+            content: '< >';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--accent-color);
+            color: white;
+            padding: 5px 2px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .helper-text {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            pointer-events: none;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>ImgCompare RND</h1>
+        <div class="drop-zones">
+            <label class="drop-zone" id="drop-left">
+                <span>Left Image (Top)</span>
+                <input type="file" accept="image/*" id="input-left">
+            </label>
+            <label class="drop-zone" id="drop-right">
+                <span>Right Image (Bottom)</span>
+                <input type="file" accept="image/*" id="input-right">
+            </label>
+        </div>
+        <div class="controls">
+            <button id="btn-reset">Reset View</button>
+            <button id="btn-fit">Fit Screen</button>
+        </div>
+    </header>
+
+    <div id="viewer-container">
+        <!-- Bottom Layer (Right Image) -->
+        <div id="layer-right" class="layer-container">
+            <img src="" alt="" class="image-content" id="img-right" style="display:none;">
+        </div>
+
+        <!-- Top Layer (Left Image) - Clipped -->
+        <div id="layer-left-container" class="layer-container">
+            <div class="layer-container"> <!-- Nested to match structure if needed, or just img -->
+                <img src="" alt="" class="image-content" id="img-left" style="display:none;">
+            </div>
+        </div>
+
+        <!-- Slider -->
+        <div id="slider-handle"></div>
+
+        <div class="helper-text" id="status-text">Zoom: Scroll | Pan: Drag | Compare: Slide</div>
+    </div>
+
+    <script>
+        // Elements
+        const container = document.getElementById('viewer-container');
+        const slider = document.getElementById('slider-handle');
+        const layerLeftContainer = document.getElementById('layer-left-container');
+        const imgLeft = document.getElementById('img-left');
+        const imgRight = document.getElementById('img-right');
+        const dropLeft = document.getElementById('drop-left');
+        const dropRight = document.getElementById('drop-right');
+        const inputLeft = document.getElementById('input-left');
+        const inputRight = document.getElementById('input-right');
+        const btnReset = document.getElementById('btn-reset');
+        const btnFit = document.getElementById('btn-fit');
+
+        // State
+        let sliderPos = 50; // percentage
+        let isDraggingSlider = false;
+        let isPanning = false;
+        let startPanX = 0;
+        let startPanY = 0;
+
+        // Transform State
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+
+        // --- Image Loading Logic ---
+
+        function handleFile(file, imgElement, dropZone) {
+            if (!file || !file.type.startsWith('image/')) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgElement.src = e.target.result;
+                imgElement.style.display = 'block';
+
+                // Allow checking native size for fit
+                imgElement.onload = () => {
+                    // If this is the first image loaded, or we want to auto fit? 
+                    // Let's just center.
+                };
+
+                // Update drop zone preview
+                let prev = dropZone.querySelector('.preview');
+                if (!prev) {
+                    prev = document.createElement('img');
+                    prev.className = 'preview';
+                    dropZone.appendChild(prev);
+                }
+                prev.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        [inputLeft, inputRight].forEach((input, idx) => {
+            input.addEventListener('change', (e) => {
+                const img = idx === 0 ? imgLeft : imgRight;
+                const drop = idx === 0 ? dropLeft : dropRight;
+                if (e.target.files[0]) handleFile(e.target.files[0], img, drop);
+            });
+        });
+
+        // Drag and Drop styles
+        [dropLeft, dropRight].forEach((zone, idx) => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+            zone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+            });
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                const img = idx === 0 ? imgLeft : imgRight;
+                if (file) handleFile(file, img, zone);
+            });
+        });
+
+        // --- Slider Logic ---
+
+        function updateSlider(percent) {
+            sliderPos = Math.max(0, Math.min(100, percent));
+            slider.style.left = sliderPos + '%';
+            layerLeftContainer.style.clipPath = `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)`;
+        }
+
+        slider.addEventListener('mousedown', (e) => {
+            isDraggingSlider = true;
+            e.preventDefault(); // Prevent text selection
+            e.stopPropagation(); // Prevent panning start
+        });
+
+        // --- Pan & Zoom Logic ---
+
+        function updateTransform() {
+            const transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            imgLeft.style.transform = transform;
+            imgRight.style.transform = transform;
+        }
+
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+
+            const zoomSpeed = 0.1;
+            const newScale = e.deltaY > 0 ? scale * (1 - zoomSpeed) : scale * (1 + zoomSpeed);
+
+            // Limit zoom
+            if (newScale < 0.1 || newScale > 20) return;
+
+            // Zoom towards mouse pointer
+            const rect = container.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const offsetY = e.clientY - rect.top;
+
+            // Calculate how much the transform origin moves in the new scale
+            // Formula: newTranslate = oldTranslate - (mouseOffset - oldTranslate) * (scaleRatio - 1)
+            // Actually, simpler standard zoom-at-point logic:
+            // (offsetX - translateX) / scale = point in image
+            // newTranslateX = offsetX - pointInImage * newScale
+
+            const pointX = (offsetX - translateX) / scale;
+            const pointY = (offsetY - translateY) / scale;
+
+            translateX = offsetX - pointX * newScale;
+            translateY = offsetY - pointY * newScale;
+            scale = newScale;
+
+            updateTransform();
+        });
+
+        container.addEventListener('mousedown', (e) => {
+            if (isDraggingSlider) return;
+            isPanning = true;
+            startPanX = e.clientX - translateX;
+            startPanY = e.clientY - translateY;
+            container.classList.add('grabbing');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDraggingSlider) {
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percent = (x / rect.width) * 100;
+                updateSlider(percent);
+            } else if (isPanning) {
+                translateX = e.clientX - startPanX;
+                translateY = e.clientY - startPanY;
+                updateTransform();
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDraggingSlider = false;
+            isPanning = false;
+            container.classList.remove('grabbing');
+        });
+
+        // --- Buttons ---
+
+        btnReset.addEventListener('click', () => {
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateTransform();
+            updateSlider(50);
+        });
+
+        btnFit.addEventListener('click', () => {
+            // Simple fit: detect natural size of image and container size
+            // For now, reset to scale 1 (assuming images are large) or scale to fit container?
+            // Let's just do a "Fit Inside" using object-fit logic manually on scale
+            if (!imgRight.naturalWidth) return;
+
+            const rect = container.getBoundingClientRect();
+            const scaleX = rect.width / imgRight.naturalWidth;
+            const scaleY = rect.height / imgRight.naturalHeight;
+
+            // Fit contain
+            scale = Math.min(scaleX, scaleY) * 0.9;
+
+            // Center
+            translateX = (rect.width - imgRight.naturalWidth * scale) / 2;
+            translateY = (rect.height - imgRight.naturalHeight * scale) / 2;
+
+            updateTransform();
+        });
+
+        // Handle Image Loading Size (to center initially properly if needed)
+        // We already use CSS flex center, so at scale 1, translateX 0, it should be centered if image is smaller than container?
+        // Actually, CSS says `max-width: none`. It will be natural size.
+        // Flex center in .layer-container will center the 0x0 point? No.
+        // The images are huge.
+        // Let's rely on standard flow. `display: flex; justify-content: center; align-items: center;`
+        // If the image is 2000px wide, it will overflow the center.
+        // The transform is applied to the image element.
+        // CSS Transform Origin is key. Default is 50% 50%.
+        // So if scale is 1, it stays centered.
+        // Panning modifies translate X/Y.
+        // This should work fine.
+
+    </script>
+
+</body>
+
+</html>
