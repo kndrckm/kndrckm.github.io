@@ -137,3 +137,189 @@ body {
 .project-gradient {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0) 100%);
 }
+
+/* --- MIGRATED FROM INDEX.HTML --- */
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Scrollbar fade effect classes */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+html.scrollbar-hidden::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+html.scrollbar-visible::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+html.scrollbar-hidden {
+  scrollbar-color: transparent transparent;
+}
+
+html.scrollbar-visible {
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+/* Make scrollbar completely transparent when hidden */
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-button {
+  background: transparent !important;
+}
+
+/* Utils */
+.apple-corners-full {
+  border-radius: 32px;
+  overflow: hidden;
+}
+
+@media (min-width: 810px) {
+  .apple-corners-full {
+    border-radius: 40px;
+  }
+}
+
+/* Navigation Utils */
+.nav-fixed {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: fit-content;
+}
+
+/* CV Expand */
+.exp-details {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 1023px) {
+  .exp-details {
+    max-height: 1000px;
+    opacity: 1;
+    margin-top: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .is-revealed .exp-details {
+    max-height: 1000px;
+    opacity: 1;
+    margin-top: 1.5rem;
+  }
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    height: 750px;
+  }
+}
+
+.bento-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;
+}
+
+@media (max-width: 1023px) {
+  .bento-col {
+    height: 800px;
+  }
+}
+
+.bento-card {
+  flex: 1;
+  position: relative;
+  border-radius: 2rem;
+  overflow: hidden;
+  transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
+  cursor: pointer;
+  min-height: 150px;
+}
+
+@media (min-width: 1024px) {
+  .bento-card:hover {
+    flex: 3;
+  }
+
+  .bento-col:hover .bento-card:not(:hover) {
+    filter: brightness(0.9);
+  }
+}
+
+/* Skeleton */
+.skeleton {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 1.5rem;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Global Cursor */
+body.no-cursor,
+body.no-cursor * {
+  cursor: none !important;
+}
+
+#custom-cursor {
+  pointer-events: none;
+  z-index: 999999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.05s linear;
+}
+
+.cursor-card-offset-right {
+  transform: translate(40px, -50%);
+}
+
+.cursor-card-offset-left {
+  transform: translate(calc(-100% - 40px), -50%);
+}

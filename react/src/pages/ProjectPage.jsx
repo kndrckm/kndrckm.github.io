@@ -87,8 +87,7 @@ export default function ProjectPage({ slug, onHomeClick, skipHeroAnimation }) {
         // Init Lucide icons
         if (window.lucide) window.lucide.createIcons();
 
-        // Scroll to top
-        window.scrollTo(0, 0);
+        // Note: No window.scrollTo - the overlay container handles scroll position
 
         // Reveal animation
         const observer = new IntersectionObserver((entries, obs) => {
