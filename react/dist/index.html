@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kend.design.studio</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="kend.design.studio architecture & interior design portfolio, based in indonesia">
+  <meta name="keywords"
+    content="kend.design.studio, architecture, interior design, residential design, commercial design, Indonesia, Kendrick Marzuki, portfolio, architect">
+  <meta name="author" content="Kendrick Marzuki">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph (Facebook/LinkedIn) -->
+  <meta property="og:title" content="kend.design.studio">
+  <meta property="og:description"
+    content="Crafting spaces that breathe. Residential & Commercial Design Studio by Kendrick Marzuki.">
+  <meta property="og:url" content="https://kndrckm.github.io">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" type="image/png" href="/react/assets/KM-icon.png">
+  <link rel="apple-touch-icon" href="/react/assets/KM-icon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Pannellum 360 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+
+  <script type="module" crossorigin src="/react/assets/index-BlBukkUL.js"></script>
+  <link rel="stylesheet" crossorigin href="/react/assets/index-D-Q8fF2G.css">
+</head>
+
+<body class="font-sans antialiased">
+  <div id="root"></div>
+
+  <!-- Instagram-style scrollbar fade -->
+  <script>
+    (function () {
+      let scrollTimeout;
+      const html = document.documentElement;
+
+      // Start hidden
+      html.classList.add('scrollbar-hidden');
+
+      function showScrollbar() {
+        html.classList.remove('scrollbar-hidden');
+        html.classList.add('scrollbar-visible');
+      }
+
+      function hideScrollbar() {
+        html.classList.remove('scrollbar-visible');
+        html.classList.add('scrollbar-hidden');
+      }
+
+      window.addEventListener('scroll', function () {
+        showScrollbar();
+
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(hideScrollbar, 1000);
+      }, { passive: true });
+
+      // Also show on mouse move near right edge
+      document.addEventListener('mousemove', function (e) {
+        if (window.innerWidth - e.clientX < 30) {
+          showScrollbar();
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(hideScrollbar, 1500);
+        }
+      }, { passive: true });
+    })();
+  </script>
+</body>
+
+</html>
