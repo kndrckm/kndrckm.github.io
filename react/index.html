@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kend.design.studio</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="kend.design.studio architecture & interior design portfolio, based in indonesia">
+  <meta name="keywords"
+    content="kend.design.studio, architecture, interior design, residential design, commercial design, Indonesia, Kendrick Marzuki, portfolio, architect">
+  <meta name="author" content="Kendrick Marzuki">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph (Facebook/LinkedIn) -->
+  <meta property="og:title" content="kend.design.studio">
+  <meta property="og:description"
+    content="Crafting spaces that breathe. Residential & Commercial Design Studio by Kendrick Marzuki.">
+  <meta property="og:url" content="https://kndrckm.github.io">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" type="image/png" href="/assets/KM-icon.png">
+  <link rel="apple-touch-icon" href="/assets/KM-icon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Pannellum 360 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Global Frame Background */
+    body {
+      background-color: #EDEFF2;
+      margin: 0;
+      color: #1D1D1F;
+      overflow-x: hidden;
+    }
+
+    /* Make scrollbar completely transparent when hidden */
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-corner,
+    ::-webkit-scrollbar-button {
+      background: transparent !important;
+    }
+
+    /* Universal Site Container */
+    .site-container {
+      margin-left: auto;
+      margin-right: auto;
+      width: 88%;
+      max-width: 100%;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 810px) {
+      .site-container {
+        width: 90%;
+        max-width: none;
+      }
+    }
+
+    @media (min-width: 1600px) {
+      .site-container {
+        max-width: 1800px;
+        width: 85%;
+      }
+    }
+
+    /* Hero Container */
+    .hero-container {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .apple-corners-full {
+      border-radius: 32px;
+      overflow: hidden;
+    }
+
+    @media (min-width: 810px) {
+      .apple-corners-full {
+        border-radius: 40px;
+      }
+    }
+
+    /* Reveal Animation */
+    .reveal-text {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .reveal-text.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-text.revealed-no-anim {
+      transition: none !important;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Navigation */
+    .nav-fixed {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      width: fit-content;
+    }
+
+    .nav-glass {
+      background: rgba(255, 255, 255, 0.70);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .nav-glass:hover,
+    .nav-glass:active {
+      transform: scale(1.01);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Footer Animation */
+    @keyframes mesh-float {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .vision-mesh-animated {
+      background: linear-gradient(-45deg, #1D1D1F, #2D1B4D, #161617, #001A33);
+      background-size: 400% 400%;
+      animation: mesh-float 15s ease infinite;
+    }
+
+    #scroll-overlay {
+      background-color: #000000;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* CV Expand */
+    .exp-details {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @media (max-width: 1023px) {
+      .exp-details {
+        max-height: 1000px;
+        opacity: 1;
+        margin-top: 1.5rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .is-revealed .exp-details {
+        max-height: 1000px;
+        opacity: 1;
+        margin-top: 1.5rem;
+      }
+    }
+
+    /* Bento Grid */
+    .bento-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        height: 750px;
+      }
+    }
+
+    .bento-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      height: 100%;
+    }
+
+    @media (max-width: 1023px) {
+      .bento-col {
+        height: 800px;
+      }
+    }
+
+    .bento-card {
+      flex: 1;
+      position: relative;
+      border-radius: 2rem;
+      overflow: hidden;
+      transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease;
+      cursor: pointer;
+      min-height: 150px;
+    }
+
+    @media (min-width: 1024px) {
+      .bento-card:hover {
+        flex: 3;
+      }
+
+      .bento-col:hover .bento-card:not(:hover) {
+        filter: brightness(0.9);
+      }
+    }
+
+    .project-gradient {
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    /* Hide scrollbar */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s infinite;
+      border-radius: 1.5rem;
+    }
+
+    @keyframes skeleton-shimmer {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* Hero Pop Animation */
+    @keyframes pop-in {
+      0% {
+        opacity: 0;
+        transform: scale(0.96) translateY(20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .animate-pop {
+      animation: pop-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+
+    /* Global Cursor */
+    body.no-cursor,
+    body.no-cursor * {
+      cursor: none !important;
+    }
+
+    #custom-cursor {
+      pointer-events: none;
+      z-index: 999999;
+      position: fixed;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.05s linear;
+    }
+
+    .cursor-card-offset-right {
+      transform: translate(40px, -50%);
+    }
+
+    .cursor-card-offset-left {
+      transform: translate(calc(-100% - 40px), -50%);
+    }
+
+    /* Instagram-style Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Scrollbar fade effect */
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+    }
+
+    html.scrollbar-hidden::-webkit-scrollbar-thumb {
+      background: transparent;
+    }
+
+    html.scrollbar-visible::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    html.scrollbar-hidden {
+      scrollbar-color: transparent transparent;
+    }
+
+    html.scrollbar-visible {
+      scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+    }
+  </style>
+</head>
+
+<body class="font-sans antialiased">
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+
+  <!-- Instagram-style scrollbar fade -->
+  <script>
+    (function () {
+      let scrollTimeout;
+      const html = document.documentElement;
+
+      // Start hidden
+      html.classList.add('scrollbar-hidden');
+
+      function showScrollbar() {
+        html.classList.remove('scrollbar-hidden');
+        html.classList.add('scrollbar-visible');
+      }
+
+      function hideScrollbar() {
+        html.classList.remove('scrollbar-visible');
+        html.classList.add('scrollbar-hidden');
+      }
+
+      window.addEventListener('scroll', function () {
+        showScrollbar();
+
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(hideScrollbar, 1000);
+      }, { passive: true });
+
+      // Also show on mouse move near right edge
+      document.addEventListener('mousemove', function (e) {
+        if (window.innerWidth - e.clientX < 30) {
+          showScrollbar();
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(hideScrollbar, 1500);
+        }
+      }, { passive: true });
+    })();
+  </script>
+</body>
+
+</html>

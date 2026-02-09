@@ -1,0 +1,15 @@
+127.0.0.1 - - [05/Feb/2026 08:45:17] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 08:45:17] "GET /cv-data.js HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 08:45:17] "GET /assets/hero.webp HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 08:45:18] "GET /projects-data.js HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 08:45:19] "GET /assets/hero.mp4 HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 08:45:19] "GET /assets/hero2.mp4 HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 08:45:19] "GET /assets/apartment_1.webp HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 09:04:01] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 09:04:02] "GET /assets/hero.webp HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 09:04:02] "GET /cv-data.js HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 09:04:02] "GET /projects-data.js HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 09:04:03] "GET /assets/hero.mp4 HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 09:04:03] "GET /assets/hero2.mp4 HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 09:04:03] "GET /assets/apartment_1.webp HTTP/1.1" 200 -
+127.0.0.1 - - [05/Feb/2026 09:04:06] "GET /index.html HTTP/1.1" 304 -

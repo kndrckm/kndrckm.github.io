@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kend.design.studio (SPA Demo)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="cv-data.js"></script>
+    <script src="projects-data.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { primary: '#1D1D1F', secondary: '#6E6E73', accent: '#007AFF', 'azure-light': '#F5F7FA' },
+                    boxShadow: { 'ios-deep': '0 30px 60px -12px rgba(0,0,0,0.4)', 'floating': '0 30px 60px -15px rgba(0,0,0,0.1)' },
+                    keyframes: {
+                        'wiggle-vertical': { '0%, 100%': { transform: 'translateY(-50%)' }, '25%': { transform: 'translateY(calc(-50% - 5px))' }, '75%': { transform: 'translateY(calc(-50% + 5px))' } }
+                    },
+                    animation: { 'wiggle-scroll': 'wiggle-vertical 0.5s ease-in-out' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #EDEFF2;
+            margin: 0;
+            color: #1D1D1F;
+            overflow-x: hidden;
+        }
+
+        .site-container {
+            margin: 0 auto;
+            width: 88%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        @media (min-width: 810px) {
+            .site-container {
+                width: 90%;
+                max-width: none;
+            }
+        }
+
+        @media (min-width: 1600px) {
+            .site-container {
+                max-width: 1800px;
+                width: 85%;
+            }
+        }
+
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .reveal-text.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.70);
+            backdrop-filter: blur(20px);
+            border: 1.5px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-container {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .animate-pop {
+            animation: pop-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        @keyframes pop-in {
+            0% {
+                opacity: 0;
+                transform: scale(0.96) translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased">
+    <div id="layout-nav"></div>
+
+    <main id="app-root">
+        <!-- VIEW: LANDING -->
+        <div id="view-landing">
+            <section id="hero" class="relative w-full h-[100vh] bg-[#EDEFF2]">
+                <div class="w-full h-full">
+                    <div id="hero-spotlight-container"
+                        class="hero-container sticky top-0 h-screen overflow-hidden group">
+                        <div class="absolute inset-0 w-full h-full">
+                            <video id="hero-img" autoplay muted playsinline loop poster="assets/hero.webp"
+                                class="absolute top-0 w-full h-[120vh] object-cover scale-[1.2] brightness-[0.6] z-10">
+                                <source src="assets/hero.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <canvas id="hero-spotlight-canvas"
+                            class="absolute inset-0 w-full h-full z-30 pointer-events-none mix-blend-overlay"></canvas>
+                    </div>
+                    <div class="fixed inset-0 flex flex-col justify-end pb-12 md:pb-20 z-0 pointer-events-none">
+                        <div id="hero-foreground" class="select-none w-[88%] md:w-[90%] mx-auto pointer-events-auto">
+                            <h1
+                                class="text-[11vw] sm:text-[9vw] md:text-[7vw] lg:text-[6rem] font-extrabold leading-[0.8] tracking-tighter uppercase mb-6">
+                                <span class="text-white">KEND</span><span class="text-white">.DESIGN</span></h1>
+                            <p class="text-white/60 text-base md:text-lg max-w-2xl font-medium leading-relaxed">Single
+                                Page Application Demo.<br>Click cards below to load content instantly.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="portfolio" class="relative z-10 bg-[#EDEFF2] pt-24 pb-24">
+                <div class="site-container mb-10">
+                    <h2 class="text-4xl md:text-6xl font-black text-primary tracking-tight uppercase">Featured Projects
+                    </h2>
+                </div>
+                <div id="project-carousel" class="flex flex-col overflow-x-auto pb-8"></div>
+            </section>
+        </div>
+
+        <!-- VIEW: PROJECT (Dynamic) -->
+        <div id="view-project" class="hidden min-h-screen bg-[#F2F4F8] pt-32 pb-20">
+            <div id="project-content-injector"></div>
+        </div>
+    </main>
+
+    <div id="layout-footer"></div>
+
+    <!-- TEMPLATES -->
+
+    <!-- TEMPLATE: A HOME -->
+    <template id="tmpl-ahome">
+        <div
+            class="animate-pop relative w-[96%] mx-auto mt-4 h-[85vh] md:h-[92vh] rounded-[2.5rem] overflow-hidden shadow-floating group">
+            <img src="assets/projects/ahome_2.webp"
+                class="absolute inset-0 w-full h-full object-cover object-center z-10 select-none">
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-20 pointer-events-none">
+            </div>
+            <div class="absolute bottom-32 md:bottom-40 w-full z-30 pointer-events-none">
+                <div class="w-[91.66%] md:w-[93.75%] 2xl:w-[88.54%] max-w-[1800px] mx-auto">
+                    <h1
+                        class="text-[10vw] md:text-[6.5vw] font-black text-white tracking-tighter leading-none reveal-text">
+                        A <span class="text-white/80">Home</span></h1>
+                </div>
+            </div>
+        </div>
+        <section class="relative z-40 -mt-24 mb-32 reveal-text">
+            <div class="site-container nav-glass rounded-[2.5rem] p-8 md:p-14">
+                <div class="grid grid-cols-3 gap-8 pb-12 border-b border-black/5">
+                    <div><span class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Area
+                            Size</span>
+                        <h4 class="text-lg font-bold text-primary">130 sqm</h4>
+                    </div>
+                    <div><span
+                            class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Year</span>
+                        <h4 class="text-lg font-bold text-primary">2024</h4>
+                    </div>
+                    <div><span
+                            class="block text-[10px] font-bold text-accent uppercase tracking-widest mb-2">Style</span>
+                        <h4 class="text-lg font-bold text-primary">Modern Tropical</h4>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pt-12">
+                    <div class="md:col-span-8">
+                        <p class="text-secondary leading-relaxed mb-6 text-lg">Designed to accommodate the project
+                            owner's elderly mother, this home prioritizes accessibility.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="gallery" class="site-container mb-40 reveal-text">
+            <div class="relative w-full h-[500px] md:h-[700px] rounded-[2.5rem] overflow-hidden shadow-2xl group mb-6">
+                <div id="panorama" class="w-full h-full"></div>
+                <div class="absolute top-6 left-6 z-10 pointer-events-none"><span
+                        class="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-widest text-primary shadow-sm">360°
+                        Virtual Tour</span></div>
+            </div>
+        </section>
+    </template>
+
+    <!-- TEMPLATE: KAVLING 12 -->
+    <template id="tmpl-kavling12">
+        <div
+            class="animate-pop relative w-[96%] mx-auto mt-4 h-[85vh] md:h-[92vh] rounded-[2.5rem] overflow-hidden shadow-floating group">
+            <div id="hero-switch-container"
+                class="absolute top-1/2 right-[5%] -translate-y-1/2 z-30 pointer-events-auto flex items-center gap-4">
+                <div
+                    class="relative bg-black/20 backdrop-blur-md border border-white/30 p-1 rounded-full flex flex-col justify-between shadow-2xl w-[3.5rem] h-[7.5rem] box-border">
+                    <div id="hero-knob"
+                        class="absolute left-1 w-[2.9rem] h-[2.9rem] bg-white rounded-full transition-transform duration-500 z-0 pointer-events-none">
+                    </div>
+                    <button onclick="toggleHero('day')"
+                        class="relative z-10 w-full flex-1 flex items-center justify-center -translate-y-1.5"><i
+                            id="hero-icon-day" data-lucide="sun"
+                            class="w-6 h-6 transition-all duration-300 text-primary"></i></button>
+                    <button onclick="toggleHero('night')"
+                        class="relative z-10 w-full flex-1 flex items-center justify-center translate-y-1.5"><i
+                            id="hero-icon-night" data-lucide="moon"
+                            class="w-6 h-6 transition-all duration-300 text-white/50"></i></button>
+                </div>
+            </div>
+            <img id="hero-day" src="assets/projects/kavling12_1.webp"
+                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 z-10">
+            <img id="hero-night" src="assets/projects/kavling12_2.webp"
+                class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000 z-10">
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-20 pointer-events-none">
+            </div>
+            <div class="absolute bottom-40 w-full z-30">
+                <div class="w-[90%] mx-auto">
+                    <h1 class="text-[6.5vw] font-black text-white tracking-tighter leading-none reveal-text">Kavling
+                        <span class="text-white/80">12</span></h1>
+                </div>
+            </div>
+        </div>
+        <section class="relative z-40 -mt-24 mb-32 reveal-text">
+            <div class="site-container nav-glass rounded-[2.5rem] p-14">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-12 pt-12">
+                    <div class="md:col-span-8">
+                        <h2 class="text-4xl font-bold text-accent mb-6">"A home designed to breathe."</h2>
+                        <p class="text-secondary leading-relaxed">Kavling 12 is a blank canvas allowing users to express
+                            themselves.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <script src="layout.js"></script>
+    <script>
+        const appState = { currentView: 'landing' };
+        initLayout(true);
+
+        // GLOBAL LOGIC FOR PROJECTS
+        function toggleHero(mode) {
+            const dayImg = document.getElementById('hero-day');
+            const nightImg = document.getElementById('hero-night');
+            const knob = document.getElementById('hero-knob');
+            const iconDay = document.getElementById('hero-icon-day');
+            const iconNight = document.getElementById('hero-icon-night');
+            if (!dayImg) return;
+
+            if (mode === 'night') {
+                nightImg.style.opacity = '1'; dayImg.style.opacity = '0';
+                knob.style.transform = 'translateY(4rem)';
+                iconDay.classList.add('text-white/50'); iconDay.classList.remove('text-primary');
+                iconNight.classList.add('text-primary'); iconNight.classList.remove('text-white/50');
+            } else {
+                nightImg.style.opacity = '0'; dayImg.style.opacity = '1';
+                knob.style.transform = 'translateY(0)';
+                iconDay.classList.remove('text-white/50'); iconDay.classList.add('text-primary');
+                iconNight.classList.remove('text-primary'); iconNight.classList.add('text-white/50');
+            }
+        }
+
+        // NAVIGATION HANDLER
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (!link) return;
+            const href = link.getAttribute('href');
+
+            // Map filenames to template IDs
+            const map = {
+                'project-ahome.html': 'tmpl-ahome',
+                'project-kavling12.html': 'tmpl-kavling12',
+                'project-boardinghouse.html': 'tmpl-kavling12' // Reusing kavling logic for demo
+            };
+
+            if (href && map[href]) {
+                e.preventDefault();
+                loadProjectFromTemplate(map[href]);
+            } else if (href === 'index.html' || href === '/' || (href && href.startsWith('#') && appState.currentView === 'project')) {
+                // If clicking logo or home link while in project
+                if (href !== '#gallery') { // ignore internal project anchors
+                    e.preventDefault();
+                    loadLandingView();
+                }
+            }
+        });
+
+        function loadProjectFromTemplate(tmplId) {
+            const tmpl = document.getElementById(tmplId);
+            if (!tmpl) return;
+
+            const content = tmpl.content.cloneNode(true);
+            const injector = document.getElementById('project-content-injector');
+            injector.innerHTML = '';
+            injector.appendChild(content);
+
+            document.getElementById('view-landing').classList.add('hidden');
+            document.getElementById('view-project').classList.remove('hidden');
+            appState.currentView = 'project';
+            window.scrollTo(0, 0);
+
+            // Re-init Icons
+            if (window.lucide) window.lucide.createIcons();
+
+            // Special Init for A Home Pano
+            if (tmplId === 'tmpl-ahome') {
+                setTimeout(() => {
+                    if (window.pannellum) {
+                        pannellum.viewer('panorama', {
+                            "type": "equirectangular", "panorama": "assets/projects/ahome_pano.webp",
+                            "autoLoad": true, "showControls": false
+                        });
+                    }
+                }, 100);
+            }
+
+            // Reveal Animation Trigger
+            setTimeout(() => {
+                document.querySelectorAll('.reveal-text').forEach(el => el.classList.add('revealed'));
+            }, 100);
+        }
+
+        function loadLandingView() {
+            appState.currentView = 'landing';
+            document.getElementById('view-landing').classList.remove('hidden');
+            document.getElementById('view-project').classList.add('hidden');
+            document.getElementById('project-content-injector').innerHTML = '';
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+
+</html>
