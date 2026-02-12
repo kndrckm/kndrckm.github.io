@@ -151,6 +151,21 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // --- State ---
+    const q1Options = [
+        { label: "Chill & Aesthetic: Mode 'Putri', duduk cantik, foto visual tenang", value: "A" },
+        { label: "Creative & Playful: Gerak, bikin sesuatu, main game, interaksi seru", value: "B" },
+        { label: "Explore & Culture: Jalan kaki santai, pemandangan baru, wisata budaya", value: "C" }
+    ];
+
+    const q3Options = [
+        { label: "Comfort Nusantara: Masakan Rumahan/Tradisional bumbu menyaman", value: "U" },
+        { label: "Western Meat/Pizza: Daging (Steak) atau Pizza Italia", value: "V" },
+        { label: "Rooftop City Light: Pemandangan lampu kota dari atas", value: "W" },
+        { label: "Unique Ambience: Tempat unik/tematik (Vintage/Garden/Boho)", value: "X" },
+        { label: "Festive / Street Food: Wisata kuliner jajan santai / ramai", value: "Y" },
+        { label: "Healthy & Light: Makan bersih (clean eating), sayur/plant-based", value: "Z" }
+    ];
+
     let currentStep = 0;
     let answers = { q1: "", p1Spot: null, q3: "", finalSpot: null }; // finalSpot is now object
 
@@ -168,11 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (currentStep === 0) {
             return {
                 text: "Pertama-tama... Sabtu ini energi kamu lagi condong ke mana?",
-                options: [
-                    { label: "Chill & Aesthetic: Mode 'Putri', duduk cantik, foto visual tenang", value: "A" },
-                    { label: "Creative & Playful: Gerak, bikin sesuatu, main game, interaksi seru", value: "B" },
-                    { label: "Explore & Culture: Jalan kaki santai, pemandangan baru, wisata budaya", value: "C" }
-                ],
+                options: q1Options,
                 onAnswer: (val) => {
                     answers.q1 = val;
                     currentStep = 1;
@@ -194,14 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (currentStep === 2) {
             return {
                 text: "Nah kalau buat makan, lagi pengen makanan yang gimana?",
-                options: [
-                    { label: "Comfort Nusantara: Masakan Rumahan/Tradisional bumbu menyaman", value: "U" },
-                    { label: "Western Meat/Pizza: Daging (Steak) atau Pizza Italia", value: "V" },
-                    { label: "Rooftop City Light: Pemandangan lampu kota dari atas", value: "W" },
-                    { label: "Unique Ambience: Tempat unik/tematik (Vintage/Garden/Boho)", value: "X" },
-                    { label: "Festive / Street Food: Wisata kuliner jajan santai / ramai", value: "Y" },
-                    { label: "Healthy & Light: Makan bersih (clean eating), sayur/plant-based", value: "Z" }
-                ],
+                options: q3Options,
                 onAnswer: (val) => {
                     answers.q3 = val;
                     currentStep = 3;
@@ -296,6 +300,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const timestamp = new Date().toLocaleString('id-ID');
 
+        // Retrieve User Choices for Logging
+        const choice1 = q1Options.find(o => o.value === answers.q1)?.label || answers.q1;
+        // Find Q2 label by comparing target reference. 
+        // Note: answers.p1Spot is the target object.
+        const choice2 = phase1Data[answers.q1].options.find(o => o.target === answers.p1Spot)?.label || answers.p1Spot.name;
+        const choice3 = q3Options.find(o => o.value === answers.q3)?.label || answers.q3;
+        const choice4 = answers.finalSpot.name;
+
         // Google Calendar Link
         const eventTitle = encodeURIComponent("Valentine Date ❤️");
         const eventDetails = encodeURIComponent(
@@ -349,6 +361,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const resultPayload = {
             recipient: "Monica Theresa Ken Ratri Drupadi",
+            choices: {
+                q1: choice1,
+                q2: choice2,
+                q3: choice3,
+                q4: choice4
+            },
             plan: {
                 afternoon: answers.p1Spot.name,
                 dinner: dinnerSpot.name,
@@ -375,7 +393,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        content: `💌 **Itinerary Valentine!**\n**Device:** ${deviceInfo}\n**Loc:** ${locationInfo}\n\n**🕒 15:00:** ${resultPayload.plan.afternoon}\n**🕒 18:00:** ${resultPayload.plan.dinner}\n**🕒 19:30:** ${resultPayload.plan.night}\n**🚗:** ${resultPayload.plan.route}\n\n*${timestamp}*`
+                        content: `💌 **Itinerary Valentine!**
+**Device:** ${deviceInfo}
+**Loc:** ${locationInfo}
+
+**📋 Pilihan User:**
+1. **Mood:** ${choice1}
+2. **Activity:** ${choice2}
+3. **Cravings:** ${choice3}
+4. **Closing:** ${choice4}
+
+**✨ The Result:**
+**🕒 15:00:** ${resultPayload.plan.afternoon}
+**🕒 18:00:** ${resultPayload.plan.dinner}
+**🕒 19:30:** ${resultPayload.plan.night}
+**🚗 Region:** ${resultPayload.plan.route}
+
+*${timestamp}*`
                     })
                 });
 
