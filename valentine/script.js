@@ -394,21 +394,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         content: `💌 **Itinerary Valentine!**
-**Device:** ${deviceInfo}
-**Loc:** ${locationInfo}
-
-**📋 Pilihan User:**
-1. **Mood:** ${choice1}
-2. **Activity:** ${choice2}
-3. **Cravings:** ${choice3}
-4. **Closing:** ${choice4}
-
+**Device & Loc:** ${deviceInfo}.${locationInfo}
+**📋 Pilihan User:**${choice1}, ${choice2}, ${choice3}, ${choice4}
 **✨ The Result:**
 **🕒 15:00:** ${resultPayload.plan.afternoon}
 **🕒 18:00:** ${resultPayload.plan.dinner}
 **🕒 19:30:** ${resultPayload.plan.night}
 **🚗 Region:** ${resultPayload.plan.route}
-
 *${timestamp}*`
                     })
                 });
