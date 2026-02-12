@@ -245,40 +245,51 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderCurrentStep() {
-        const progressBar = document.getElementById('progress-bar');
-        if (progressBar) {
-            const progress = ((currentStep + 1) / 4) * 100;
-            progressBar.style.width = `${progress}%`;
+        // Update Progress Bar (wrapped in requestAnimationFrame)
+        requestAnimationFrame(() => {
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                const progress = currentStep * 25;
+                progressBar.style.width = `${progress}%`;
 
-            // Floating Progress Messages
-            let msg = "";
-            if (progress === 50) msg = "2 lagi! ✌️";
-            if (progress === 75) msg = "Terakhir nih! 🏁";
+                // Floating Progress Messages
+                let msg = "";
+                if (progress === 50) msg = "2 lagi! ✌️";
+                if (progress === 75) msg = "Terakhir nih! 🏁";
 
-            if (msg) {
-                const floatMsg = document.createElement('div');
-                floatMsg.innerText = msg;
-                floatMsg.style.position = 'absolute';
-                floatMsg.style.top = '-35px';
-                floatMsg.style.right = '0';
-                floatMsg.style.background = '#8a3b3b';
-                floatMsg.style.color = 'white';
-                floatMsg.style.padding = '4px 10px';
-                floatMsg.style.borderRadius = '12px';
-                floatMsg.style.fontSize = '0.75rem';
-                floatMsg.style.fontWeight = 'bold';
-                floatMsg.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-                floatMsg.style.animation = 'floatBadge 1s ease-out';
+                if (msg) {
+                    // Check duplicate
+                    const existingMsg = progressBar.parentElement.querySelector('.float-msg');
+                    if (existingMsg && existingMsg.innerText === msg) return;
 
-                // Remove older messages
-                const oldMsg = progressBar.parentElement.querySelector('.float-msg');
-                if (oldMsg) oldMsg.remove();
+                    const floatMsg = document.createElement('div');
+                    floatMsg.innerText = msg;
+                    floatMsg.className = 'float-msg';
 
-                floatMsg.classList.add('float-msg');
-                progressBar.parentElement.style.position = 'relative';
-                progressBar.parentElement.appendChild(floatMsg);
+                    // Style
+                    Object.assign(floatMsg.style, {
+                        position: 'absolute',
+                        top: '-35px',
+                        right: '0',
+                        background: '#8a3b3b',
+                        color: 'white',
+                        padding: '4px 10px',
+                        borderRadius: '12px',
+                        fontSize: '0.75rem',
+                        fontWeight: 'bold',
+                        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                        animation: 'floatBadge 1s ease-out',
+                        zIndex: '10'
+                    });
+
+                    // Remove older messages
+                    if (existingMsg) existingMsg.remove();
+
+                    progressBar.parentElement.style.position = 'relative';
+                    progressBar.parentElement.appendChild(floatMsg);
+                }
             }
-        }
+        });
 
         const q = getNextQuestion();
         if (!q) {
@@ -304,22 +315,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function calculateAndFinish() {
+        // Animate to 100%
+        const progressBar = document.getElementById('progress-bar');
+        if (progressBar) progressBar.style.width = '100%';
+
+        await new Promise(r => setTimeout(r, 500)); // Wait for bar to fill
+
         surveyContainer.classList.add('hidden');
-
-        // Loading Screen
-        const loadingDiv = document.createElement('div');
-        loadingDiv.id = 'loading-screen';
-        loadingDiv.innerHTML = `
-            <div style="text-align: center; margin-top: 50vh; transform: translateY(-50%); color: white;">
-                <h2 style="font-family: 'Great Vibes', cursive; font-size: 2.5rem; animation: pulse 1s infinite;">Enaknya dimana yaa... 🤔</h2>
-            </div>
-        `;
-        document.body.appendChild(loadingDiv);
-
-        // Wait 2 seconds before showing final container
-        await new Promise(r => setTimeout(r, 2000));
-        loadingDiv.remove();
-
         finalContainer.classList.remove('hidden');
 
         // Logic Engine
