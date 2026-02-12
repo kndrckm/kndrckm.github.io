@@ -1,6 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add('loaded');
 
+    // --- Floating Hearts Logic ---
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.classList.add('floating-heart');
+        heart.innerText = ['❤️', '💖', '🌸', '✨', '💕', '🌹'][Math.floor(Math.random() * 6)];
+
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+        heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 7000);
+    }
+    setInterval(createHeart, 400);
+
     const openBtn = document.getElementById('open-btn');
     const invitationCard = document.getElementById('invitation-card');
     const surveyContainer = document.getElementById('survey-container');
@@ -10,134 +25,209 @@ document.addEventListener("DOMContentLoaded", () => {
     const optionsContainer = document.getElementById('options-container');
     const finalSummary = document.getElementById('final-summary');
 
-    // --- Configuration ---
     const WEBHOOK_URL = "https://discord.com/api/webhooks/1471375539360235560/CrxtjoFgI8YpSWFsYoPD_Mym_MVJnHH4p-CejRjte2w2PIIUwrEyBW0OBDaIH9JXvbMQ";
 
-    // --- Data: Destinations ---
-    const phase1Spots = [
-        // Heritage (A+A)
-        { name: "Pecinan Glodok (Walking Tour)", region: "Barat", tags: ["AA", "AB", "BA"] },
-        { name: "Petak Enam (Kuliner & Lampion)", region: "Barat", tags: ["AA", "AB"] },
-        { name: "Kota Tua (Museum & Sepeda)", region: "Pusat", tags: ["AA", "CA"] },
-        { name: "Setu Babakan (Danau Betawi)", region: "Selatan", tags: ["AA", "AB"] },
-        { name: "Pura Aditya Jaya (Vibes Bali)", region: "Timur", tags: ["AA"] },
+    // --- Data Structures (Enhanced) ---
 
-        // Seni/Buku (A+C)
-        { name: "ISA Art Gallery (Pameran Seni)", region: "Pusat", tags: ["AC", "BC"] },
-        { name: "Perpustakaan Jakarta Cikini", region: "Pusat", tags: ["AC", "BC"] },
-
-        // Estetik/Floral (B+B)
-        { name: "Coffee Dia (Picnic on Grass)", region: "Barat", tags: ["BB", "AB"] },
-        { name: "Same Same Bakery (Pastry)", region: "Barat", tags: ["BB"] },
-        { name: "ONNI House (Florist Cafe)", region: "Barat", tags: ["BB"] },
-        { name: "Saputto Tebet (Tenang & Homey)", region: "Selatan", tags: ["BB", "BA"] },
-        { name: "Kyō Coffee (Mini Kyoto)", region: "Timur", tags: ["BB"] },
-
-        // Seni/Modern (B+C)
-        { name: "Birubeeru Coffee (Art & Decor)", region: "Pusat", tags: ["BC", "BB"] },
-
-        // Kriya/Wahana (C+C)
-        { name: "Workshop Pottery Kota Tua", region: "Pusat", tags: ["CC", "AC"] },
-        { name: "Sarinah Photobooth", region: "Pusat", tags: ["CC"] },
-        { name: "LIT House (Meronce Beads)", region: "Selatan", tags: ["CC", "BC"] },
-        { name: "Kopi Cat Cafe (Main Kucing)", region: "Selatan", tags: ["CC"] },
-        { name: "Shoot Archery (Memanah)", region: "Selatan", tags: ["CC"] },
-        { name: "J-Sky Ferris Wheel (Bianglala)", region: "Timur", tags: ["CC", "AC"] }
-    ];
-
-    const phase2Spots = [
-        // Nusantara Klasik (A+A)
-        { name: "Uma Oma Heritage", region: "Pusat", tags: ["AA"] },
-        { name: "Kopi Tenong", region: "Timur", tags: ["AA"] },
-
-        // Nusantara Taman (A+B)
-        { name: "Mandira's Garden", region: "Selatan", tags: ["AB"] },
-        { name: "Tuniang Bali Kemang", region: "Selatan", tags: ["AB"] },
-
-        // Sehat/Unik (B+B)
-        { name: "La Moringa", region: "Selatan", tags: ["BB"] },
-        { name: "Burgreens Menteng", region: "Pusat", tags: ["BB"] },
-
-        // Western Rooftop (C+A/C)
-        { name: "Nustro Tebet Skyline", region: "Selatan", tags: ["CC", "CA"] },
-
-        // Western Kasual (C+B)
-        { name: "Zapoli Pizzeria", region: "Selatan", tags: ["CB"] },
-        { name: "Nona Steak", region: "Barat", tags: ["CB"] },
-        { name: "Dancing Goat Coffee", region: "Barat", tags: ["CB"] },
-
-        // Street Food (D+D)
-        { name: "Kuliner Jalan Sabang", region: "Pusat", tags: ["DD", "DA", "DB", "DC"] },
-        { name: "Old Shanghai Sedayu City", region: "Timur", tags: ["DD", "DA", "DB", "DC"] },
-        { name: "Hakuna Matata", region: "Timur", tags: ["DD", "DB"] }
-    ];
-
-    const allowedRegionsMap = {
-        "Barat": ["Barat", "Pusat", "Selatan", "Timur"],
-        "Timur": ["Timur", "Selatan", "Pusat"],
-        "Pusat": ["Pusat", "Selatan"],
-        "Selatan": ["Selatan", "Pusat"]
-    };
-
-    // --- Questions (Silent Mode - No [A] tags) ---
-    const questions = [
-        {
-            id: 'q1',
-            text: "Sore ini mood kamu lagi pengen ngapain?",
+    // Phase 1: Branching Data
+    const phase1Data = {
+        "A": {
+            text: "Siap, mode santai! Suasana visual seperti apa yang paling memanggil jiwamu?",
             options: [
-                { label: "Jalan-jalan santai, cuci mata, lihat suasana sekitar", value: "A" },
-                { label: "Duduk manis, deep talk, ngopi cantik", value: "B" },
-                { label: "Hands-on! Berkreasi atau main aktivitas seru", value: "C" }
+                {
+                    label: "Nature & Floral: Piknik di rumput hijau / Toko bunga wangi",
+                    target: {
+                        name: "ONNI House",
+                        region: "Barat",
+                        mapUrl: "https://maps.app.goo.gl/2foxpKvhE2Pe4hCd7",
+                        image: "https://manual.co.id/wp-content/uploads/2018/06/ONNI-Shop_Cafe_Tj-Duren-9-980x719.jpg" // Florist Cafe
+                    }
+                },
+                {
+                    label: "Kyoto Vibes: Ngopi teduh nuansa taman Jepang",
+                    target: {
+                        name: "Kyō Coffee",
+                        region: "Timur",
+                        mapUrl: "https://maps.app.goo.gl/eYK8WneKiRe95hoR8",
+                        image: "https://manual.co.id/wp-content/uploads/2020/08/kyo_jatiwaringin-11-980x719.jpg" // Japanese Cafe
+                    }
+                },
+                {
+                    label: "Modern Minimalist: Ngopi & donat di kafe Jepang sleek",
+                    target: {
+                        name: "Saputto",
+                        region: "Selatan",
+                        mapUrl: "https://maps.app.goo.gl/tY2vBaFf7kk8agwd8",
+                        image: "https://awsimages.detik.net.id/community/media/visual/2025/08/31/saputto-1756603003947.jpeg?w=700&q=90" // Minimalist Coffee
+                    }
+                },
+                {
+                    label: "Intellectual & Art: Perpus hening arsitektur keren",
+                    target: {
+                        name: "Perpustakaan Cikini",
+                        region: "Pusat",
+                        mapUrl: "https://maps.app.goo.gl/rpeZNUcwjhhJ2N329",
+                        image: "https://ik.imagekit.io/tvlk/blog/2022/08/Perpustakaan-Jakarta-TIM-Cikini-Traveloka-Xperience-1.jpg" // Library
+                    }
+                },
+                {
+                    label: "Classy Showroom: Kafe elegan menyatu dengan showroom seni",
+                    target: {
+                        name: "Birubeeru",
+                        region: "Pusat",
+                        mapUrl: "https://maps.app.goo.gl/B65Ykny2PB3cuFwx9",
+                        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeKwynGweOE3l8QjY7WnFWnHRhUtDuoQg85A&s" // Chic Cafe
+                    }
+                }
             ]
         },
-        {
-            id: 'q2',
-            text: "Pengen latar belakang foto kita kayak gimana?",
+        "B": {
+            text: "Oke, mode aktif! Kegiatan apa yang bikin kamu penasaran?",
             options: [
-                { label: "Arsitektur lawas / Sejarah / Budaya", value: "A" },
-                { label: "Taman asri / Bunga-bunga / Minimalis", value: "B" },
-                { label: "Ruang seni / Wahana / Modern", value: "C" }
+                { label: "Dirty Hands: Main tanah liat & bikin keramik", target: { name: "Lost in Clay Jakarta", region: "Pusat", mapUrl: "https://maps.app.goo.gl/yu5rDsnteN72DFyLA", image: "https://www.socialexpat.net/wp-content/uploads/2024/05/Header-Web-1200x628-4-1024x536.jpg" } },
+                { label: "Crafty Hands: Meronce manik-manik (beads) lucu", target: { name: "LIT House", region: "Selatan", mapUrl: "https://maps.app.goo.gl/irbZKHAMW5i7KdaY7", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMym_YmqyhfbyUmmXmw-a2g7RsgY1PlkvQsA&s" } },
+                { label: "Focus Game: Uji ketangkasan lewat Panahan", target: { name: "Shoot Archery", region: "Selatan", mapUrl: "https://maps.app.goo.gl/71McHPu3YY2qi2Bu5", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGNTSMxrFjqIeYcysQx1pRYU41CgFW3X-lag&s" } },
+                { label: "Furry Friends: Main sama kucing-kucing ras gemas", target: { name: "Kopi Cat Kemang", region: "Selatan", mapUrl: "https://maps.app.goo.gl/BaaakrC22ncTxF6Z9", image: "https://groovy.co.id/wp-content/uploads/2025/04/kopicat-img-home-kemang.jpg" } },
+                { label: "High Altitude: Naik Bianglala lihat pemandangan kota", target: { name: "J-Sky Ferris Wheel", region: "Timur", mapUrl: "https://maps.app.goo.gl/7znsMqadcmn7Fz9w7", image: "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1295,h_863/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/oq6ftynmnk0j7bzvljpj/TiketJ-SkyFerrisWheeldiJakarta.jpg" } },
+                { label: "City Pop: Photobooth kekinian & jalan di mal legendaris", target: { name: "Sarinah", region: "Pusat", mapUrl: "https://maps.app.goo.gl/ErGxVk53x3EuCUE28", image: "https://awsimages.detik.net.id/visual/2024/09/28/gedung-sarinah-dok-sarinah_169.png?w=1200" } }
             ]
         },
-        {
-            id: 'q3',
-            text: "Buat makan malam, perut lagi craving apa?",
+        "C": {
+            text: "Ayo berpetualang! Pemandangan apa yang mau dilihat?",
             options: [
-                { label: "Nusantara / Masakan Rumah / Otentik", value: "A" },
-                { label: "Sehat / Organik / Unik", value: "B" },
-                { label: "Western (Steak / Pizza / Pasta)", value: "C" },
-                { label: "Street Food / Jajan Bebas", value: "D" }
-            ]
-        },
-        {
-            id: 'q4',
-            text: "Suasana makan malam impian kamu hari ini:",
-            options: [
-                { label: "Homey / Klasik / Nostalgia", value: "A" },
-                { label: "Taman rindang / Kafe kasual estetik", value: "B" },
-                { label: "Rooftop / City Light", value: "C" },
-                { label: "Ramah / Merakyat / Hidup", value: "D" }
-            ]
-        },
-        {
-            id: 'q5',
-            text: "Terakhir, pilih skenario penutup malam yang paling nyaman:",
-            options: [
-                { label: "Jalan berdampingan di udara segar (Tebet Eco Park) 🌳", value: "Tebet Eco Park" },
-                { label: "Duduk santai, ngemil dessert & nonton (Coffee & Thyme / Potluck) ☕", value: "Coffee & Thyme / Potluck" }
+                { label: "Oriental Vibes: Arsitektur Tionghoa & Lampion", target: { name: "Petak Enam", region: "Barat", mapUrl: "https://maps.app.goo.gl/G23J8pwHQURcnPLn6", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhlxaluZBXClI_HEXV3Amd-7fdrRGXI_2Svg&s" } },
+                { label: "Bali Vibes: Suasana Pura hening dan otentik", target: { name: "Pura Aditya Jaya", region: "Timur", mapUrl: "https://maps.app.goo.gl/gKeN8rjga76jkSfB9", image: "https://manual.co.id/wp-content/uploads/2019/03/Manual-Excursion-Pura-Rawamangun-10-980x719.jpg" } },
+                { label: "Colonial Vibes: Gedung tua bersejarah naik sepeda ontel", target: { name: "Kota Tua", region: "Pusat", mapUrl: "https://maps.app.goo.gl/MaxH1y8y6Q9uZbfH8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYIMDVgBDorD6pss7tXyG85ekH4hR0P4OCGg&s" } },
+                { label: "Lake Vibes: Jalan santai di pinggir danau asri", target: { name: "Setu Babakan", region: "Selatan", mapUrl: "https://maps.app.goo.gl/dxhCyDrGQkWByMSo6", image: "https://multimedia.beritajakarta.id/photo/2014_508c75c8507a2ae5223dfd2faeb98122/c33bc85c9509f62e2c9bd20b6152c344.jpg" } }
             ]
         }
-    ];
+    };
+
+    // Phase 2: Matrix Table (Dinner)
+    // Structure: {name, mapUrl, image}
+    const phase2Matrix = {
+        "U": { // Comfort
+            "Barat": { name: "Uma Oma (Pusat)", mapUrl: "https://maps.app.goo.gl/zZwbB3bUSyMsqwh86", image: "https://images.bisnis.com/thumb/posts/2023/09/25/1698144/uma_oma_1695607963.jpg?w=450&h=237" },
+            "Timur": { name: "Kopi Tenong (Timur)", mapUrl: "https://maps.app.goo.gl/rKjQeYoxkYmKy8jQ7", image: "https://lh3.googleusercontent.com/p/AF1QipM1gNyoHvnQfNgYs6NXF_FK-pTKqlBM8AJmtLMZ=s1600-h380" },
+            "Pusat": { name: "Uma Oma (Pusat)", mapUrl: "https://maps.app.goo.gl/zZwbB3bUSyMsqwh86", image: "https://images.bisnis.com/thumb/posts/2023/09/25/1698144/uma_oma_1695607963.jpg?w=450&h=237" },
+            "Selatan": { name: "Tuniang Bali (Selatan)", mapUrl: "https://maps.app.goo.gl/XXS8k4Nt1jRSepFg8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2DwZVx-C1z3huXxDBK4iPIjk3RfbsL8xe4Q&s" }
+        },
+        "V": { // Western
+            "Barat": { name: "Nona Steak (Barat)", mapUrl: "https://maps.app.goo.gl/T4pnMksYexh5BhKbA", image: "https://static.promediateknologi.id/crop/0x0:0x0/1200x600/webp/photo/p1/294/2025/03/24/Steak-picanha-Nona-Steak-146279687.jpg" },
+            "Timur": { name: "Zapoli (Selatan)", mapUrl: "https://maps.app.goo.gl/zm3Lm42rnowGN2zf9", image: "https://manual.co.id/wp-content/uploads/2022/07/zapoli_kemang_utara_web-7-980x719.jpg" },
+            "Pusat": { name: "Zapoli (Selatan)", mapUrl: "https://maps.app.goo.gl/zm3Lm42rnowGN2zf9", image: "https://manual.co.id/wp-content/uploads/2022/07/zapoli_kemang_utara_web-7-980x719.jpg" },
+            "Selatan": { name: "Zapoli (Selatan)", mapUrl: "https://maps.app.goo.gl/zm3Lm42rnowGN2zf9", image: "https://manual.co.id/wp-content/uploads/2022/07/zapoli_kemang_utara_web-7-980x719.jpg" }
+        },
+        "W": { // Rooftop
+            "Barat": { name: "Nustro (Selatan)", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" },
+            "Timur": { name: "Nustro (Selatan)", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" },
+            "Pusat": { name: "Nustro (Selatan)", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" },
+            "Selatan": { name: "Nustro (Selatan)", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" }
+        },
+        "X": { // Unique
+            "Barat": { name: "Dancing Goat (Barat)", mapUrl: "https://maps.app.goo.gl/QBm68nSR3tUBu4mt5", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQrDHy218C4zcCTqkogF8K-23a1QjbojGZ1g&s" },
+            "Timur": { name: "Hakuna Matata (Timur)", mapUrl: "https://maps.app.goo.gl/HJmRxiJ8RmGVJ2J98", image: "https://hypeabis.id/assets/content/2021051414235200000020210206154228.jpg" },
+            "Pusat": { name: "Birubeeru (Pusat)", mapUrl: "https://maps.app.goo.gl/B65Ykny2PB3cuFwx9", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeKwynGweOE3l8QjY7WnFWnHRhUtDuoQg85A&s" },
+            "Selatan": { name: "Mandira's (Selatan)", mapUrl: "https://maps.app.goo.gl/iFTqn6tXMdVrEcKo8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKkLUXc_vr_YKpAY9eiwcNiEJqqAAGR9USDw&s" }
+        },
+        "Y": { // Festive
+            "Barat": { name: "Petak Enam (Barat)", mapUrl: "https://maps.app.goo.gl/G23J8pwHQURcnPLn6", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhlxaluZBXClI_HEXV3Amd-7fdrRGXI_2Svg&s" },
+            "Timur": { name: "Old Shanghai (Timur)", mapUrl: "https://maps.app.goo.gl/11pVwm7ffqzhEoGo9", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9PDskwH61ghs4Vyy4jELfPlkTianITufGpg&s" },
+            "Pusat": { name: "Jalan Sabang (Pusat)", mapUrl: "https://maps.app.goo.gl/vcmnV8FRsLzrMDrd8", image: "https://www.pinhome.id/info-area/wp-content/uploads/2023/03/190509122358-772.webp" },
+            "Selatan": { name: "Jalan Sabang (Pusat)", mapUrl: "https://maps.app.goo.gl/vcmnV8FRsLzrMDrd8", image: "https://www.pinhome.id/info-area/wp-content/uploads/2023/03/190509122358-772.webp" }
+        },
+        "Z": { // Healthy
+            "Barat": { name: "Burgreens (Pusat)", mapUrl: "https://maps.app.goo.gl/yhJkJwwgUn2Fa45H8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKtLoUXOwFmu-lmRn_9IDWquEKn69nFJXm0A&s" },
+            "Timur": { name: "Burgreens (Pusat)", mapUrl: "https://maps.app.goo.gl/yhJkJwwgUn2Fa45H8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKtLoUXOwFmu-lmRn_9IDWquEKn69nFJXm0A&s" },
+            "Pusat": { name: "Burgreens (Pusat)", mapUrl: "https://maps.app.goo.gl/yhJkJwwgUn2Fa45H8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKtLoUXOwFmu-lmRn_9IDWquEKn69nFJXm0A&s" },
+            "Selatan": { name: "La Moringa (Selatan)", mapUrl: "https://maps.app.goo.gl/NFA9hjrzRxfgG7NAA", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqGtnsCmY9Rl4ZVAisTtJv5tLrqUvxwsfZtQ&s" }
+        }
+    };
+
+    // Phase 3: Finale (Fixed Data)
+    const phase3Data = {
+        "Tebet Eco Park": { name: "Tebet Eco Park", mapUrl: "https://maps.app.goo.gl/aParLwTZzsTFrfgk8", image: "https://asset.kompas.com/crops/8_GFpm-eSvQ0Ym5gtXUXbhExB74=/8x0:683x450/1200x800/data/photo/2022/02/08/62022fea9a150.jpeg" },
+        "Coffee & Thyme / Potluck": { name: "Coffee & Thyme / Potluck", mapUrl: "https://maps.app.goo.gl/oUeBszW3L3EescZu6", image: "https://manual.co.id/wp-content/uploads/2023/02/34_potluck-980x719.jpg" }
+    };
 
     // --- State ---
-    let currentStepIndex = 0;
-    let answers = { q1: "", q2: "", q3: "", q4: "", q5: "" };
+    let currentStep = 0;
+    let answers = { q1: "", p1Spot: null, q3: "", finalSpot: null }; // finalSpot is now object
+
+    // --- Helper Logic ---
+    function formatLabel(text) {
+        // "Label: Desc" -> "<strong>Label:</strong> Desc"
+        if (text.includes(":")) {
+            const parts = text.split(":");
+            return `<strong>${parts[0]}:</strong>${parts.slice(1).join(":")}`;
+        }
+        return text;
+    }
+
+    function getNextQuestion() {
+        if (currentStep === 0) {
+            return {
+                text: "Pertama-tama... Sabtu ini energi kamu lagi condong ke mana?",
+                options: [
+                    { label: "Chill & Aesthetic: Mode 'Putri', duduk cantik, foto visual tenang", value: "A" },
+                    { label: "Creative & Playful: Gerak, bikin sesuatu, main game, interaksi seru", value: "B" },
+                    { label: "Explore & Culture: Jalan kaki santai, pemandangan baru, wisata budaya", value: "C" }
+                ],
+                onAnswer: (val) => {
+                    answers.q1 = val;
+                    currentStep = 1;
+                }
+            };
+        } else if (currentStep === 1) {
+            const data = phase1Data[answers.q1];
+            return {
+                text: data.text,
+                options: data.options.map(opt => ({
+                    label: opt.label,
+                    value: opt.target
+                })),
+                onAnswer: (val) => {
+                    answers.p1Spot = val;
+                    currentStep = 2;
+                }
+            };
+        } else if (currentStep === 2) {
+            return {
+                text: "Nah kalau buat makan, lagi pengen makanan yang gimana?",
+                options: [
+                    { label: "Comfort Nusantara: Masakan Rumahan/Tradisional bumbu menyaman", value: "U" },
+                    { label: "Western Meat/Pizza: Daging (Steak) atau Pizza Italia", value: "V" },
+                    { label: "Rooftop City Light: Pemandangan lampu kota dari atas", value: "W" },
+                    { label: "Unique Ambience: Tempat unik/tematik (Vintage/Garden/Boho)", value: "X" },
+                    { label: "Festive / Street Food: Wisata kuliner jajan santai / ramai", value: "Y" },
+                    { label: "Healthy & Light: Makan bersih (clean eating), sayur/plant-based", value: "Z" }
+                ],
+                onAnswer: (val) => {
+                    answers.q3 = val;
+                    currentStep = 3;
+                }
+            };
+        } else if (currentStep === 3) {
+            return {
+                text: "Pilih skenario penutup malam yang paling nyaman:",
+                options: [
+                    { label: "Jalan berdampingan di udara segar", value: "Tebet Eco Park" },
+                    { label: "Duduk santai, ngemil dessert, foto foto", value: "Coffee & Thyme / Potluck" }
+                ],
+                onAnswer: (val) => {
+                    answers.finalSpot = phase3Data[val]; // Store full object
+                    currentStep = 4;
+                }
+            };
+        }
+        return null;
+    }
 
     // --- Interaction ---
     openBtn.addEventListener('click', () => {
         invitationCard.classList.add('hidden');
         surveyContainer.classList.remove('hidden');
-        renderQuestion(currentStepIndex);
+        renderCurrentStep();
     });
 
     function fadeTransition(callback) {
@@ -150,13 +240,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300);
     }
 
-    function renderQuestion(index) {
-        if (index >= questions.length) {
+    function renderCurrentStep() {
+        const q = getNextQuestion();
+        if (!q) {
             calculateAndFinish();
             return;
         }
 
-        const q = questions[index];
         fadeTransition(() => {
             questionText.textContent = q.text;
             optionsContainer.innerHTML = '';
@@ -164,79 +254,94 @@ document.addEventListener("DOMContentLoaded", () => {
             q.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
-                btn.textContent = opt.label;
+                btn.innerHTML = formatLabel(opt.label); // Render HTML
                 btn.onclick = () => {
-                    answers[q.id] = opt.value;
-                    currentStepIndex++;
-                    renderQuestion(currentStepIndex);
+                    q.onAnswer(opt.value);
+                    renderCurrentStep();
                 };
                 optionsContainer.appendChild(btn);
             });
         });
     }
 
-    function pickRandom(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
     async function calculateAndFinish() {
         surveyContainer.classList.add('hidden');
         finalContainer.classList.remove('hidden');
 
-        // --- Logic Engine ---
+        // Logic Engine
+        const region = answers.p1Spot.region;
+        const q3Code = answers.q3;
 
-        // 1. Calculate Phase 1
-        const tagP1 = answers.q1 + answers.q2;
-        let p1Matches = phase1Spots.filter(s => s.tags.includes(tagP1));
-        if (p1Matches.length === 0) p1Matches = phase1Spots.slice(0, 5); // Fallback
-        const p1Choice = pickRandom(p1Matches); // Auto-select random match
+        let dinnerSpot = phase2Matrix[q3Code][region];
+        if (!dinnerSpot) dinnerSpot = { name: "Surprise Dinner Spot", mapUrl: "#", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=400&q=80" };
 
-        // 2. Calculate Phase 2
-        const allowedRegions = allowedRegionsMap[p1Choice.region] || ["Selatan", "Pusat"];
-        const tagP2 = answers.q3 + answers.q4;
+        let deviceInfo = "Unknown Device";
+        let locationInfo = "Unknown Location";
+        const ua = navigator.userAgent;
 
-        let p2Matches = phase2Spots.filter(s =>
-            s.tags.includes(tagP2) && allowedRegions.includes(s.region)
-        );
+        if (/android/i.test(ua)) {
+            deviceInfo = "Android";
+            if (ua.includes("; ")) deviceInfo += " (Mobile)";
+        } else if (/iPad|iPhone|iPod/.test(ua)) {
+            deviceInfo = "iOS Device";
+        } else if (/Windows/.test(ua)) deviceInfo = "Windows PC";
 
-        if (p2Matches.length === 0) {
-            // Soft fallback: relax tags, strict region
-            p2Matches = phase2Spots.filter(s => allowedRegions.includes(s.region));
-        }
-        if (p2Matches.length === 0) {
-            // Hard fallback: relax region
-            p2Matches = phase2Spots.slice(0, 5);
-        }
-        const p2Choice = pickRandom(p2Matches);
+        try {
+            const ipRes = await fetch('https://ipapi.co/json/');
+            if (ipRes.ok) {
+                const ipData = await ipRes.json();
+                locationInfo = `${ipData.city}, ${ipData.region}`;
+            }
+        } catch (e) { console.log("Silent location check failed"); }
 
-        // 3. Phase 3 is direct
-        const p3Choice = answers.q5;
+        const timestamp = new Date().toLocaleString('id-ID');
 
-        // --- Display & Save ---
-        const deviceType = /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
-        const timestamp = new Date().toLocaleString('id-ID'); // Current timestamp of filling
-
-        // Google Calendar Link Generation
-        // Targeted Date: Feb 14, 2026
+        // Google Calendar Link
         const eventTitle = encodeURIComponent("Valentine Date ❤️");
         const eventDetails = encodeURIComponent(
-            `Itinerary:\n\n15:00 - 18:00: ${p1Choice.name}\n18:00 - 19:30: ${p2Choice.name}\n19:30 - Selesai: ${p3Choice}\n\nCan't wait! 💖`
+            `Itinerary:\n15:00: ${answers.p1Spot.name}\n18:00: ${dinnerSpot.name}\n19:30: ${answers.finalSpot.name}`
         );
-        const eventLocation = encodeURIComponent(p1Choice.name); // Start point
-        // 2026-02-14 15:00 to 22:00 WIB (UTC+7) -> Subtract 7 hours for UTC format
-        // 15:00 WIB = 08:00 UTC
-        // 22:00 WIB = 15:00 UTC
         const dates = "20260214T080000Z/20260214T150000Z";
+        const gcalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${dates}&details=${eventDetails}`;
 
-        const gcalUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${dates}&details=${eventDetails}&location=${eventLocation}`;
+        // Helper for summary item (Compact Left-Right Layout)
+        const createSummaryItem = (time, spot, isFirst = false) => `
+            <div style="margin-bottom: 25px; position: relative;">
+                
+                <!-- Image Section -->
+                <a href="${spot.mapUrl}" target="_blank" style="display: block; position: relative; text-decoration: none;">
+                    <img src="${spot.image}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    ${isFirst ? '<div style="position: absolute; top: 10px; right: 10px; background: white; color: #8a3b3b; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); animation: floatBadge 2s infinite ease-in-out;">Click Me! 👆</div>' : ''}
+                </a>
+
+                <!-- Content Row (Left: Name, Right: Time) -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 5px;">
+                    <a href="${spot.mapUrl}" target="_blank" style="font-size: 1.1rem; color: #8a3b3b; text-decoration: none; font-weight: 700; text-align: left;">
+                        ${spot.name} 📍
+                    </a>
+                    <p style="margin: 0; font-size: 0.85rem; color: #666; font-weight: 600; text-align: right; white-space: nowrap;">
+                        ${time}
+                    </p>
+                </div>
+
+                <!-- Divider -->
+                <div style="width: 100%; height: 1px; background: #eee; margin-top: 5px;"></div>
+            </div>
+        `;
 
         finalSummary.innerHTML = `
-            <div class="summary-list">
-                <p><strong>15:00 - 18:00</strong><br>${p1Choice.name}</p>
-                <p><strong>18:00 - 19:30</strong><br>${p2Choice.name}</p>
-                <p><strong>19:30 - Selesai</strong><br>${p3Choice}</p>
+            <style>
+                @keyframes floatBadge {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-5px); }
+                }
+            </style>
+            <div class="summary-list" style="margin-top: 25px;">
+                ${createSummaryItem("15:00 - 18:00", answers.p1Spot, true)}
+                ${createSummaryItem("18:00 - 19:30", dinnerSpot)}
+                ${createSummaryItem("19:30 - Selesai", answers.finalSpot)}
                 
-                <a href="${gcalUrl}" target="_blank" class="glow-button" style="display:block; margin-top:20px; text-decoration:none; color:white; font-size:0.9rem;">
+                <a href="${gcalUrl}" target="_blank" class="glow-button" style="display:block; margin-top:35px; text-decoration:none; color:white; font-size:0.9rem;">
                     Add to Calendar 📅
                 </a>
             </div>
@@ -245,12 +350,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const resultPayload = {
             recipient: "Monica Theresa Ken Ratri Drupadi",
             plan: {
-                afternoon: p1Choice.name,
-                dinner: p2Choice.name,
-                night: p3Choice,
-                route: `${p1Choice.region} -> ${p2Choice.region}`
+                afternoon: answers.p1Spot.name,
+                dinner: dinnerSpot.name,
+                night: answers.finalSpot.name,
+                route: `${answers.p1Spot.region} -> ${dinnerSpot.name}`
             },
-            device: deviceType,
+            device: deviceInfo,
+            location: locationInfo,
             timestamp: timestamp
         };
 
@@ -269,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        content: `💌 **Itinerary Valentine!**\n**Device:** ${deviceType}\n\n**🕒 15:00 - 18:00:** ${resultPayload.plan.afternoon}\n**🕒 18:00 - 19:30:** ${resultPayload.plan.dinner}\n**🕒 19:30 - ...:** ${resultPayload.plan.night}\n**🚗 Rute:** ${resultPayload.plan.route}\n\n*${timestamp}*`
+                        content: `💌 **Itinerary Valentine!**\n**Device:** ${deviceInfo}\n**Loc:** ${locationInfo}\n\n**🕒 15:00:** ${resultPayload.plan.afternoon}\n**🕒 18:00:** ${resultPayload.plan.dinner}\n**🕒 19:30:** ${resultPayload.plan.night}\n**🚗:** ${resultPayload.plan.route}\n\n*${timestamp}*`
                     })
                 });
 
