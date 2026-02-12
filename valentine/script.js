@@ -107,40 +107,40 @@ document.addEventListener("DOMContentLoaded", () => {
     // Structure: {name, mapUrl, image}
     const phase2Matrix = {
         "U": { // Comfort
-            "Barat": { name: "Uma Oma (Pusat)", mapUrl: "https://maps.app.goo.gl/zZwbB3bUSyMsqwh86", image: "https://images.bisnis.com/thumb/posts/2023/09/25/1698144/uma_oma_1695607963.jpg?w=450&h=237" },
-            "Timur": { name: "Kopi Tenong (Timur)", mapUrl: "https://maps.app.goo.gl/rKjQeYoxkYmKy8jQ7", image: "https://lh3.googleusercontent.com/p/AF1QipM1gNyoHvnQfNgYs6NXF_FK-pTKqlBM8AJmtLMZ=s1600-h380" },
-            "Pusat": { name: "Uma Oma (Pusat)", mapUrl: "https://maps.app.goo.gl/zZwbB3bUSyMsqwh86", image: "https://images.bisnis.com/thumb/posts/2023/09/25/1698144/uma_oma_1695607963.jpg?w=450&h=237" },
-            "Selatan": { name: "Tuniang Bali (Selatan)", mapUrl: "https://maps.app.goo.gl/XXS8k4Nt1jRSepFg8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2DwZVx-C1z3huXxDBK4iPIjk3RfbsL8xe4Q&s" }
+            "Barat": { name: "Uma Oma", mapUrl: "https://maps.app.goo.gl/zZwbB3bUSyMsqwh86", image: "https://images.bisnis.com/thumb/posts/2023/09/25/1698144/uma_oma_1695607963.jpg?w=450&h=237" },
+            "Timur": { name: "Kopi Tenong", mapUrl: "https://maps.app.goo.gl/rKjQeYoxkYmKy8jQ7", image: "https://lh3.googleusercontent.com/p/AF1QipM1gNyoHvnQfNgYs6NXF_FK-pTKqlBM8AJmtLMZ=s1600-h380" },
+            "Pusat": { name: "Uma Oma", mapUrl: "https://maps.app.goo.gl/zZwbB3bUSyMsqwh86", image: "https://images.bisnis.com/thumb/posts/2023/09/25/1698144/uma_oma_1695607963.jpg?w=450&h=237" },
+            "Selatan": { name: "Tuniang Bali", mapUrl: "https://maps.app.goo.gl/XXS8k4Nt1jRSepFg8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2DwZVx-C1z3huXxDBK4iPIjk3RfbsL8xe4Q&s" }
         },
         "V": { // Western
-            "Barat": { name: "Nona Steak (Barat)", mapUrl: "https://maps.app.goo.gl/T4pnMksYexh5BhKbA", image: "https://static.promediateknologi.id/crop/0x0:0x0/1200x600/webp/photo/p1/294/2025/03/24/Steak-picanha-Nona-Steak-146279687.jpg" },
-            "Timur": { name: "Zapoli (Selatan)", mapUrl: "https://maps.app.goo.gl/zm3Lm42rnowGN2zf9", image: "https://manual.co.id/wp-content/uploads/2022/07/zapoli_kemang_utara_web-7-980x719.jpg" },
-            "Pusat": { name: "Zapoli (Selatan)", mapUrl: "https://maps.app.goo.gl/zm3Lm42rnowGN2zf9", image: "https://manual.co.id/wp-content/uploads/2022/07/zapoli_kemang_utara_web-7-980x719.jpg" },
-            "Selatan": { name: "Zapoli (Selatan)", mapUrl: "https://maps.app.goo.gl/zm3Lm42rnowGN2zf9", image: "https://manual.co.id/wp-content/uploads/2022/07/zapoli_kemang_utara_web-7-980x719.jpg" }
+            "Barat": { name: "Nona Steak", mapUrl: "https://maps.app.goo.gl/T4pnMksYexh5BhKbA", image: "https://static.promediateknologi.id/crop/0x0:0x0/1200x600/webp/photo/p1/294/2025/03/24/Steak-picanha-Nona-Steak-146279687.jpg" },
+            "Timur": { name: "Zapoli", mapUrl: "https://maps.app.goo.gl/zm3Lm42rnowGN2zf9", image: "https://manual.co.id/wp-content/uploads/2022/07/zapoli_kemang_utara_web-7-980x719.jpg" },
+            "Pusat": { name: "Zapoli", mapUrl: "https://maps.app.goo.gl/zm3Lm42rnowGN2zf9", image: "https://manual.co.id/wp-content/uploads/2022/07/zapoli_kemang_utara_web-7-980x719.jpg" },
+            "Selatan": { name: "Zapoli", mapUrl: "https://maps.app.goo.gl/zm3Lm42rnowGN2zf9", image: "https://manual.co.id/wp-content/uploads/2022/07/zapoli_kemang_utara_web-7-980x719.jpg" }
         },
         "W": { // Rooftop
-            "Barat": { name: "Nustro (Selatan)", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" },
-            "Timur": { name: "Nustro (Selatan)", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" },
-            "Pusat": { name: "Nustro (Selatan)", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" },
-            "Selatan": { name: "Nustro (Selatan)", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" }
+            "Barat": { name: "Nustro", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" },
+            "Timur": { name: "Nustro", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" },
+            "Pusat": { name: "Nustro", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" },
+            "Selatan": { name: "Nustro", mapUrl: "https://maps.app.goo.gl/6mbjLSq3epHXSNkZ8", image: "https://awsimages.detik.net.id/community/media/visual/2025/01/30/nustro-tebet-skyline-3_43.jpeg?w=600&q=90" }
         },
         "X": { // Unique
-            "Barat": { name: "Dancing Goat (Barat)", mapUrl: "https://maps.app.goo.gl/QBm68nSR3tUBu4mt5", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQrDHy218C4zcCTqkogF8K-23a1QjbojGZ1g&s" },
-            "Timur": { name: "Hakuna Matata (Timur)", mapUrl: "https://maps.app.goo.gl/HJmRxiJ8RmGVJ2J98", image: "https://hypeabis.id/assets/content/2021051414235200000020210206154228.jpg" },
-            "Pusat": { name: "Birubeeru (Pusat)", mapUrl: "https://maps.app.goo.gl/B65Ykny2PB3cuFwx9", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeKwynGweOE3l8QjY7WnFWnHRhUtDuoQg85A&s" },
-            "Selatan": { name: "Mandira's (Selatan)", mapUrl: "https://maps.app.goo.gl/iFTqn6tXMdVrEcKo8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKkLUXc_vr_YKpAY9eiwcNiEJqqAAGR9USDw&s" }
+            "Barat": { name: "Dancing Goat", mapUrl: "https://maps.app.goo.gl/QBm68nSR3tUBu4mt5", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQrDHy218C4zcCTqkogF8K-23a1QjbojGZ1g&s" },
+            "Timur": { name: "Hakuna Matata", mapUrl: "https://maps.app.goo.gl/HJmRxiJ8RmGVJ2J98", image: "https://hypeabis.id/assets/content/2021051414235200000020210206154228.jpg" },
+            "Pusat": { name: "Birubeeru", mapUrl: "https://maps.app.goo.gl/B65Ykny2PB3cuFwx9", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeKwynGweOE3l8QjY7WnFWnHRhUtDuoQg85A&s" },
+            "Selatan": { name: "Mandira's", mapUrl: "https://maps.app.goo.gl/iFTqn6tXMdVrEcKo8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKkLUXc_vr_YKpAY9eiwcNiEJqqAAGR9USDw&s" }
         },
         "Y": { // Festive
-            "Barat": { name: "Petak Enam (Barat)", mapUrl: "https://maps.app.goo.gl/G23J8pwHQURcnPLn6", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhlxaluZBXClI_HEXV3Amd-7fdrRGXI_2Svg&s" },
-            "Timur": { name: "Old Shanghai (Timur)", mapUrl: "https://maps.app.goo.gl/11pVwm7ffqzhEoGo9", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9PDskwH61ghs4Vyy4jELfPlkTianITufGpg&s" },
-            "Pusat": { name: "Jalan Sabang (Pusat)", mapUrl: "https://maps.app.goo.gl/vcmnV8FRsLzrMDrd8", image: "https://www.pinhome.id/info-area/wp-content/uploads/2023/03/190509122358-772.webp" },
-            "Selatan": { name: "Jalan Sabang (Pusat)", mapUrl: "https://maps.app.goo.gl/vcmnV8FRsLzrMDrd8", image: "https://www.pinhome.id/info-area/wp-content/uploads/2023/03/190509122358-772.webp" }
+            "Barat": { name: "Petak Enam", mapUrl: "https://maps.app.goo.gl/G23J8pwHQURcnPLn6", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhlxaluZBXClI_HEXV3Amd-7fdrRGXI_2Svg&s" },
+            "Timur": { name: "Old Shanghai", mapUrl: "https://maps.app.goo.gl/11pVwm7ffqzhEoGo9", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9PDskwH61ghs4Vyy4jELfPlkTianITufGpg&s" },
+            "Pusat": { name: "Jalan Sabang", mapUrl: "https://maps.app.goo.gl/vcmnV8FRsLzrMDrd8", image: "https://www.pinhome.id/info-area/wp-content/uploads/2023/03/190509122358-772.webp" },
+            "Selatan": { name: "Jalan Sabang", mapUrl: "https://maps.app.goo.gl/vcmnV8FRsLzrMDrd8", image: "https://www.pinhome.id/info-area/wp-content/uploads/2023/03/190509122358-772.webp" }
         },
         "Z": { // Healthy
-            "Barat": { name: "Burgreens (Pusat)", mapUrl: "https://maps.app.goo.gl/yhJkJwwgUn2Fa45H8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKtLoUXOwFmu-lmRn_9IDWquEKn69nFJXm0A&s" },
-            "Timur": { name: "Burgreens (Pusat)", mapUrl: "https://maps.app.goo.gl/yhJkJwwgUn2Fa45H8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKtLoUXOwFmu-lmRn_9IDWquEKn69nFJXm0A&s" },
-            "Pusat": { name: "Burgreens (Pusat)", mapUrl: "https://maps.app.goo.gl/yhJkJwwgUn2Fa45H8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKtLoUXOwFmu-lmRn_9IDWquEKn69nFJXm0A&s" },
-            "Selatan": { name: "La Moringa (Selatan)", mapUrl: "https://maps.app.goo.gl/NFA9hjrzRxfgG7NAA", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqGtnsCmY9Rl4ZVAisTtJv5tLrqUvxwsfZtQ&s" }
+            "Barat": { name: "Burgreens", mapUrl: "https://maps.app.goo.gl/yhJkJwwgUn2Fa45H8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKtLoUXOwFmu-lmRn_9IDWquEKn69nFJXm0A&s" },
+            "Timur": { name: "Burgreens", mapUrl: "https://maps.app.goo.gl/yhJkJwwgUn2Fa45H8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKtLoUXOwFmu-lmRn_9IDWquEKn69nFJXm0A&s" },
+            "Pusat": { name: "Burgreens", mapUrl: "https://maps.app.goo.gl/yhJkJwwgUn2Fa45H8", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKtLoUXOwFmu-lmRn_9IDWquEKn69nFJXm0A&s" },
+            "Selatan": { name: "La Moringa", mapUrl: "https://maps.app.goo.gl/NFA9hjrzRxfgG7NAA", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqGtnsCmY9Rl4ZVAisTtJv5tLrqUvxwsfZtQ&s" }
         }
     };
 
@@ -161,8 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
         { label: "Comfort Nusantara: Masakan Rumahan/Tradisional bumbu menyaman", value: "U" },
         { label: "Western Meat/Pizza: Daging (Steak) atau Pizza Italia", value: "V" },
         { label: "Rooftop City Light: Pemandangan lampu kota dari atas", value: "W" },
-        { label: "Unique Ambience: Tempat unik/tematik (Vintage/Garden/Boho)", value: "X" },
-        { label: "Festive / Street Food: Wisata kuliner jajan santai / ramai", value: "Y" },
+        { label: "Unique Ambience: Tempat unik/tematik (Vintage/Garden)", value: "X" },
+        { label: "Festive/Street Food: Wisata kuliner jajan pinggiran", value: "Y" },
         { label: "Healthy & Light: Makan bersih (clean eating), sayur/plant-based", value: "Z" }
     ];
 
