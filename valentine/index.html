@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine Invitation for Monica Theresa Ken Ratri Drupadi</title>
+    <!-- Cinematic & Romantic Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Inline critical CSS */
+        body {
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease-in;
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="bg-floral-white">
+
+    <div class="app-container">
+        <!-- Decoration: Floral Corners (CSS/SVG) -->
+        <div class="floral-corner top-left"></div>
+        <div class="floral-corner top-right"></div>
+        <div class="floral-corner bottom-left"></div>
+        <div class="floral-corner bottom-right"></div>
+
+        <main class="content">
+            <!-- Initial content that will be replaced by survey -->
+            <div id="invitation-card">
+                <!-- Header / Hero Section -->
+                <section class="hero">
+                    <div class="logo-mark">❦</div>
+                    <h2 class="animate-fade-in-up delay-1">Dearest,</h2>
+                    <h1 class="recipient-name animate-fade-in-up delay-2">Monica Theresa<br>Ken Ratri Drupadi</h1>
+                    <p class="subtitle animate-fade-in-up delay-3">A special question awaits you.</p>
+                </section>
+
+                <!-- Interactive 'Yes' / RSVP -->
+                <section class="action-area animate-fade-in-up delay-4">
+                    <button id="open-btn" class="glow-button">Open Invitation</button>
+                </section>
+            </div>
+
+            <!-- Survey Container (Hidden by default) -->
+            <div id="survey-container" class="hidden">
+                <div class="survey-card animate-fade-in-up">
+                    <h2 id="question-text">Question 1</h2>
+                    <div id="options-container" class="options-grid">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Container (Hidden by default) -->
+            <div id="final-container" class="hidden">
+                <div class="final-card animate-fade-in-up">
+                    <h1>It's a Date! 💖</h1>
+                    <p class="date-text">14 Feb 2026</p>
+                    <p id="final-summary">We are going...</p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer / Credits -->
+        <footer class="footer">
+            <p>Made with ❤️ for You</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
