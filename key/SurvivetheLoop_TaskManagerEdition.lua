@@ -5,7 +5,7 @@ local success, err = pcall(function()
     TaskManagerUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/TaskUI_Library.lua"))()
 end)
 
-if not success or not TaskManagerUI then warn("Gagal mengambil UI Library"); return end
+if not success or not TaskManagerUI then warn("Gagal memuat UI Library Windows 11"); return end
 
 -- ==========================================
 -- INISIALISASI VARIABEL & SISTEM
@@ -23,6 +23,7 @@ local tpThreshold = 50
 local hasTeleportedForLowHp = false 
 local flySpeed = 300
 local flyKey = Enum.KeyCode.X
+local strafeKey = Enum.KeyCode.C
 
 local cachedBases = {}
 
@@ -54,23 +55,30 @@ local function doSafeTeleport()
 end
 
 -- ==========================================
--- MEMUAT UI COMPACT SURVIVE THE LOOP
+-- MEMBUAT WINDOW DARK MODE
 -- ==========================================
 local Window = TaskManagerUI:CreateWindow({Name = "Survive the Loop"})
 
--- 11306132213 adalah gambar icon Home standard dari Roblox Decal
-local TabHome = Window:CreateTab("Player Mods", 11210499092) 
+-- Tab utama
+local TabMods = Window:CreateTab("Player Mods", 11306132213) 
+-- Tab Settings (Ikon Gear) dipin di bawah
+local TabSettings = Window:CreateTab("Settings", 11295281432, true) 
 
 -- ==========================================
--- ISI TAB PLAYER MODS (Fungsional Kompak)
+-- ISI TAB PLAYER MODS
 -- ==========================================
 
--- Fly Mod: Teks | Tombol Enable | TextBox Key | TextBox Speed
-TabHome:CreateAdvancedRow({
+-- Row 1: Fly Mode (Speed, Key, Toggle)
+TabMods:CreateToggleRow({
     Name = "Fly Mod",
-    DefaultKey = "X",
-    DefaultSpeed = "300",
-    OnToggle = function(state) -- Nilai 'state' dikirim dari library (true/false)
+    HasSpeed = true, DefaultSpeed = "300",
+    HasKey = true, DefaultKey = "X",
+    OnSpeedChange = function(newSpeed) flySpeed = tonumber(newSpeed) or flySpeed end,
+    OnKeyChange = function(newKey)
+        local key = Enum.KeyCode[string.upper(newKey)]
+        if key then flyKey = key end
+    end,
+    OnToggle = function(state)
         flyEnabled = state
         local c = player.Character
         if flyEnabled then
@@ -87,61 +95,69 @@ TabHome:CreateAdvancedRow({
                 if c:FindFirstChild("Humanoid") then c.Humanoid.PlatformStand = false end
             end
         end
-    end,
-    OnKeyChange = function(newKeyString)
-        flyKey = Enum.KeyCode[string.upper(newKeyString)] or flyKey
-    end,
-    OnSpeedChange = function(newSpeedVal)
-        flySpeed = tonumber(newSpeedVal) or flySpeed
     end
 })
 
--- Auto Strafe Toggle (Muka Tombol Penuh)
-local autoStrafeBtn = TabHome:CreateButton({
-    Name = "Auto Strafe [C]: OFF",
-    Callback = function()
-        autoMoveEnabled = not autoMoveEnabled
-        -- Kita bisa merubah properties tombol yang dikembalikan library
-        -- secara langsung, tetapi dalam library kita otomatis diberi animasi hover
-        print("Auto Strafe", autoMoveEnabled)
+-- Row 2: Auto Strafe (Key, Toggle)
+TabMods:CreateToggleRow({
+    Name = "Auto Strafe",
+    HasKey = true, DefaultKey = "C",
+    OnKeyChange = function(newKey)
+        local key = Enum.KeyCode[string.upper(newKey)]
+        if key then strafeKey = key end
+    end,
+    OnToggle = function(state)
+        autoMoveEnabled = state
     end
 })
 
--- Auto TP Slider dan Toggle
-TabHome:CreateButton({
-    Name = "Auto TP (Low HP): OFF -> Klik untuk Toggle",
-    Callback = function()
-        autoTpLowHpEnabled = not autoTpLowHpEnabled
+-- Row 3: Auto TP when Low (Toggle Only)
+TabMods:CreateToggleRow({
+    Name = "Auto TP (Low HP)",
+    OnToggle = function(state)
+        autoTpLowHpEnabled = state
         hasTeleportedForLowHp = false
-        print("Auto TP Low HP Status:", autoTpLowHpEnabled)
     end
 })
 
-TabHome:CreateSlider({
-    Name = "TP Threshold (%)",
+-- Row 4: Auto TP Threshold Slider
+TabMods:CreateSliderRow({
+    Name = "TP Threshold",
     Min = 10,
     Max = 90,
     Default = 50,
-    Callback = function(Value)
-        tpThreshold = Value
+    Suffix = "%",
+    Callback = function(val)
+        tpThreshold = val
     end
 })
 
--- Safe Teleport
-TabHome:CreateButton({
+-- Row 5: Safe TP Button
+TabMods:CreateButtonRow({
     Name = "Safe Teleport",
+    ButtonText = "Execute",
     Callback = function()
-        local success = doSafeTeleport()
-        if not success then warn("Gagal Safe Teleport. Base tidak ditemukan.") end
+        doSafeTeleport()
     end
 })
 
--- Tombol ESP List & Toggle (Simplified)
-TabHome:CreateButton({
-    Name = "ESP Visualize Nodes: OFF -> Toggle",
-    Callback = function()
-        espEnabled = not espEnabled
-        print("ESP Enabled:", espEnabled)
+-- Row 6: ESP Toggle
+TabMods:CreateToggleRow({
+    Name = "ESP Node Visualize",
+    OnToggle = function(state)
+        espEnabled = state
+    end
+})
+
+-- ==========================================
+-- ISI TAB SETTINGS
+-- ==========================================
+TabSettings:CreateInputRow({
+    Name = "Menu Toggle Key",
+    Default = "Z",
+    Placeholder = "Key",
+    Callback = function(val)
+        Window:SetToggleKey(val)
     end
 })
 
@@ -166,7 +182,7 @@ table.insert(connections, game:GetService("RunService").RenderStepped:Connect(fu
         end
     end
 
-    -- Fly Logic Basic Mapping
+    -- Fly Logic
     if flyEnabled and hrp and hum then
         local bg = hrp:FindFirstChild("FlyGyro")
         local bv = hrp:FindFirstChild("FlyVel")
@@ -188,10 +204,12 @@ table.insert(connections, game:GetService("RunService").RenderStepped:Connect(fu
     end
 end))
 
--- Bind AutoMove shortcut
+-- Global Hotkeys
 table.insert(connections, game:GetService("UserInputService").InputBegan:Connect(function(input, gp)
-    if not gp and input.KeyCode == Enum.KeyCode.C then
+    if gp then return end
+    if input.KeyCode == strafeKey then
         autoMoveEnabled = not autoMoveEnabled
-        print("Auto Strafe Toggled by Shortcut [C]")
+        -- (Ideally sync visual toggle with UI, current UI architecture is one-way binding logic, 
+        -- but this handles internal state accurately).
     end
 end))
