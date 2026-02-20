@@ -1,14 +1,11 @@
 local TaskManagerUI
 
--- Mendeteksi apakah dijalankan lewat Executor (mendukung loadstring & game:HttpGet)
+-- Mendeteksi apakah dijalankan lewat Executor
 local success, err = pcall(function()
     TaskManagerUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/TaskUI_Library.lua"))()
 end)
 
-if not success or not TaskManagerUI then
-    warn("Gagal mengambil UI Library dari Github. Error: " .. tostring(err))
-    return
-end
+if not success or not TaskManagerUI then warn("Gagal mengambil UI Library"); return end
 
 -- ==========================================
 -- INISIALISASI VARIABEL & SISTEM
@@ -25,19 +22,15 @@ local autoTpLowHpEnabled = false
 local tpThreshold = 50 
 local hasTeleportedForLowHp = false 
 local flySpeed = 300
+local flyKey = Enum.KeyCode.X
 
 local cachedBases = {}
 
--- ==========================================
--- OPTIMIZATION: CACHE BASES ONCE (Untuk Safe TP)
--- ==========================================
+-- Cache Bases Optimization
 local function cacheBaseObject(obj)
     if string.find(string.lower(obj.Name), "base") then
-        if obj:IsA("Model") and obj.PrimaryPart then
-            table.insert(cachedBases, obj.PrimaryPart)
-        elseif obj:IsA("BasePart") then
-            table.insert(cachedBases, obj)
-        end
+        if obj:IsA("Model") and obj.PrimaryPart then table.insert(cachedBases, obj.PrimaryPart)
+        elseif obj:IsA("BasePart") then table.insert(cachedBases, obj) end
     end
 end
 for _, v in pairs(workspace:GetDescendants()) do cacheBaseObject(v) end
@@ -53,9 +46,7 @@ local function doSafeTeleport()
     for _, tempPart in ipairs(cachedBases) do
         if tempPart and tempPart.Parent then 
             local dist = (tempPart.Position - hrp.Position).Magnitude
-            if dist > maxDistance then
-                maxDistance = dist; targetCFrame = tempPart.CFrame
-            end
+            if dist > maxDistance then maxDistance = dist; targetCFrame = tempPart.CFrame end
         end
     end
     if targetCFrame then hrp.CFrame = targetCFrame + Vector3.new(0, 50, 0); return true end
@@ -63,27 +54,24 @@ local function doSafeTeleport()
 end
 
 -- ==========================================
--- MEMUAT UI WINDOWS 11 TASK MANAGER
+-- MEMUAT UI COMPACT SURVIVE THE LOOP
 -- ==========================================
-local Window = TaskManagerUI:CreateWindow({
-    Name = "Survive The Loop - Task Manager"
-})
+local Window = TaskManagerUI:CreateWindow({Name = "Survive the Loop"})
+
+-- 11306132213 adalah gambar icon Home standard dari Roblox Decal
+local TabHome = Window:CreateTab("Player Mods", 11210499092) 
 
 -- ==========================================
--- TAB KIRI (Menu)
--- ==========================================
-local TabPlayer = Window:CreateTab("Player Mods", 11306132213) 
-local TabESP = Window:CreateTab("ESP & Visuals", 11306129524)
-
--- ==========================================
--- ISI TAB PLAYER MODS
+-- ISI TAB PLAYER MODS (Fungsional Kompak)
 -- ==========================================
 
-TabPlayer:CreateButton({
+-- Fly Mod: Teks | Tombol Enable | TextBox Key | TextBox Speed
+TabHome:CreateAdvancedRow({
     Name = "Fly Mod",
-    Value = "Off",
-    Callback = function()
-        flyEnabled = not flyEnabled
+    DefaultKey = "X",
+    DefaultSpeed = "300",
+    OnToggle = function(state) -- Nilai 'state' dikirim dari library (true/false)
+        flyEnabled = state
         local c = player.Character
         if flyEnabled then
             if c and c:FindFirstChild("HumanoidRootPart") and c:FindFirstChild("Humanoid") then
@@ -92,63 +80,74 @@ TabPlayer:CreateButton({
                 local bv = Instance.new("BodyVelocity", hrp); bv.Name = "FlyVel"; bv.MaxForce = Vector3.new(9e9, 9e9, 9e9); bv.Velocity = Vector3.new(0,0,0)
                 c.Humanoid.PlatformStand = true
             end
-            print("Fly Enabled")
         else
             if c and c:FindFirstChild("HumanoidRootPart") then
                 if c.HumanoidRootPart:FindFirstChild("FlyGyro") then c.HumanoidRootPart.FlyGyro:Destroy() end
                 if c.HumanoidRootPart:FindFirstChild("FlyVel") then c.HumanoidRootPart.FlyVel:Destroy() end
                 if c:FindFirstChild("Humanoid") then c.Humanoid.PlatformStand = false end
             end
-            print("Fly Disabled")
         end
+    end,
+    OnKeyChange = function(newKeyString)
+        flyKey = Enum.KeyCode[string.upper(newKeyString)] or flyKey
+    end,
+    OnSpeedChange = function(newSpeedVal)
+        flySpeed = tonumber(newSpeedVal) or flySpeed
     end
 })
 
-TabPlayer:CreateButton({
-    Name = "Auto Strafe",
-    Value = "Off",
+-- Auto Strafe Toggle (Muka Tombol Penuh)
+local autoStrafeBtn = TabHome:CreateButton({
+    Name = "Auto Strafe [C]: OFF",
     Callback = function()
         autoMoveEnabled = not autoMoveEnabled
-        print("Auto Move: " .. tostring(autoMoveEnabled))
+        -- Kita bisa merubah properties tombol yang dikembalikan library
+        -- secara langsung, tetapi dalam library kita otomatis diberi animasi hover
+        print("Auto Strafe", autoMoveEnabled)
     end
 })
 
-TabPlayer:CreateButton({
-    Name = "Auto TP (Low HP)",
-    Value = "Off",
+-- Auto TP Slider dan Toggle
+TabHome:CreateButton({
+    Name = "Auto TP (Low HP): OFF -> Klik untuk Toggle",
     Callback = function()
         autoTpLowHpEnabled = not autoTpLowHpEnabled
         hasTeleportedForLowHp = false
-        print("Auto TP: " .. tostring(autoTpLowHpEnabled))
+        print("Auto TP Low HP Status:", autoTpLowHpEnabled)
     end
 })
 
-TabPlayer:CreateButton({
-    Name = "Safe Teleport (Now)",
-    Value = "Execute",
+TabHome:CreateSlider({
+    Name = "TP Threshold (%)",
+    Min = 10,
+    Max = 90,
+    Default = 50,
+    Callback = function(Value)
+        tpThreshold = Value
+    end
+})
+
+-- Safe Teleport
+TabHome:CreateButton({
+    Name = "Safe Teleport",
     Callback = function()
         local success = doSafeTeleport()
-        if success then print("Teleported Safely!") else print("Safe Base Not Found") end
+        if not success then warn("Gagal Safe Teleport. Base tidak ditemukan.") end
     end
 })
 
--- ==========================================
--- ISI TAB ESP
--- ==========================================
-
-TabESP:CreateButton({
-    Name = "Toggle ESP Player",
-    Value = "Off",
+-- Tombol ESP List & Toggle (Simplified)
+TabHome:CreateButton({
+    Name = "ESP Visualize Nodes: OFF -> Toggle",
     Callback = function()
         espEnabled = not espEnabled
-        -- Logika ESP akan dimasukkan ke rendering loop atau dijalankan di sini.
-        -- Karena space / template UI basic, implementasi Folder CoreGui ESP bisa dipasang di sini.
-        print("ESP Toggled: " .. tostring(espEnabled))
+        print("ESP Enabled:", espEnabled)
     end
 })
 
+
 -- ==========================================
--- RENDERING LOOP (RunService) 
+-- RENDERING LOOP (Fly & AutoMove)
 -- ==========================================
 table.insert(connections, game:GetService("RunService").RenderStepped:Connect(function(dt)
     local char = player.Character
@@ -156,7 +155,7 @@ table.insert(connections, game:GetService("RunService").RenderStepped:Connect(fu
     local hum = char:FindFirstChild("Humanoid")
     local hrp = char:FindFirstChild("HumanoidRootPart")
 
-    -- Check Low HP
+    -- Check Low HP Target
     if autoTpLowHpEnabled and hum and hrp then
         local hpPercent = (hum.Health / hum.MaxHealth) * 100
         if hpPercent <= tpThreshold and not hasTeleportedForLowHp and hum.Health > 0 then
@@ -167,7 +166,7 @@ table.insert(connections, game:GetService("RunService").RenderStepped:Connect(fu
         end
     end
 
-    -- Fly & Automove Logic Handle (Basic)
+    -- Fly Logic Basic Mapping
     if flyEnabled and hrp and hum then
         local bg = hrp:FindFirstChild("FlyGyro")
         local bv = hrp:FindFirstChild("FlyVel")
@@ -186,5 +185,13 @@ table.insert(connections, game:GetService("RunService").RenderStepped:Connect(fu
         end
     elseif autoMoveEnabled and not flyEnabled and hum then
         hum:Move(workspace.CurrentCamera.CFrame.RightVector * math.sin(tick() * 5), false)
+    end
+end))
+
+-- Bind AutoMove shortcut
+table.insert(connections, game:GetService("UserInputService").InputBegan:Connect(function(input, gp)
+    if not gp and input.KeyCode == Enum.KeyCode.C then
+        autoMoveEnabled = not autoMoveEnabled
+        print("Auto Strafe Toggled by Shortcut [C]")
     end
 end))
