@@ -10,6 +10,17 @@ else
     parentUI = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 end
 
+local function LoadLucideIcons()
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/src/Icons.lua"))()
+    end)
+    if success and result and result.assets then
+        return result.assets
+    end
+    return {}
+end
+local LucideIcons = LoadLucideIcons()
+
 -- Windows 11 Dark Mode Palette
 local Palette = {
     Background = Color3.fromRGB(32, 32, 32),
@@ -235,7 +246,22 @@ function SkenaUI:CreateWindow(Options)
         TabIcon.Size = UDim2.new(0, 20, 0, 20)
         TabIcon.Position = UDim2.new(0.5, -10, 0.5, -10)
         TabIcon.BackgroundTransparency = 1
-        TabIcon.Image = "rbxassetid://" .. tostring(IconID)
+        
+        local finalImage = ""
+        if type(IconID) == "string" then
+            local checkKey = "lucide-" .. IconID
+            if LucideIcons[checkKey] then
+                finalImage = LucideIcons[checkKey]
+            elseif LucideIcons[IconID] then
+                finalImage = LucideIcons[IconID]
+            else
+                finalImage = "rbxassetid://10709798174" -- Circle Fallback
+            end
+        else
+            finalImage = "rbxassetid://" .. tostring(IconID)
+        end
+        
+        TabIcon.Image = finalImage
         TabIcon.ImageColor3 = Palette.TextSecondary
         
         local Indicator = Instance.new("Frame", TabBtn)

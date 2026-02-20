@@ -119,10 +119,9 @@ task.spawn(function()
     end
 end)
 
--- Icon IDs (Menggunakan ID Gambar Roblox yang valid/Teruji)
--- 16467575849 (Eye Icon) | 10888330750 (Settings Icon)
-local TabMods = Window:CreateTab("Player Mods", 16467575849) 
-local TabSettings = Window:CreateTab("Settings", 10888330750, true) 
+-- Icon Tab menggunakan teks sederhana berkat integrasi Lucide Icons
+local TabMods = Window:CreateTab("Player Mods", "eye") 
+local TabSettings = Window:CreateTab("Settings", "settings", true) 
 
 -- ==========================================
 -- ISI TAB PLAYER MODS
