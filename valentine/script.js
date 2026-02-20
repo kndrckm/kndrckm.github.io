@@ -70,8 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         image: "https://ik.imagekit.io/tvlk/blog/2022/08/Perpustakaan-Jakarta-TIM-Cikini-Traveloka-Xperience-1.jpg" // Library
                     }
                 },
-                {
-                    label: "Classy Showroom: Kafe elegan menyatu dengan showroom seni",
+                {   label: "Classy Showroom: Kafe elegan menyatu dengan showroom seni",
                     target: {
                         name: "Birubeeru",
                         region: "Pusat",
