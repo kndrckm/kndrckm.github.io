@@ -56,20 +56,6 @@ function SkenaUI:CreateWindow(Options)
         ToggleKey = Enum.KeyCode.Z
     }
 
-    -- Global shortcut to toggle UI
-    local uiToggleConnection
-    uiToggleConnection = UserInputService.InputBegan:Connect(function(input, gp)
-        if gp then return end
-        if input.KeyCode == WindowObj.ToggleKey then
-            SG.Enabled = not SG.Enabled
-        end
-    end)
-    
-    -- When SG is destroyed, cleanup Toggle shortcut
-    SG.Destroying:Connect(function()
-        if uiToggleConnection then uiToggleConnection:Disconnect() end
-    end)
-    
     local DragFrame = Instance.new("Frame", SG)
     DragFrame.Name = "DragFrame"
     DragFrame.Size = UDim2.new(0, 450, 0, 50) 
@@ -77,13 +63,12 @@ function SkenaUI:CreateWindow(Options)
     DragFrame.BackgroundTransparency = 1
     DragFrame.Active = true
 
-    local Main = Instance.new("Frame", DragFrame)
+    local Main = Instance.new("CanvasGroup", DragFrame)
     Main.Name = "Main"
     Main.Size = UDim2.new(1, 0, 0, 0) 
     Main.AutomaticSize = Enum.AutomaticSize.Y 
     Main.BackgroundColor3 = Palette.Background
     Main.BorderSizePixel = 0
-    Main.ClipsDescendants = true
     
     local MainCorner = Instance.new("UICorner", Main)
     MainCorner.CornerRadius = UDim.new(0, 8)
@@ -91,6 +76,43 @@ function SkenaUI:CreateWindow(Options)
     local MainStroke = Instance.new("UIStroke", Main)
     MainStroke.Color = Palette.Border
     MainStroke.Thickness = 1
+
+    local MainScale = Instance.new("UIScale", Main)
+    MainScale.Scale = 0.85
+    
+    -- Initial Fade In Pop-Up
+    Main.GroupTransparency = 1
+    TweenService:Create(Main, TweenInfo.new(0.35, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {GroupTransparency = 0}):Play()
+    TweenService:Create(MainScale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = 1}):Play()
+
+    -- Global shortcut to toggle UI w/ Animation
+    local uiVisible = true
+    local uiToggleConnection
+    uiToggleConnection = UserInputService.InputBegan:Connect(function(input, gp)
+        if gp then return end
+        if input.KeyCode == WindowObj.ToggleKey then
+            uiVisible = not uiVisible
+            if uiVisible then
+                SG.Enabled = true
+                MainScale.Scale = 0.85
+                Main.GroupTransparency = 1
+                TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {GroupTransparency = 0}):Play()
+                TweenService:Create(MainScale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = 1}):Play()
+            else
+                local tw = TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {GroupTransparency = 1})
+                TweenService:Create(MainScale, TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Scale = 0.9}):Play()
+                tw:Play()
+                task.delay(0.2, function()
+                    if not uiVisible then SG.Enabled = false end
+                end)
+            end
+        end
+    end)
+    
+    -- When SG is destroyed, cleanup Toggle shortcut
+    SG.Destroying:Connect(function()
+        if uiToggleConnection then uiToggleConnection:Disconnect() end
+    end)
 
     -- Drag Logic
     local dragging, dragInput, dragStart, startPos
@@ -291,10 +313,11 @@ function SkenaUI:CreateWindow(Options)
         
         local TabBtn, TabIcon, Indicator = CreateTabButton(TabName, IconID, isSettings)
 
-        local Page = Instance.new("Frame", TabContainer)
+        local Page = Instance.new("CanvasGroup", TabContainer)
         Page.Size = UDim2.new(1, 0, 0, 0)
         Page.AutomaticSize = Enum.AutomaticSize.Y
         Page.BackgroundTransparency = 1
+        Page.GroupTransparency = 1
         Page.Visible = false
         
         local PLayout = Instance.new("UIListLayout", Page)
@@ -602,15 +625,20 @@ function SkenaUI:CreateWindow(Options)
     end
     
     function WindowObj:SelectTab(TabName)
+        if WindowObj.CurrentTab == TabName then return end
         WindowObj.CurrentTab = TabName
         for name, data in pairs(WindowObj.Tabs) do
             if name == TabName then
                 data.Page.Visible = true
+                data.Page.GroupTransparency = 1
+                TweenService:Create(data.Page, TweenInfo.new(0.35, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {GroupTransparency = 0}):Play()
+                
                 data.Indicator.Visible = true
                 data.Icon.ImageColor3 = Palette.Accent
                 data.Button.BackgroundTransparency = 0
             else
                 data.Page.Visible = false
+                data.Page.GroupTransparency = 1
                 data.Indicator.Visible = false
                 data.Icon.ImageColor3 = Palette.TextSecondary
                 data.Button.BackgroundTransparency = 1
