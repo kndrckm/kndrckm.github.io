@@ -125,11 +125,11 @@ end
 -- ==========================================
 -- MEMBUAT WINDOW SKENAHUB
 -- ==========================================
-local Window = SkenaUI:CreateWindow({Name = "SkenaHub"})
+local Window = SkenaUI:CreateWindow({Name = "SkenaHub - Survive the Loop Helper"})
 
--- Icon IDs (Lucide Icons Port format Image)
-local TabMods = Window:CreateTab("Player Mods", 6031094028) 
-local TabSettings = Window:CreateTab("Settings", 6031225815, true) 
+-- Icon IDs (Menggunakan ID Gambar Roblox yang valid)
+local TabMods = Window:CreateTab("Player Mods", 10888331510) 
+local TabSettings = Window:CreateTab("Settings", 10888330750, true) 
 
 -- ==========================================
 -- ISI TAB PLAYER MODS
