@@ -35,35 +35,14 @@ local flySpeed = 300
 local flyKey = Enum.KeyCode.X
 local strafeKey = Enum.KeyCode.C
 
-local cachedBases = {}
-
--- ==========================================
--- LOGIC & OPTIMIZATION
--- ==========================================
-local function cacheBaseObject(obj)
-    if string.find(string.lower(obj.Name), "base") then
-        if obj:IsA("Model") and obj.PrimaryPart then table.insert(cachedBases, obj.PrimaryPart)
-        elseif obj:IsA("BasePart") then table.insert(cachedBases, obj) end
-    end
-end
-for _, v in pairs(workspace:GetDescendants()) do cacheBaseObject(v) end
-table.insert(connections, workspace.DescendantAdded:Connect(function(obj) cacheBaseObject(obj) end))
-
 local function doSafeTeleport()
     local char = player.Character
     if not char then return false end
     local hrp = char:FindFirstChild("HumanoidRootPart")
     if not hrp then return false end
-    local targetCFrame = nil
-    local maxDistance = -1
-    for _, tempPart in ipairs(cachedBases) do
-        if tempPart and tempPart.Parent then 
-            local dist = (tempPart.Position - hrp.Position).Magnitude
-            if dist > maxDistance then maxDistance = dist; targetCFrame = tempPart.CFrame end
-        end
-    end
-    if targetCFrame then hrp.CFrame = targetCFrame + Vector3.new(0, 50, 0); return true end
-    return false
+    
+    hrp.CFrame = hrp.CFrame + Vector3.new(50, 100, 50)
+    return true
 end
 
 local espFolder = nil
@@ -194,13 +173,6 @@ TabMods:CreateSliderRow({
     end
 })
 
-TabMods:CreateButtonRow({
-    Name = "Safe Teleport",
-    ButtonText = "Execute",
-    Callback = function()
-        doSafeTeleport()
-    end
-})
 
 TabMods:CreateToggleRow({
     Name = "ESP Node Visualize",
