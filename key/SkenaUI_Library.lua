@@ -115,6 +115,7 @@ function SkenaUI:CreateWindow(Options)
     TitleText.TextSize = 12
     TitleText.TextColor3 = Palette.TextSecondary
     TitleText.TextXAlignment = Enum.TextXAlignment.Left
+    WindowObj.TitleText = TitleText
 
     local ControlContainer = Instance.new("Frame", TitleBar)
     ControlContainer.Size = UDim2.new(0, 92, 1, 0)
@@ -594,6 +595,12 @@ function SkenaUI:CreateWindow(Options)
     function WindowObj:SetToggleKey(KeycodeStr)
         local kc = Enum.KeyCode[string.upper(KeycodeStr)]
         if kc then WindowObj.ToggleKey = kc end
+    end
+
+    function WindowObj:SetTitle(NewTitle)
+        if WindowObj.TitleText then
+            WindowObj.TitleText.Text = tostring(NewTitle)
+        end
     end
     
     return WindowObj

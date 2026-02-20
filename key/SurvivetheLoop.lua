@@ -123,12 +123,26 @@ local function applyFly(state)
 end
 
 -- ==========================================
--- MEMBUAT WINDOW SKENAHUB
+-- MEMBUAT WINDOW SKENAHUB (Dynamic Game Title)
 -- ==========================================
-local Window = SkenaUI:CreateWindow({Name = "SkenaHub - Survive the Loop Helper"})
+local Window = SkenaUI:CreateWindow({Name = "SkenaHub - Loading..."})
 
--- Icon IDs (Menggunakan ID Gambar Roblox yang valid)
-local TabMods = Window:CreateTab("Player Mods", 10888331510) 
+-- Auto grab judul game berdasarkan PlaceId 
+task.spawn(function()
+    local success, info = pcall(function()
+        return game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
+    end)
+    if success and info and info.Name then
+        Window:SetTitle("SkenaHub - " .. info.Name .. " Helper")
+    else
+        -- Jika gagal fetch (misal koneksi atau private place), fallback manual
+        Window:SetTitle("SkenaHub - Survive the Loop Helper")
+    end
+end)
+
+-- Icon IDs (Menggunakan ID Gambar Roblox yang valid/Teruji)
+-- 16467575849 (Eye Icon) | 10888330750 (Settings Icon)
+local TabMods = Window:CreateTab("Player Mods", 16467575849) 
 local TabSettings = Window:CreateTab("Settings", 10888330750, true) 
 
 -- ==========================================
