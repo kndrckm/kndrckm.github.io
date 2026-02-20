@@ -1,26 +1,15 @@
--- Ini adalah contoh cara memakai UI Library yang sudah kita buat.
--- Jika kamu mengetes ini di Roblox Studio, copy seluruh teks ini lalu paste di View -> Command Bar lalu tekan Enter!
-
--- 1. Load Library dari file yang kita buat
--- (Karena kita nentest lokal, kita gunakan fungsi require jika di environment executor, 
--- tapi untuk Command Bar Studio, kita akan gunakan simulasi load cepat)
-
 local TaskManagerUI
--- Jika di game/Studio Command Bar, kita load manual scriptnya (Anggap kita sudah copy paste isi TaskUI_Library)
--- Untuk simulasi ini, kita gunakan Require / Loadstring jika di executor:
-if getfenv().loadstring then
-    -- Misal script library ditaruh di Github raw nantinya:
-    -- TaskManagerUI = loadstring(game:HttpGet("URL_RAW_GITHUB_KAMU"))()
-else
-    -- Jika di lokal Studio dan ada di ReplicatedStorage dll:
-    -- TaskManagerUI = require(game.ReplicatedStorage.TaskUI_Library)
+
+-- Mendeteksi apakah dijalankan lewat Executor (mendukung loadstring & game:HttpGet)
+local success, err = pcall(function()
+    TaskManagerUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/TaskUI_Library.lua"))()
+end)
+
+if not success or not TaskManagerUI then
+    warn("Gagal mengambil UI Library dari Github. Error: " .. tostring(err))
+    return
 end
 
--- ==========================================
--- JIKA TESTING LEWAT COMMAND BAR STUDIO, 
--- COPY ISI DARI TaskUI_Library.lua, PASTE DI ATAS BARIS INI,
--- LALU HAPUS `local TaskManagerUI` di atas.
--- ==========================================
 
 -- 2. Membuat Jendela Utama (Mirip Window Task Manager)
 local Window = TaskManagerUI:CreateWindow({
