@@ -59,7 +59,8 @@ function SkenaUI:CreateWindow(Options)
     local DragFrame = Instance.new("Frame", SG)
     DragFrame.Name = "DragFrame"
     DragFrame.Size = UDim2.new(0, 450, 0, 50) 
-    DragFrame.Position = UDim2.new(0.5, -225, 0.4, 0)
+    DragFrame.Position = UDim2.new(0.5, -225, 0.15, 0)
+    DragFrame.AutomaticSize = Enum.AutomaticSize.Y
     DragFrame.BackgroundTransparency = 1
     DragFrame.Active = true
 
