@@ -68,7 +68,7 @@ end
 -- SETTINGS BATCH & DELAY
 -- ==========================================
 getgenv().AFK_PlantAmount = 15
-getgenv().AFK_HarvestDelay = 120
+getgenv().AFK_HarvestDelay = 300
 
 TabFarming:CreateInputRow({
     Name = " [ Jumlah Tanam per Loop ]",
@@ -81,10 +81,10 @@ TabFarming:CreateInputRow({
 
 TabFarming:CreateInputRow({
     Name = " [ Waktu Tunggu / Panen (Detik) ]",
-    Placeholder = "120",
-    Default = "120",
+    Placeholder = "300",
+    Default = "300",
     Callback = function(val)
-        getgenv().AFK_HarvestDelay = tonumber(val) or 120
+        getgenv().AFK_HarvestDelay = tonumber(val) or 300
     end
 })
 
@@ -268,24 +268,16 @@ TabFarming:CreateToggleRow({
                         task.wait(2)
                     end
                     
-                    -- 3. Menunggu (Waktu Tanaman Tumbuh)
-                    local hDelay = getgenv().AFK_HarvestDelay or 120
+                    -- 3. Menunggu (Waktu Tanaman Tumbuh & Auto-Harvest Game)
+                    local hDelay = getgenv().AFK_HarvestDelay or 300
                     for hw = hDelay, 1, -1 do
                         if not getgenv().SkenaAutoFarm_Crop then return end
-                        TUpdate("Menunggu Tumbuh", "Panen Otomatis", hw .. "s")
+                        TUpdate("Menunggu Panenan Game", "Jual Hasil", hw .. "s")
                         task.wait(1)
-                    end
-                    
-                    -- 4. Panen Otomatis
-                    TUpdate("Panen ("..getgenv().SelectedCrop..")", "Jual Hasil", "Proses...")
-                    for i = 1, plotSize + 5 do
-                        if not getgenv().SkenaAutoFarm_Crop then return end
-                        pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer(getgenv().SelectedCrop, i, cData.EnglishName) end)
-                        task.wait(0.35) 
                     end
                     task.wait(1.5)
                     
-                    -- 5. Jual Pintar
+                    -- 4. Jual Pintar
                     TUpdate("Menganalisa Tas (Jual)", "Restart Loop", "Proses...")
                     local sellAmt = plotSize
                     pcall(function()
