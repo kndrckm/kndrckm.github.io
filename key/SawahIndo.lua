@@ -90,7 +90,9 @@ TabFarming:CreateToggleRow({
                 local rs = game:GetService("ReplicatedStorage")
                 while getgenv().SkenaAutoFarm_Jagung do
                     
-                    pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", 15) end)
+                    -- 1. Beli Bibit (Sesuai lahan kalibrasi yang diset)
+                    local plotSize = #getgenv().PLOT_POSITIONS > 0 and #getgenv().PLOT_POSITIONS or 15
+                    pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", plotSize) end)
                     task.wait(1)
                     
                     if #getgenv().PLOT_POSITIONS > 0 then
@@ -103,20 +105,32 @@ TabFarming:CreateToggleRow({
                         warn("AUTO-FARM TERTUNDA: Anda belum merekam titik tanah via Kalibrasi.")
                     end
                     
-                    -- 3. Menunggu (Waktu Jagung Tumbuh = Sekitar 15-20 detik)
-                    -- Sesuaikan angka ini bila ternyata jagung belum 100% muncul dan siap dipanen
+                    -- 3. Menunggu (Waktu Jagung Tumbuh)
                     task.wait(120)
                     
-                    -- 4. Panen Otomatis (Instan)
-                    for i = 1, 15 do
+                    -- 4. Panen Otomatis (Range diperlebar ke 20 ID petak dengan delay lebih santun)
+                    for i = 1, 20 do
                         if not getgenv().SkenaAutoFarm_Jagung then return end
                         pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer("Jagung", i, "Corn") end)
-                        task.wait(0.2)
+                        task.wait(0.35) -- Delay diperhalus agar tidak macet / drop di petak-13
                     end
                     task.wait(1.5)
                     
-                    -- 5. Jual
-                    pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 9999) end)
+                    -- 5. Jual Pintar (Membaca tas secara akurat)
+                    local sellAmt = plotSize
+                    pcall(function()
+                        local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
+                        if typeof(inv) == "table" then
+                            for k, v in pairs(inv) do
+                                if typeof(v) == "number" and (k == "Jagung" or k == "Corn") then sellAmt = v
+                                elseif typeof(v) == "table" and (v.Name == "Jagung" or k == "Jagung") then
+                                    sellAmt = tonumber(v.Amount) or tonumber(v.Count) or tonumber(v.Quantity) or sellAmt
+                                end
+                            end
+                        end
+                    end)
+                    
+                    pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", sellAmt) end)
                     task.wait(1.5)
                 end
             end)
@@ -167,10 +181,28 @@ TabFarming:CreateButtonRow({
     Name = "3. Sell All Jagung",
     ButtonText = "Jual",
     Callback = function()
-        pcall(function()
-            local rs = game:GetService("ReplicatedStorage")
-            -- Ditembak dengan angka fantastis agar terjual berapapun sampai habis di Inventory
-            rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 9999)
+        task.spawn(function()
+            pcall(function()
+                local rs = game:GetService("ReplicatedStorage")
+                local sellAmt = 15 -- Harga default tebak
+                
+                -- Sadap data inventaris
+                local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
+                if typeof(inv) == "table" then
+                    for k, v in pairs(inv) do
+                        if typeof(v) == "number" and (k == "Jagung" or k == "Corn") then sellAmt = v
+                        elseif typeof(v) == "table" and (v.Name == "Jagung" or k == "Jagung") then
+                            sellAmt = tonumber(v.Amount) or tonumber(v.Count) or tonumber(v.Quantity) or sellAmt
+                        end
+                    end
+                end
+                
+                if sellAmt > 0 then
+                    rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", sellAmt)
+                else
+                    warn("Inventaris jagung kosong atau GET_LIST gagal dilacak!")
+                end
+            end)
         end)
     end
 })
