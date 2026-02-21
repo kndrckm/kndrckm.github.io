@@ -411,6 +411,25 @@ TabFarming:CreateButtonRow({
     end
 })
 
+TabFarming:CreateToggleRow({
+    Name = "Fast Interact (No Hold E)",
+    OnToggle = function(state)
+        getgenv().SkenaNoDelayInteract = state
+        if state then
+            task.spawn(function()
+                while getgenv().SkenaNoDelayInteract do
+                    for _, v in ipairs(workspace:GetDescendants()) do
+                        if v:IsA("ProximityPrompt") and v.HoldDuration > 0 then
+                            v.HoldDuration = 0
+                        end
+                    end
+                    task.wait(1)
+                end
+            end)
+        end
+    end
+})
+
 -- (AFK Mode dipindah ke atas)
 
 -- ==========================================
