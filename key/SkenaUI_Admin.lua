@@ -51,11 +51,17 @@ function SkenaAdmin.Attach(Window, DebugData)
                 if getgenv()._SKENA_IS_SPYING and (method == "FireServer" or method == "InvokeServer") then
                     -- Hindari loop/error internal
                     local args = {...}
+                    local timeSec = os.clock()
+                    local gap = 0
+                    if getgenv()._SKENA_SPY_LAST_TIME then
+                        gap = timeSec - getgenv()._SKENA_SPY_LAST_TIME
+                    end
+                    getgenv()._SKENA_SPY_LAST_TIME = timeSec
+
                     task.spawn(function()
                         pcall(function()
                             local pName = tostring(self.Parent)
-                            local timeSec = os.clock()
-                            local logLine = string.format("\n[%.2fs] [Remote] %s.%s (%s)", timeSec, pName, tostring(self), method)
+                            local logLine = string.format("\n[+%.3fs GAP] [Remote] %s.%s (%s)", gap, pName, tostring(self), method)
                             for i, v in ipairs(args) do
                                 local tStr = typeof(v)
                                 local vStr = tostring(v)

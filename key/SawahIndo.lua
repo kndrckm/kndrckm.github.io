@@ -254,9 +254,11 @@ TabFarming:CreateToggleRow({
                             warn("Batal tanam putaran ini karena bibit target (" .. cData.SeedName .. ") gagal dipegang!")
                             task.wait(2)
                         else
-                            local pos = char.HumanoidRootPart.Position
+                            local startPos = char.HumanoidRootPart.Position
+                            local rightVec = char.HumanoidRootPart.CFrame.RightVector
                             for i = 1, plotSize do
                                 if not getgenv().SkenaAutoFarm_Crop then return end
+                                local pos = startPos + (rightVec * ((i - 1) * 3))
                                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                                 task.wait(0.25)
                             end
@@ -374,9 +376,11 @@ TabFarming:CreateInputButtonRow({
                 return
             end
             
-            local pos = char.HumanoidRootPart.Position
             local rs = game:GetService("ReplicatedStorage")
+            local startPos = char.HumanoidRootPart.Position
+            local rightVec = char.HumanoidRootPart.CFrame.RightVector
             for i = 1, amount do
+                local pos = startPos + (rightVec * ((i - 1) * 3))
                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                 task.wait(0.25)
             end
