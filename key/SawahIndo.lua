@@ -125,6 +125,9 @@ TabFarming:CreateToggleRow({
                         if hum then
                             local heldCrop = char:FindFirstChild(cData.SeedName)
                             if not heldCrop then
+                                hum:UnequipTools()
+                                task.wait(0.2)
+                                
                                 local inBp = player.Backpack:FindFirstChild(cData.SeedName)
                                 if inBp then
                                     hum:EquipTool(inBp)
@@ -137,11 +140,18 @@ TabFarming:CreateToggleRow({
                             if not char:FindFirstChild(cData.SeedName) then
                                 local recheckBp = player.Backpack:FindFirstChild(cData.SeedName)
                                 if recheckBp then
+                                    hum:UnequipTools()
+                                    task.wait(0.2)
                                     hum:EquipTool(recheckBp)
                                     task.wait(0.4)
                                 end
                             end
                         end
+                        
+                        -- Cek akhir: pastikan benar-benar memakai tool yang tepat
+                        if not char:FindFirstChild(cData.SeedName) then
+                            warn("Batal tanam putaran ini karena bibit target (" .. cData.SeedName .. ") gagal dipegang!")
+                        else
                         
                         local pos = char.HumanoidRootPart.Position
                         for i = 1, plotSize do
@@ -149,6 +159,7 @@ TabFarming:CreateToggleRow({
                             pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                             task.wait(0.25)
                         end
+                        end -- Penutup dari pengecekan final tool
                     else
                         warn("Karakter tidak ditemukan! Tanam ditunda 2 detik.")
                         task.wait(2)
@@ -229,15 +240,24 @@ TabFarming:CreateInputButtonRow({
             if hum then
                 local heldCrop = char:FindFirstChild(cData.SeedName)
                 if not heldCrop then
+                    hum:UnequipTools()
+                    task.wait(0.2)
+                    
                     local inBp = player.Backpack:FindFirstChild(cData.SeedName)
                     if inBp then
                         hum:EquipTool(inBp)
-                        task.wait(0.25)
+                        task.wait(0.4)
                     else
-                        warn("Batal tanam manual: Bibit tidak ada di tangan/tas!")
+                        warn("Batal tanam manual: Bibit " .. cData.SeedName .. " tidak ada di tas!")
                         return
                     end
                 end
+            end
+            
+            -- Cek akhir manual
+            if not char:FindFirstChild(cData.SeedName) then
+                warn("Gagal menanam manual! Anda tidak memegang " .. cData.SeedName)
+                return
             end
             
             local pos = char.HumanoidRootPart.Position
