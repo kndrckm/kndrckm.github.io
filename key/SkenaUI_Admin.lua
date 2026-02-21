@@ -143,6 +143,39 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
     
+    -- Modul Ekstra: Auto-Touch (Brute-force Tycoon/Simulator)
+    TabAdmin:CreateToggleRow({
+        Name = "Auto-Touch All (Brute-force)",
+        OnToggle = function(state)
+            getgenv()._SKENA_AUTO_TOUCH = state
+            if state then
+                task.spawn(function()
+                    local player = game.Players.LocalPlayer
+                    while getgenv()._SKENA_AUTO_TOUCH do
+                        local char = player.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        if hrp and firetouchinterest then
+                            for _, obj in ipairs(workspace:GetDescendants()) do
+                                if obj:IsA("TouchInterest") and obj.Parent then
+                                    pcall(function()
+                                        firetouchinterest(hrp, obj.Parent, 0)
+                                        task.wait(0.01)
+                                        firetouchinterest(hrp, obj.Parent, 1)
+                                    end)
+                                end
+                            end
+                        elseif not firetouchinterest then
+                            warn("Executor Anda tidak mendukung firetouchinterest!")
+                            getgenv()._SKENA_AUTO_TOUCH = false
+                            break
+                        end
+                        task.wait(1)
+                    end
+                end)
+            end
+        end
+    })
+
     -- Modul 1: Dump ESP Data (Tampil Universal)
     TabAdmin:CreateButtonRow({
         Name = "Copy Captured ESP Data",
