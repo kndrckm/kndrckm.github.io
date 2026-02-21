@@ -143,36 +143,66 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
     
-    -- Modul Ekstra: Scan & Record Semua Tombol Fisik (TouchInterest)
+    -- Modul Ekstra: Scan & Record Semua Tombol Fisik (TouchInterest + Script)
     TabAdmin:CreateButtonRow({
         Name = "Scan & Copy TouchInterests",
         ButtonText = "Scan",
         Callback = function(btn)
-            local lines = {"=== SKENA TOUCHINTEREST SCAN ==="}
-            local count = 0
-            
-            for _, obj in ipairs(workspace:GetDescendants()) do
-                if obj:IsA("TouchInterest") and obj.Parent then
-                    count = count + 1
-                    local part = obj.Parent
-                    table.insert(lines, string.format("[%d] Name: %s | Path: %s", count, part.Name, part:GetFullName()))
+            local ok, errMsg = pcall(function()
+                local lines = {"=== SKENA TOUCHINTEREST SCAN ==="}
+                local seen = {}
+                local count = 0
+                
+                -- Scan 1: TouchInterest langsung
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if (obj.ClassName == "TouchInterest" or (pcall(function() return obj:IsA("TouchInterest") end) and obj:IsA("TouchInterest"))) and obj.Parent then
+                        local part = obj.Parent
+                        local path = part:GetFullName()
+                        if not seen[path] then
+                            seen[path] = true
+                            count = count + 1
+                            lines[#lines + 1] = "[" .. count .. "] (TouchInterest) " .. part.Name .. " | " .. path
+                        end
+                    end
                 end
-            end
+                
+                -- Scan 2: BasePart yang punya child Script (biasanya tombol tycoon)
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("BasePart") then
+                        for _, child in ipairs(obj:GetChildren()) do
+                            if child:IsA("Script") or child:IsA("LocalScript") then
+                                local path = obj:GetFullName()
+                                if not seen[path] then
+                                    seen[path] = true
+                                    count = count + 1
+                                    lines[#lines + 1] = "[" .. count .. "] (Script) " .. obj.Name .. " | " .. path
+                                end
+                                break
+                            end
+                        end
+                    end
+                end
+
+                if count == 0 then
+                    warn("[Scan] Tidak ada TouchInterest atau tombol script yang ditemukan.")
+                    animateBtn(btn, false)
+                    return
+                end
+                
+                local finalStr = table.concat(lines, "\n")
+                if setclipboard then
+                    setclipboard(finalStr)
+                    warn("[Scan] Berhasil copy " .. count .. " objek ke clipboard!")
+                    animateBtn(btn, true)
+                else
+                    print(finalStr)
+                    warn("[Scan] Cetak ke F9 Console. (setclipboard tidak didukung)")
+                    animateBtn(btn, false)
+                end
+            end)
             
-            if count == 0 then
-                warn("Tidak ada TouchInterest (tombol fisik) yang ditemukan di game ini.")
-                animateBtn(btn, false)
-                return
-            end
-            
-            local finalStr = table.concat(lines, "\n")
-            if setclipboard then
-                setclipboard(finalStr)
-                warn("Berhasil meng-copy " .. count .. " jalur tombol fisik ke clipboard PC Anda!")
-                animateBtn(btn, true)
-            else
-                print(finalStr)
-                warn("Cetak ke F9 Console. (setclipboard tidak didukung)")
+            if not ok then
+                warn("[Scan ERROR] " .. tostring(errMsg))
                 animateBtn(btn, false)
             end
         end
