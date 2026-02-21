@@ -34,6 +34,28 @@ local TabFarming = Window:CreateTab("Farming", "wheat")
 local TabSettings = Window:CreateTab("Settings", "settings", true) 
 
 -- ==========================================
+-- CROP DATA REFERENCE
+-- ==========================================
+local CROP_DATA = {
+    ["Jagung"] = { SeedName = "Bibit Jagung", EnglishName = "Corn" },
+    ["Tomat"]  = { SeedName = "Bibit Tomat",  EnglishName = "Tomato" },
+    ["Padi"]   = { SeedName = "Bibit Padi",   EnglishName = "Rice" },
+    ["Terong"] = { SeedName = "Bibit Terong", EnglishName = "Eggplant" }
+}
+getgenv().SelectedCrop = "Jagung"
+
+local CropDrop = TabFarming:CreateDropdown({
+    Name = " [ Target Tanaman (Global) ]",
+    Callback = function(val)
+        getgenv().SelectedCrop = val
+        warn("Terpilih Tanaman: " .. val)
+    end
+})
+for cName, _ in pairs(CROP_DATA) do
+    CropDrop:AddItem(cName, cName == "Jagung")
+end
+
+-- ==========================================
 -- SISTEM KALIBRASI (SMART PLOT DETECTOR)
 -- ==========================================
 getgenv().PLOT_POSITIONS = getgenv().PLOT_POSITIONS or {}
@@ -78,26 +100,37 @@ TabFarming:CreateToggleRow({
 })
 
 -- ==========================================
--- LOOPING MODE / AUTO-FARM (JAGUNG)
+-- LOOPING MODE / AUTO-FARM
 -- ==========================================
-getgenv().SkenaAutoFarm_Jagung = false
+getgenv().SkenaAutoFarm_Crop = false
+getgenv().AutoBuySeed = true
+
 TabFarming:CreateToggleRow({
-    Name = "Auto Farm Jagung (AFK)",
+    Name = "Auto Farm (AFK)",
+    HasSubToggle = true,
+    SubToggleName = "Auto Beli",
+    SubToggleDefault = true,
+    OnSubToggle = function(state)
+        getgenv().AutoBuySeed = state
+    end,
     OnToggle = function(state)
-        getgenv().SkenaAutoFarm_Jagung = state
+        getgenv().SkenaAutoFarm_Crop = state
         if state then
             task.spawn(function()
                 local rs = game:GetService("ReplicatedStorage")
-                while getgenv().SkenaAutoFarm_Jagung do
-                    
-                    -- 1. Beli Bibit (Sesuai lahan kalibrasi yang diset)
+                while getgenv().SkenaAutoFarm_Crop do
+                    local cData = CROP_DATA[getgenv().SelectedCrop]
                     local plotSize = #getgenv().PLOT_POSITIONS > 0 and #getgenv().PLOT_POSITIONS or 15
-                    pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", plotSize) end)
-                    task.wait(1)
+                    
+                    -- 1. Beli Bibit (Hanya jika dicentang)
+                    if getgenv().AutoBuySeed then
+                        pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", cData.SeedName, plotSize) end)
+                        task.wait(1)
+                    end
                     
                     if #getgenv().PLOT_POSITIONS > 0 then
                         for _, pos in ipairs(getgenv().PLOT_POSITIONS) do
-                            if not getgenv().SkenaAutoFarm_Jagung then return end
+                            if not getgenv().SkenaAutoFarm_Crop then return end
                             pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                             task.wait(0.25)
                         end
@@ -108,21 +141,21 @@ TabFarming:CreateToggleRow({
                     -- 3. Menunggu (Waktu Jagung Tumbuh)
                     task.wait(120)
                     
-                    -- 4. Panen Otomatis (Range diperlebar ke 20 ID petak dengan delay lebih santun)
+                    -- 4. Panen Otomatis
                     for i = 1, 20 do
-                        if not getgenv().SkenaAutoFarm_Jagung then return end
-                        pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer("Jagung", i, "Corn") end)
-                        task.wait(0.35) -- Delay diperhalus agar tidak macet / drop di petak-13
+                        if not getgenv().SkenaAutoFarm_Crop then return end
+                        pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer(getgenv().SelectedCrop, i, cData.EnglishName) end)
+                        task.wait(0.35) 
                     end
                     task.wait(1.5)
                     
-                    -- 5. Jual Pintar (Membaca tas secara akurat)
+                    -- 5. Jual Pintar
                     local sellAmt = plotSize
                     pcall(function()
                         local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
                         if typeof(inv) == "table" and typeof(inv.Items) == "table" then
                             for _, itemData in pairs(inv.Items) do
-                                if typeof(itemData) == "table" and (itemData.Name == "Jagung" or itemData.DisplayName == "Corn") then
+                                if typeof(itemData) == "table" and (itemData.Name == getgenv().SelectedCrop or itemData.DisplayName == cData.EnglishName) then
                                     sellAmt = tonumber(itemData.Owned) or sellAmt
                                     break
                                 end
@@ -130,7 +163,7 @@ TabFarming:CreateToggleRow({
                         end
                     end)
                     
-                    pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", sellAmt) end)
+                    pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", getgenv().SelectedCrop, sellAmt) end)
                     task.wait(1.5)
                 end
             end)
@@ -143,24 +176,25 @@ TabFarming:CreateTextRow({
 })
 
 -- ==========================================
--- MANUAL BUTTONS (JAGUNG)
+-- MANUAL BUTTONS
 -- ==========================================
 TabFarming:CreateInputButtonRow({
-    Name = "1. Beli Bibit Jagung",
+    Name = "1. Beli Bibit",
     Placeholder = "Jml",
     Default = "15",
     ButtonText = "Beli",
     Callback = function(inputValue)
+        local cData = CROP_DATA[getgenv().SelectedCrop]
         local amount = tonumber(inputValue) or 15
         pcall(function()
             local rs = game:GetService("ReplicatedStorage")
-            rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", amount)
+            rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", cData.SeedName, amount)
         end)
     end
 })
 
 TabFarming:CreateButtonRow({
-    Name = "2. Tanam Jagung (15 Petak)",
+    Name = "2. Tanam (Sesuai Kalibrasi)",
     ButtonText = "Tanam",
     Callback = function()
         task.spawn(function()
@@ -178,11 +212,12 @@ TabFarming:CreateButtonRow({
 })
 
 TabFarming:CreateButtonRow({
-    Name = "3. Sell All Jagung",
+    Name = "3. Sell All",
     ButtonText = "Jual",
     Callback = function()
         task.spawn(function()
             pcall(function()
+                local cData = CROP_DATA[getgenv().SelectedCrop]
                 local rs = game:GetService("ReplicatedStorage")
                 local sellAmt = 15 -- Harga default tebak
                 
@@ -190,7 +225,7 @@ TabFarming:CreateButtonRow({
                 local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
                 if typeof(inv) == "table" and typeof(inv.Items) == "table" then
                     for _, itemData in pairs(inv.Items) do
-                        if typeof(itemData) == "table" and (itemData.Name == "Jagung" or itemData.DisplayName == "Corn") then
+                        if typeof(itemData) == "table" and (itemData.Name == getgenv().SelectedCrop or itemData.DisplayName == cData.EnglishName) then
                             sellAmt = tonumber(itemData.Owned) or sellAmt
                             break
                         end
@@ -198,9 +233,9 @@ TabFarming:CreateButtonRow({
                 end
                 
                 if sellAmt > 0 then
-                    rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", sellAmt)
+                    rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", getgenv().SelectedCrop, sellAmt)
                 else
-                    warn("Inventaris jagung kosong atau GET_LIST gagal dilacak!")
+                    warn("Inventaris kosong atau GET_LIST gagal dilacak!")
                 end
             end)
         end)

@@ -449,7 +449,27 @@ function SkenaUI:CreateWindow(Options)
                 UpdateToggleRender(false)
                 pcall(cbToggle, state)
             end)
-
+            
+            if Options.HasSubToggle then
+                local SubBtn = Instance.new("TextButton", RightContainer)
+                SubBtn.Size = UDim2.new(0, 64, 0, 22)
+                SubBtn.BackgroundColor3 = Options.SubToggleDefault and Palette.Accent or Palette.InputHdr
+                SubBtn.Text = Options.SubToggleName or "Sub"
+                SubBtn.TextColor3 = Color3.new(1,1,1)
+                SubBtn.Font = Enum.Font.GothamMedium
+                SubBtn.TextSize = 11
+                SubBtn.LayoutOrder = 1
+                Instance.new("UICorner", SubBtn).CornerRadius = UDim.new(0, 4)
+                
+                local subState = Options.SubToggleDefault == nil and true or Options.SubToggleDefault
+                SubBtn.MouseButton1Click:Connect(function()
+                    subState = not subState
+                    SubBtn.BackgroundColor3 = subState and Palette.Accent or Palette.InputHdr
+                    pcall(Options.OnSubToggle, subState)
+                end)
+                -- Jalankan initial callback
+                task.spawn(function() pcall(Options.OnSubToggle, subState) end)
+            end
             local function attachTextBox(placeholder, defaultVal, callback, width, layoutOrder, prefix)
                 local container = Instance.new("Frame", RightContainer)
                 container.BackgroundTransparency = 1
@@ -697,6 +717,131 @@ function SkenaUI:CreateWindow(Options)
             
             SetupBtn(Btn1Text, cb1, 1)
             SetupBtn(Btn2Text, cb2, 2)
+        end
+
+        function TabData:CreateDropdown(Options)
+            local Title = Options.Name or "Dropdown"
+            local cb = Options.Callback or function() end
+            
+            local Row = Instance.new("Frame", Page)
+            Row.Size = UDim2.new(1, 0, 0, 0)
+            Row.AutomaticSize = Enum.AutomaticSize.Y
+            Row.BackgroundColor3 = Palette.RowItem
+            Row.BorderSizePixel = 0
+            Instance.new("UICorner", Row).CornerRadius = UDim.new(0, 6)
+            local Stroke = Instance.new("UIStroke", Row)
+            Stroke.Color = Palette.Border
+            Stroke.Thickness = 1
+            
+            local Header = Instance.new("Frame", Row)
+            Header.Size = UDim2.new(1, 0, 0, 44)
+            Header.BackgroundTransparency = 1
+            
+            local Txt = Instance.new("TextLabel", Header)
+            Txt.Size = UDim2.new(0.4, 0, 1, 0)
+            Txt.Position = UDim2.new(0, 12, 0, 0)
+            Txt.BackgroundTransparency = 1
+            Txt.Text = Title
+            Txt.Font = Enum.Font.GothamMedium
+            Txt.TextSize = 13
+            Txt.TextColor3 = Palette.TextPrimary
+            Txt.TextXAlignment = Enum.TextXAlignment.Left
+
+            local RightContainer = Instance.new("Frame", Header)
+            RightContainer.Size = UDim2.new(0.6, -12, 1, 0)
+            RightContainer.Position = UDim2.new(0.4, 0, 0, 0)
+            RightContainer.BackgroundTransparency = 1
+            local RCLayout = Instance.new("UIListLayout", RightContainer)
+            RCLayout.FillDirection = Enum.FillDirection.Horizontal
+            RCLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+            RCLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+            RCLayout.Padding = UDim.new(0, 8)
+            
+            local DropLabel = Instance.new("TextLabel", RightContainer)
+            DropLabel.Size = UDim2.new(0, 100, 0, 24)
+            DropLabel.BackgroundColor3 = Palette.InputHdr
+            DropLabel.Text = "Select v"
+            DropLabel.TextColor3 = Palette.TextSecondary
+            DropLabel.Font = Enum.Font.GothamMedium
+            DropLabel.TextSize = 12
+            Instance.new("UICorner", DropLabel).CornerRadius = UDim.new(0, 4)
+            local EStroke = Instance.new("UIStroke", DropLabel)
+            EStroke.Color = Palette.Border
+            EStroke.Thickness = 1
+            
+            local ExpandBtn = Instance.new("TextButton", DropLabel)
+            ExpandBtn.Size = UDim2.new(1, 0, 1, 0)
+            ExpandBtn.BackgroundTransparency = 1
+            ExpandBtn.Text = ""
+            
+            ExpandBtn.MouseEnter:Connect(function() TweenService:Create(DropLabel, TweenInfo.new(0.2), {BackgroundColor3 = Palette.RowHover}):Play() end)
+            ExpandBtn.MouseLeave:Connect(function() TweenService:Create(DropLabel, TweenInfo.new(0.2), {BackgroundColor3 = Palette.InputHdr}):Play() end)
+
+            local DropFrame = Instance.new("Frame", Row)
+            DropFrame.Size = UDim2.new(1, 0, 0, 0)
+            DropFrame.Position = UDim2.new(0, 0, 0, 44)
+            DropFrame.BackgroundTransparency = 1
+            DropFrame.ClipsDescendants = true
+            
+            local Scroll = Instance.new("ScrollingFrame", DropFrame)
+            Scroll.Size = UDim2.new(1, -16, 1, -8)
+            Scroll.Position = UDim2.new(0, 8, 0, 0)
+            Scroll.BackgroundTransparency = 1
+            Scroll.ScrollBarThickness = 3
+            Scroll.ScrollBarImageColor3 = Palette.Accent
+            Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+            Scroll.BorderSizePixel = 0
+            
+            local SList = Instance.new("UIListLayout", Scroll)
+            SList.Padding = UDim.new(0, 4)
+            SList.SortOrder = Enum.SortOrder.LayoutOrder
+            
+            local isExpanded = false
+            ExpandBtn.MouseButton1Click:Connect(function()
+                isExpanded = not isExpanded
+                TweenService:Create(DropFrame, TweenInfo.new(0.25, Enum.EasingStyle.Cubic), {Size = isExpanded and UDim2.new(1, 0, 0, 120) or UDim2.new(1, 0, 0, 0)}):Play()
+            end)
+
+            local out = {}
+            out.Items = {}
+            function out:AddItem(itemStr, isDefault)
+                local Itm = Instance.new("TextButton", Scroll)
+                Itm.Size = UDim2.new(1, -8, 0, 26)
+                Itm.BackgroundColor3 = isDefault and Palette.AccentDark or Palette.InputHdr
+                Itm.Text = "  " .. itemStr
+                Itm.TextXAlignment = Enum.TextXAlignment.Left
+                Itm.TextColor3 = isDefault and Color3.new(1,1,1) or Palette.TextSecondary
+                Itm.Font = Enum.Font.GothamMedium
+                Itm.TextSize = 12
+                Itm.AutoButtonColor = false
+                Instance.new("UICorner", Itm).CornerRadius = UDim.new(0,4)
+                
+                if isDefault then
+                    DropLabel.Text = itemStr .. " v"
+                    task.spawn(function() pcall(cb, itemStr) end)
+                end
+                
+                table.insert(out.Items, {Btn = Itm, Str = itemStr})
+                
+                Itm.MouseButton1Click:Connect(function()
+                    for _, data in ipairs(out.Items) do
+                        data.Btn.BackgroundColor3 = Palette.InputHdr
+                        data.Btn.TextColor3 = Palette.TextSecondary
+                    end
+                    Itm.BackgroundColor3 = Palette.AccentDark
+                    Itm.TextColor3 = Color3.new(1,1,1)
+                    DropLabel.Text = itemStr .. " v"
+                    
+                    isExpanded = false
+                    TweenService:Create(DropFrame, TweenInfo.new(0.15), {Size = UDim2.new(1, 0, 0, 0)}):Play()
+                    
+                    pcall(cb, itemStr)
+                end)
+                
+                Scroll.CanvasSize = UDim2.new(0,0,0, SList.AbsoluteContentSize.Y + 10)
+            end
+            
+            return out
         end
 
         function TabData:CreateMultiSelectDropdown(Options)
