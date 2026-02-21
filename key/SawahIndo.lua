@@ -120,11 +120,11 @@ TabFarming:CreateToggleRow({
                     local sellAmt = plotSize
                     pcall(function()
                         local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
-                        if typeof(inv) == "table" then
-                            for k, v in pairs(inv) do
-                                if typeof(v) == "number" and (k == "Jagung" or k == "Corn") then sellAmt = v
-                                elseif typeof(v) == "table" and (v.Name == "Jagung" or k == "Jagung") then
-                                    sellAmt = tonumber(v.Amount) or tonumber(v.Count) or tonumber(v.Quantity) or sellAmt
+                        if typeof(inv) == "table" and typeof(inv.Items) == "table" then
+                            for _, itemData in pairs(inv.Items) do
+                                if typeof(itemData) == "table" and (itemData.Name == "Jagung" or itemData.DisplayName == "Corn") then
+                                    sellAmt = tonumber(itemData.Owned) or sellAmt
+                                    break
                                 end
                             end
                         end
@@ -188,11 +188,11 @@ TabFarming:CreateButtonRow({
                 
                 -- Sadap data inventaris
                 local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
-                if typeof(inv) == "table" then
-                    for k, v in pairs(inv) do
-                        if typeof(v) == "number" and (k == "Jagung" or k == "Corn") then sellAmt = v
-                        elseif typeof(v) == "table" and (v.Name == "Jagung" or k == "Jagung") then
-                            sellAmt = tonumber(v.Amount) or tonumber(v.Count) or tonumber(v.Quantity) or sellAmt
+                if typeof(inv) == "table" and typeof(inv.Items) == "table" then
+                    for _, itemData in pairs(inv.Items) do
+                        if typeof(itemData) == "table" and (itemData.Name == "Jagung" or itemData.DisplayName == "Corn") then
+                            sellAmt = tonumber(itemData.Owned) or sellAmt
+                            break
                         end
                     end
                 end
