@@ -89,6 +89,83 @@ TabFarming:CreateInputRow({
 })
 
 -- ==========================================
+-- HUD TRACKER (BOTTOM RIGHT)
+-- ==========================================
+local function CreateTracker()
+    pcall(function()
+        if game.CoreGui:FindFirstChild("SkenaAFKHUD") then game.CoreGui.SkenaAFKHUD:Destroy() end
+        if player.PlayerGui:FindFirstChild("SkenaAFKHUD") then player.PlayerGui.SkenaAFKHUD:Destroy() end
+    end)
+    local sg = Instance.new("ScreenGui")
+    sg.Name = "SkenaAFKHUD"
+    if not pcall(function() sg.Parent = game:GetService("CoreGui") end) then
+        sg.Parent = player.PlayerGui
+    end
+
+    local frm = Instance.new("Frame", sg)
+    frm.Size = UDim2.new(0, 220, 0, 95)
+    frm.Position = UDim2.new(1, -240, 1, -120)
+    frm.BackgroundColor3 = Color3.fromRGB(20, 20, 22)
+    Instance.new("UICorner", frm).CornerRadius = UDim.new(0, 6)
+    local stroke = Instance.new("UIStroke", frm)
+    stroke.Thickness = 1
+    stroke.Color = Color3.fromRGB(60, 60, 60)
+
+    local lblTitle = Instance.new("TextLabel", frm)
+    lblTitle.Size = UDim2.new(1, 0, 0, 22)
+    lblTitle.BackgroundTransparency = 1
+    lblTitle.Text = "  [AFK Tracker]"
+    lblTitle.Font = Enum.Font.GothamBold
+    lblTitle.TextColor3 = Color3.new(1,1,1)
+    lblTitle.TextSize = 13
+    lblTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+    local lblStat = Instance.new("TextLabel", frm)
+    lblStat.Size = UDim2.new(1, -16, 0, 18)
+    lblStat.Position = UDim2.new(0, 8, 0, 30)
+    lblStat.BackgroundTransparency = 1
+    lblStat.Text = "Prog: -"
+    lblStat.Font = Enum.Font.GothamMedium
+    lblStat.TextColor3 = Color3.fromRGB(200, 200, 200)
+    lblStat.TextSize = 12
+    lblStat.TextXAlignment = Enum.TextXAlignment.Left
+
+    local lblNext = Instance.new("TextLabel", frm)
+    lblNext.Size = UDim2.new(1, -16, 0, 18)
+    lblNext.Position = UDim2.new(0, 8, 0, 50)
+    lblNext.BackgroundTransparency = 1
+    lblNext.Text = "Next: -"
+    lblNext.Font = Enum.Font.Gotham
+    lblNext.TextColor3 = Color3.fromRGB(150, 150, 150)
+    lblNext.TextSize = 11
+    lblNext.TextXAlignment = Enum.TextXAlignment.Left
+
+    local lblTime = Instance.new("TextLabel", frm)
+    lblTime.Size = UDim2.new(1, -16, 0, 18)
+    lblTime.Position = UDim2.new(0, 8, 0, 70)
+    lblTime.BackgroundTransparency = 1
+    lblTime.Text = "Wait: -"
+    lblTime.Font = Enum.Font.GothamBold
+    lblTime.TextColor3 = Color3.fromRGB(80, 255, 120)
+    lblTime.TextSize = 12
+    lblTime.TextXAlignment = Enum.TextXAlignment.Left
+
+    frm.Visible = false
+    getgenv().SkenaTracker = {
+        Update = function(prog, nxt, tleft)
+            frm.Visible = true
+            lblStat.Text = "Prog: " .. tostring(prog)
+            lblNext.Text = "Next: " .. tostring(nxt)
+            lblTime.Text = "Wait: " .. tostring(tleft)
+        end,
+        Hide = function() frm.Visible = false end
+    }
+end
+CreateTracker()
+
+local function TUpdate(a,b,c) if getgenv().SkenaTracker then getgenv().SkenaTracker.Update(a,b,c) end end
+
+-- ==========================================
 -- LOOPING MODE / AUTO-FARM
 -- ==========================================
 getgenv().SkenaAutoFarm_Crop = false
@@ -104,6 +181,8 @@ TabFarming:CreateToggleRow({
     end,
     OnToggle = function(state)
         getgenv().SkenaAutoFarm_Crop = state
+        if not state and getgenv().SkenaTracker then getgenv().SkenaTracker.Hide() end
+        
         if state then
             task.spawn(function()
                 local rs = game:GetService("ReplicatedStorage")
@@ -112,23 +191,34 @@ TabFarming:CreateToggleRow({
                     local plotSize = getgenv().AFK_PlantAmount or 15
                     
                     local currentSeeds = 0
-                    local char = player.Character
-                    if char then
-                        for _, v in ipairs(char:GetChildren()) do
-                            if v.Name == cData.SeedName then currentSeeds = currentSeeds + 1 end
+                    local function getCount(parent)
+                        for _, v in ipairs(parent:GetChildren()) do
+                            if v:IsA("Tool") and string.find(v.Name, cData.SeedName) then
+                                local amt = 1
+                                local match = string.match(v.Name, "%d+")
+                                if match then amt = tonumber(match) end
+                                for _, child in ipairs(v:GetChildren()) do
+                                    if (child:IsA("IntValue") or child:IsA("NumberValue")) and string.find(string.lower(child.Name), "amount") then
+                                        amt = child.Value
+                                    end
+                                end
+                                currentSeeds = currentSeeds + amt
+                            end
                         end
                     end
-                    for _, v in ipairs(player.Backpack:GetChildren()) do
-                        if v.Name == cData.SeedName then currentSeeds = currentSeeds + 1 end
-                    end
+                    local char = player.Character
+                    if char then getCount(char) end
+                    getCount(player.Backpack)
                     
-                    -- 1. Beli Bibit (Hanya jika dicentang dan bibit di tas <= 15)
+                    -- 1. Beli Bibit
                     if getgenv().AutoBuySeed and currentSeeds <= 15 then
+                        TUpdate("Membeli Bibit ("..cData.SeedName..")", "Equip & Tanam", "1s")
                         pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", cData.SeedName, plotSize) end)
                         task.wait(1)
                     end
                     
-                    -- 2. Tanam Berulang di Titik Berdiri (1 Lot/Pijakan)
+                    -- 2. Tanam Berulang
+                    TUpdate("Equip & Tanam ("..plotSize.."x)", "Menunggu Panen", "Proses...")
                     if char and char:FindFirstChild("HumanoidRootPart") then
                         local hum = char:FindFirstChildOfClass("Humanoid")
                         if hum then
@@ -136,16 +226,12 @@ TabFarming:CreateToggleRow({
                             if not heldCrop then
                                 hum:UnequipTools()
                                 task.wait(0.2)
-                                
                                 local inBp = player.Backpack:FindFirstChild(cData.SeedName)
                                 if inBp then
                                     hum:EquipTool(inBp)
                                     task.wait(0.4)
-                                else
-                                    warn("Bibit " .. cData.SeedName .. " habis atau tidak ditemukan!")
                                 end
                             end
-                            -- Fallback memastikan berhasil equip sebelum tembak menanam
                             if not char:FindFirstChild(cData.SeedName) then
                                 local recheckBp = player.Backpack:FindFirstChild(cData.SeedName)
                                 if recheckBp then
@@ -157,28 +243,32 @@ TabFarming:CreateToggleRow({
                             end
                         end
                         
-                        -- Cek akhir: pastikan benar-benar memakai tool yang tepat
                         if not char:FindFirstChild(cData.SeedName) then
                             warn("Batal tanam putaran ini karena bibit target (" .. cData.SeedName .. ") gagal dipegang!")
+                            task.wait(2)
                         else
-                        
-                        local pos = char.HumanoidRootPart.Position
-                        for i = 1, plotSize do
-                            if not getgenv().SkenaAutoFarm_Crop then return end
-                            pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
-                            task.wait(0.25)
+                            local pos = char.HumanoidRootPart.Position
+                            for i = 1, plotSize do
+                                if not getgenv().SkenaAutoFarm_Crop then return end
+                                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
+                                task.wait(0.25)
+                            end
                         end
-                        end -- Penutup dari pengecekan final tool
                     else
-                        warn("Karakter tidak ditemukan! Tanam ditunda 2 detik.")
+                        warn("Karakter tidak ditemukan! Tanam ditunda.")
                         task.wait(2)
                     end
                     
                     -- 3. Menunggu (Waktu Tanaman Tumbuh)
                     local hDelay = getgenv().AFK_HarvestDelay or 120
-                    task.wait(hDelay)
+                    for hw = hDelay, 1, -1 do
+                        if not getgenv().SkenaAutoFarm_Crop then return end
+                        TUpdate("Menunggu Tumbuh", "Panen Otomatis", hw .. "s")
+                        task.wait(1)
+                    end
                     
-                    -- 4. Panen Otomatis (Buffer di atas plotSize untuk menimpa sisa tanaman/lag)
+                    -- 4. Panen Otomatis
+                    TUpdate("Panen ("..getgenv().SelectedCrop..")", "Jual Hasil", "Proses...")
                     for i = 1, plotSize + 5 do
                         if not getgenv().SkenaAutoFarm_Crop then return end
                         pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer(getgenv().SelectedCrop, i, cData.EnglishName) end)
@@ -187,6 +277,7 @@ TabFarming:CreateToggleRow({
                     task.wait(1.5)
                     
                     -- 5. Jual Pintar
+                    TUpdate("Menganalisa Tas (Jual)", "Restart Loop", "Proses...")
                     local sellAmt = plotSize
                     pcall(function()
                         local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
