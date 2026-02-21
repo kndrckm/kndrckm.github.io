@@ -44,36 +44,53 @@ function SkenaAdmin.Attach(Window, DebugData)
     -- Alat Admin: Remote Spy Logger
     if not getgenv()._SKENA_SPY_HOOKED then
         local success, err = pcall(function()
+            local function LogRemote(self, method, args)
+                local timeSec = os.clock()
+                local gap = 0
+                if getgenv()._SKENA_SPY_LAST_TIME then
+                    gap = timeSec - getgenv()._SKENA_SPY_LAST_TIME
+                end
+                getgenv()._SKENA_SPY_LAST_TIME = timeSec
+
+                task.spawn(function()
+                    pcall(function()
+                        local pName = tostring(self.Parent)
+                        local logLine = string.format("\n[+%.3fs GAP] [Remote] %s.%s (%s)", gap, pName, tostring(self), method)
+                        for i, v in ipairs(args) do
+                            local tStr = typeof(v)
+                            local vStr = tostring(v)
+                            if tStr == "string" then vStr = '"' .. vStr .. '"' end
+                            logLine = logLine .. string.format("\n  [%d] = %s  (%s)", i, vStr, tStr)
+                        end
+                        table.insert(getgenv()._SKENA_SPY_LOGS, logLine)
+                    end)
+                end)
+            end
+
+            -- 1. Hook via Namecall (Metode Umum)
             local oldNamecall
             oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
                 local method = getnamecallmethod()
-                
                 if getgenv()._SKENA_IS_SPYING and (method == "FireServer" or method == "InvokeServer") then
-                    -- Hindari loop/error internal
-                    local args = {...}
-                    local timeSec = os.clock()
-                    local gap = 0
-                    if getgenv()._SKENA_SPY_LAST_TIME then
-                        gap = timeSec - getgenv()._SKENA_SPY_LAST_TIME
-                    end
-                    getgenv()._SKENA_SPY_LAST_TIME = timeSec
-
-                    task.spawn(function()
-                        pcall(function()
-                            local pName = tostring(self.Parent)
-                            local logLine = string.format("\n[+%.3fs GAP] [Remote] %s.%s (%s)", gap, pName, tostring(self), method)
-                            for i, v in ipairs(args) do
-                                local tStr = typeof(v)
-                                local vStr = tostring(v)
-                                if tStr == "string" then vStr = '"' .. vStr .. '"' end
-                                logLine = logLine .. string.format("\n  [%d] = %s  (%s)", i, vStr, tStr)
-                            end
-                            table.insert(getgenv()._SKENA_SPY_LOGS, logLine)
-                        end)
-                    end)
+                    LogRemote(self, method, {...})
                 end
-                
                 return oldNamecall(self, ...)
+            end)
+            
+            -- 2. Hook via Function Closure (Direct / Bypassed Namecall)
+            local dummyEvent = Instance.new("RemoteEvent")
+            local dummyFunc = Instance.new("RemoteFunction")
+            
+            local oldFireServer
+            oldFireServer = hookfunction(dummyEvent.FireServer, function(self, ...)
+                if getgenv()._SKENA_IS_SPYING then LogRemote(self, "FireServer", {...}) end
+                return oldFireServer(self, ...)
+            end)
+            
+            local oldInvokeServer
+            oldInvokeServer = hookfunction(dummyFunc.InvokeServer, function(self, ...)
+                if getgenv()._SKENA_IS_SPYING then LogRemote(self, "InvokeServer", {...}) end
+                return oldInvokeServer(self, ...)
             end)
             
             getgenv()._SKENA_SPY_HOOKED = true
