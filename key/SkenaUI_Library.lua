@@ -85,27 +85,31 @@ function SkenaUI:CreateWindow(Options)
     TweenService:Create(Main, TweenInfo.new(0.35, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {GroupTransparency = 0}):Play()
     TweenService:Create(MainScale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = 1}):Play()
 
-    -- Global shortcut to toggle UI w/ Animation
     local uiVisible = true
+    local function ToggleUIAnim()
+        uiVisible = not uiVisible
+        if uiVisible then
+            SG.Enabled = true
+            MainScale.Scale = 0.85
+            Main.GroupTransparency = 1
+            TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {GroupTransparency = 0}):Play()
+            TweenService:Create(MainScale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = 1}):Play()
+        else
+            local tw = TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {GroupTransparency = 1})
+            TweenService:Create(MainScale, TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Scale = 0.9}):Play()
+            tw:Play()
+            task.delay(0.2, function()
+                if not uiVisible then SG.Enabled = false end
+            end)
+        end
+    end
+
+    -- Global shortcut to toggle UI w/ Animation
     local uiToggleConnection
     uiToggleConnection = UserInputService.InputBegan:Connect(function(input, gp)
         if gp then return end
         if input.KeyCode == WindowObj.ToggleKey then
-            uiVisible = not uiVisible
-            if uiVisible then
-                SG.Enabled = true
-                MainScale.Scale = 0.85
-                Main.GroupTransparency = 1
-                TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {GroupTransparency = 0}):Play()
-                TweenService:Create(MainScale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = 1}):Play()
-            else
-                local tw = TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {GroupTransparency = 1})
-                TweenService:Create(MainScale, TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Scale = 0.9}):Play()
-                tw:Play()
-                task.delay(0.2, function()
-                    if not uiVisible then SG.Enabled = false end
-                end)
-            end
+            ToggleUIAnim()
         end
     end)
     
@@ -159,22 +163,22 @@ function SkenaUI:CreateWindow(Options)
     local Minibtn = Instance.new("TextButton", ControlContainer)
     Minibtn.Size = UDim2.new(0, 46, 1, 0)
     Minibtn.Position = UDim2.new(0, 0, 0, 0)
-    Minibtn.Text = "–"
+    Minibtn.Text = "-"
     Minibtn.BackgroundColor3 = Palette.Background
     Minibtn.BackgroundTransparency = 1
     Minibtn.TextColor3 = Palette.TextPrimary
-    Minibtn.Font = Enum.Font.Gotham
+    Minibtn.Font = Enum.Font.GothamMedium
     Minibtn.TextSize = 14
     Minibtn.BorderSizePixel = 0
 
     local CloseBtn = Instance.new("TextButton", ControlContainer)
     CloseBtn.Size = UDim2.new(0, 46, 1, 0)
     CloseBtn.Position = UDim2.new(0, 46, 0, 0)
-    CloseBtn.Text = "✕"
+    CloseBtn.Text = "X"
     CloseBtn.BackgroundColor3 = Palette.Background
     CloseBtn.BackgroundTransparency = 1
     CloseBtn.TextColor3 = Palette.TextPrimary
-    CloseBtn.Font = Enum.Font.Gotham
+    CloseBtn.Font = Enum.Font.GothamMedium
     CloseBtn.TextSize = 14
     CloseBtn.BorderSizePixel = 0
 
@@ -184,15 +188,8 @@ function SkenaUI:CreateWindow(Options)
     CloseBtn.MouseEnter:Connect(function() CloseBtn.BackgroundTransparency = 0; CloseBtn.BackgroundColor3 = Palette.RedHover end)
     CloseBtn.MouseLeave:Connect(function() CloseBtn.BackgroundTransparency = 1 end)
 
-    local isMinimized = false
     Minibtn.MouseButton1Click:Connect(function()
-        isMinimized = not isMinimized
-        Main.ClipsDescendants = true
-        for _, ch in pairs(Main:GetChildren()) do
-            if ch ~= TitleBar and ch.Name ~= "UICorner" and ch.Name ~= "UIStroke" then
-                ch.Visible = not isMinimized
-            end
-        end
+        ToggleUIAnim()
     end)
 
     CloseBtn.MouseButton1Click:Connect(function() SG:Destroy() end)
@@ -721,7 +718,7 @@ function SkenaUI:CreateWindow(Options)
             local ExpandBtn = Instance.new("TextButton", RightContainer)
             ExpandBtn.Size = UDim2.new(0, 100, 0, 24)
             ExpandBtn.BackgroundColor3 = Palette.InputHdr
-            ExpandBtn.Text = "Filter ▾"
+            ExpandBtn.Text = "Filter v"
             ExpandBtn.TextColor3 = Palette.TextSecondary
             ExpandBtn.Font = Enum.Font.GothamMedium
             ExpandBtn.TextSize = 12
@@ -755,7 +752,7 @@ function SkenaUI:CreateWindow(Options)
             local isExpanded = false
             ExpandBtn.MouseButton1Click:Connect(function()
                 isExpanded = not isExpanded
-                ExpandBtn.Text = isExpanded and "Filter ▴" or "Filter ▾"
+                ExpandBtn.Text = isExpanded and "Filter ^" or "Filter v"
                 TweenService:Create(DropFrame, TweenInfo.new(0.25, Enum.EasingStyle.Cubic), {Size = isExpanded and UDim2.new(1, 0, 0, 120) or UDim2.new(1, 0, 0, 0)}):Play()
             end)
 
