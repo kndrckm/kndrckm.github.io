@@ -8,9 +8,8 @@ elseif PlaceId == 134750290201751 then
 elseif PlaceId == 83369512629707 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SawahIndo.lua"
 else
-    warn("[SkenaUI] Game ID tidak dikenali atau belum disupport oleh hub ini: " .. tostring(PlaceId))
-    -- (Opsional) Jika Anda memiliki UI Fallback/Universal, arahkan SkenaHub_CoreURL ke sana
-    return
+    -- Game tidak disupport: Load Fallback Admin (untuk di-test / bypass oleh admin)
+    SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/FallbackAdmin.lua"
 end
 
 -- Eksekusi script spesifik game (dengan cache buster)1
