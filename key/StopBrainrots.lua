@@ -98,41 +98,14 @@ TabMain:CreateToggleRow({
     end
 })
 
--- 4. Auto Sell Brainrot
-RegisterLoop("_SKENA_AUTO_SELL")
-TabMain:CreateToggleRow({
-    Name = "Auto Sell Brainrot",
-    OnToggle = function(state)
-        getgenv()._SKENA_AUTO_SELL = state
-        if state then
-            task.spawn(function()
-                while getgenv()._SKENA_AUTO_SELL do
-                    pcall(function()
-                        remotes.SellBrainrot:FireServer()
-                    end)
-                    task.wait(1)
-                end
-            end)
-        end
-    end
-})
-
--- 5. Auto Start Game
-RegisterLoop("_SKENA_AUTO_START")
-TabMain:CreateToggleRow({
-    Name = "Auto Start Game",
-    OnToggle = function(state)
-        getgenv()._SKENA_AUTO_START = state
-        if state then
-            task.spawn(function()
-                while getgenv()._SKENA_AUTO_START do
-                    pcall(function()
-                        remotes.StartGameRequest:FireServer()
-                    end)
-                    task.wait(3)
-                end
-            end)
-        end
+-- 4. Start Game
+TabMain:CreateButtonRow({
+    Name = "Start Game",
+    ButtonText = "Start",
+    Callback = function()
+        pcall(function()
+            remotes.StartGameRequest:FireServer()
+        end)
     end
 })
 
