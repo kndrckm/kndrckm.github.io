@@ -256,10 +256,12 @@ TabFarming:CreateToggleRow({
                             task.wait(2)
                         else
                             local startPos = char.HumanoidRootPart.Position
-                            local rightVec = char.HumanoidRootPart.CFrame.RightVector
                             for i = 1, plotSize do
                                 if not getgenv().SkenaAutoFarm_Crop then return end
-                                local pos = startPos + (rightVec * ((i - 1) * 0.5))
+                                local angle = math.rad(math.random(0, 360))
+                                local dist = math.random() * 1.5
+                                local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
+                                local pos = startPos + offset
                                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                                 task.wait(0.6)
                             end
@@ -371,9 +373,11 @@ TabFarming:CreateInputButtonRow({
             
             local rs = game:GetService("ReplicatedStorage")
             local startPos = char.HumanoidRootPart.Position
-            local rightVec = char.HumanoidRootPart.CFrame.RightVector
             for i = 1, amount do
-                local pos = startPos + (rightVec * ((i - 1) * 0.2))
+                local angle = math.rad(math.random(0, 360))
+                local dist = math.random() * 1.5
+                local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
+                local pos = startPos + offset
                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                 task.wait(0.6)
             end
