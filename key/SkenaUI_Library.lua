@@ -662,7 +662,9 @@ function SkenaUI:CreateWindow(Options)
 
             ExecBtn.MouseEnter:Connect(function() TweenService:Create(ExecBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.RowHover}):Play() end)
             ExecBtn.MouseLeave:Connect(function() TweenService:Create(ExecBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.InputHdr}):Play() end)
-            ExecBtn.MouseButton1Click:Connect(function() pcall(cb) end)
+            ExecBtn.MouseButton1Click:Connect(function() pcall(cb, ExecBtn) end)
+            
+            return { Row = Row, Button = ExecBtn }
         end
 
         function TabData:CreateDoubleButtonRow(Options)

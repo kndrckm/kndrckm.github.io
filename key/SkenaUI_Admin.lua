@@ -5,6 +5,21 @@ local WHITELISTED_ADMINS = {
 }
 local SkenaAdmin = {}
 
+local function animateBtn(btn, success)
+    if not btn or typeof(btn) ~= "Instance" then return end
+    local oldText = btn.Text
+    local oldColor = btn.BackgroundColor3
+    -- Efek Pop!
+    btn.Text = success and "Copied!" or "Gagal"
+    btn.BackgroundColor3 = success and Color3.fromRGB(40, 200, 80) or Color3.fromRGB(200, 60, 60)
+    task.delay(1.5, function()
+        if btn and btn.Parent then
+            btn.Text = oldText
+            btn.BackgroundColor3 = oldColor
+        end
+    end)
+end
+
 function SkenaAdmin.Attach(Window, DebugData)
     if not WHITELISTED_ADMINS[player.UserId] then
         return 
@@ -14,7 +29,7 @@ function SkenaAdmin.Attach(Window, DebugData)
     TabAdmin:CreateButtonRow({
         Name = "Copy My Position",
         ButtonText = "Copy Vector3",
-        Callback = function()
+        Callback = function(btn)
             local char = player.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
             if hrp then
@@ -22,9 +37,13 @@ function SkenaAdmin.Attach(Window, DebugData)
                 local posStr = string.format("Vector3.new(%.3f, %.3f, %.3f)", p.X, p.Y, p.Z)
                 if setclipboard then
                     setclipboard(posStr)
+                    animateBtn(btn, true)
                 else
                     warn("Posisi anda: " .. posStr)
+                    animateBtn(btn, false)
                 end
+            else
+                animateBtn(btn, false)
             end
         end
     })
@@ -104,19 +123,22 @@ function SkenaAdmin.Attach(Window, DebugData)
     TabAdmin:CreateButtonRow({
         Name = "Copy Recorded Actions",
         ButtonText = "Copy",
-        Callback = function()
+        Callback = function(btn)
             local logs = getgenv()._SKENA_SPY_LOGS
             if not logs or #logs == 0 then
                 warn("Belum ada tindakan rahasia yang direkam/tertangkap.")
+                animateBtn(btn, false)
                 return
             end
             local finalStr = "=== SKENA REMOTE SPY DUMP ===" .. table.concat(logs, "\n-------------------")
             if setclipboard then
                 setclipboard(finalStr)
                 warn("Data Spy dicopy ke clipboard PC Anda!")
+                animateBtn(btn, true)
             else
                 print(finalStr)
                 warn("Cek F9 Console untuk melihat rekaman Spy.")
+                animateBtn(btn, false)
             end
         end
     })
@@ -125,7 +147,7 @@ function SkenaAdmin.Attach(Window, DebugData)
     TabAdmin:CreateButtonRow({
         Name = "Copy Captured ESP Data",
         ButtonText = "Copy to Clipboard",
-        Callback = function()
+        Callback = function(btn)
             local paths = (DebugData and DebugData.CapturedPaths) or {}
             
             -- Count elements
@@ -134,6 +156,7 @@ function SkenaAdmin.Attach(Window, DebugData)
             
             if count == 0 then
                 warn("Game ini tidak mendaftarkan ESP Data / Belum ada data ditangkap di layar.")
+                animateBtn(btn, false)
                 return
             end
 
@@ -144,9 +167,11 @@ function SkenaAdmin.Attach(Window, DebugData)
             local finalStr = table.concat(lines, "\n")
             if setclipboard then
                 setclipboard(finalStr)
+                animateBtn(btn, true)
             else
                 print(finalStr)
                 warn("Executor tidak mendukung setclipboard. Cek menu console (F9)!")
+                animateBtn(btn, false)
             end
         end
     })
