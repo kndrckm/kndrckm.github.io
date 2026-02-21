@@ -143,6 +143,41 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
     
+    -- Modul Ekstra: Scan & Record Semua Tombol Fisik (TouchInterest)
+    TabAdmin:CreateButtonRow({
+        Name = "Scan & Copy TouchInterests",
+        ButtonText = "Scan",
+        Callback = function(btn)
+            local lines = {"=== SKENA TOUCHINTEREST SCAN ==="}
+            local count = 0
+            
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("TouchInterest") and obj.Parent then
+                    count = count + 1
+                    local part = obj.Parent
+                    table.insert(lines, string.format("[%d] Name: %s | Path: %s", count, part.Name, part:GetFullName()))
+                end
+            end
+            
+            if count == 0 then
+                warn("Tidak ada TouchInterest (tombol fisik) yang ditemukan di game ini.")
+                animateBtn(btn, false)
+                return
+            end
+            
+            local finalStr = table.concat(lines, "\n")
+            if setclipboard then
+                setclipboard(finalStr)
+                warn("Berhasil meng-copy " .. count .. " jalur tombol fisik ke clipboard PC Anda!")
+                animateBtn(btn, true)
+            else
+                print(finalStr)
+                warn("Cetak ke F9 Console. (setclipboard tidak didukung)")
+                animateBtn(btn, false)
+            end
+        end
+    })
+
     -- Modul Ekstra: Auto-Touch (Brute-force Tycoon/Simulator)
     TabAdmin:CreateToggleRow({
         Name = "Auto-Touch All (Brute-force)",
