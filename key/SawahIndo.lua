@@ -105,7 +105,7 @@ TabFarming:CreateToggleRow({
                     
                     -- 3. Menunggu (Waktu Jagung Tumbuh = Sekitar 15-20 detik)
                     -- Sesuaikan angka ini bila ternyata jagung belum 100% muncul dan siap dipanen
-                    task.wait(18)
+                    task.wait(120)
                     
                     -- 4. Panen Otomatis (Instan)
                     for i = 1, 15 do
