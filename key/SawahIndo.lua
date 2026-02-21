@@ -78,6 +78,53 @@ TabFarming:CreateToggleRow({
 })
 
 -- ==========================================
+-- LOOPING MODE / AUTO-FARM (JAGUNG)
+-- ==========================================
+getgenv().SkenaAutoFarm_Jagung = false
+TabFarming:CreateToggleRow({
+    Name = "Auto Farm Jagung (AFK)",
+    OnToggle = function(state)
+        getgenv().SkenaAutoFarm_Jagung = state
+        if state then
+            task.spawn(function()
+                local rs = game:GetService("ReplicatedStorage")
+                while getgenv().SkenaAutoFarm_Jagung do
+                    
+                    pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", 15) end)
+                    task.wait(1)
+                    
+                    if #getgenv().PLOT_POSITIONS > 0 then
+                        for _, pos in ipairs(getgenv().PLOT_POSITIONS) do
+                            if not getgenv().SkenaAutoFarm_Jagung then return end
+                            pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
+                            task.wait(0.15)
+                        end
+                    else
+                        warn("AUTO-FARM TERTUNDA: Anda belum merekam titik tanah via Kalibrasi.")
+                    end
+                    
+                    task.wait(10)
+                    
+                    for i = 1, 15 do
+                        if not getgenv().SkenaAutoFarm_Jagung then return end
+                        pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer("Jagung", i, "Corn") end)
+                        task.wait(0.15)
+                    end
+                    task.wait(1.5)
+                    
+                    pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 30) end)
+                    task.wait(1.5)
+                end
+            end)
+        end
+    end
+})
+
+TabFarming:CreateTextRow({
+    Text = "Step: (1) Nyalakan Kalibrasi, lalu tanam bibit manual ke dalam 15 petak bidang tanah. (2) Setelah selesai, matikan switch Kalibrasi. (3) Tekan Auto Farm AFK dan biarkan bot bermain liar."
+})
+
+-- ==========================================
 -- MANUAL BUTTONS (JAGUNG)
 -- ==========================================
 TabFarming:CreateButtonRow({
@@ -134,55 +181,7 @@ TabFarming:CreateButtonRow({
     end
 })
 
--- ==========================================
--- LOOPING MODE / AUTO-FARM (JAGUNG)
--- ==========================================
-getgenv().SkenaAutoFarm_Jagung = false
-TabFarming:CreateToggleRow({
-    Name = "Auto Farm Jagung (AFK)",
-    OnToggle = function(state)
-        getgenv().SkenaAutoFarm_Jagung = state
-        if state then
-            task.spawn(function()
-                local rs = game:GetService("ReplicatedStorage")
-                while getgenv().SkenaAutoFarm_Jagung do
-                    
-                    -- 1. Beli Bibit
-                    pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", 15) end)
-                    task.wait(1)
-                    
-                    -- 2. Tanam di semua titik hasil kalibrasi
-                    if #getgenv().PLOT_POSITIONS > 0 then
-                        for _, pos in ipairs(getgenv().PLOT_POSITIONS) do
-                            if not getgenv().SkenaAutoFarm_Jagung then return end
-                            pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
-                            task.wait(0.15)
-                        end
-                    else
-                        warn("AUTO-FARM TERTUNDA: Anda belum merekam titik tanah via Kalibrasi.")
-                    end
-                    
-                    -- 3. Menunggu (Asumsi Jagung Tumbuh Butuh ~15-20 detik)
-                    -- Sesuaikan angka ini bila tumbuhnya lebih lama. Saya mengatur waktu tunggu ideal 10 detik.
-                    task.wait(10)
-                    
-                    -- 4. Panen 
-                    for i = 1, 15 do
-                        if not getgenv().SkenaAutoFarm_Jagung then return end
-                        pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer("Jagung", i, "Corn") end)
-                        task.wait(0.15)
-                    end
-                    task.wait(1.5)
-                    
-                    -- 5. Jual
-                    pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 30) end)
-                    task.wait(1.5)
-                    
-                end
-            end)
-        end
-    end
-})
+-- (AFK Mode dipindah ke atas)
 
 -- ==========================================
 -- ISI TAB SETTINGS

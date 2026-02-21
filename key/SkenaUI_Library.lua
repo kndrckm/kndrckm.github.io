@@ -580,6 +580,35 @@ function SkenaUI:CreateWindow(Options)
             end)
         end
 
+        function TabData:CreateTextRow(Options)
+            local Text = Options.Text or "Description string here"
+
+            local Row = Instance.new("Frame", Page)
+            Row.Size = UDim2.new(1, 0, 0, 0)
+            Row.AutomaticSize = Enum.AutomaticSize.Y
+            Row.BackgroundTransparency = 1
+            Row.BorderSizePixel = 0
+
+            local Txt = Instance.new("TextLabel", Row)
+            Txt.Size = UDim2.new(1, -24, 0, 0)
+            Txt.Position = UDim2.new(0, 12, 0, 0)
+            Txt.AutomaticSize = Enum.AutomaticSize.Y
+            Txt.BackgroundTransparency = 1
+            Txt.Text = Text
+            Txt.Font = Enum.Font.Gotham
+            Txt.TextSize = 11
+            Txt.TextColor3 = Palette.TextSecondary
+            Txt.TextWrapped = true
+            Txt.TextXAlignment = Enum.TextXAlignment.Left
+            Txt.TextYAlignment = Enum.TextYAlignment.Top
+            
+            local padding = Instance.new("UIPadding", Txt)
+            padding.PaddingTop = UDim.new(0, 4)
+            padding.PaddingBottom = UDim.new(0, 4)
+            
+            return Row
+        end
+
         function TabData:CreateButtonRow(Options)
             local Title = Options.Name or "Action"
             local BtnText = Options.ButtonText or "Execute"
