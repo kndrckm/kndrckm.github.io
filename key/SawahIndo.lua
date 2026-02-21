@@ -40,13 +40,8 @@ TabFarming:CreateButtonRow({
     Name = "Beli Bibit (Padi)",
     ButtonText = "Beli",
     Callback = function()
-        pcall(function()
-            local args = {
-                [1] = 0,
-                [2] = false
-            }
-            game:GetService("ReplicatedStorage").Remotes.TutorialRemotes.GetBibit:FireServer(unpack(args))
-        end)
+        local rs = game:GetService("ReplicatedStorage")
+        rs.Remotes.TutorialRemotes.GetBibit:FireServer(0, false)
     end
 })
 
@@ -57,35 +52,42 @@ TabFarming:CreateButtonRow({
     Name = "Harvest All (Padi)",
     ButtonText = "Harvest",
     Callback = function()
-        -- Gunakan task.spawn agar UI tidak macet, dan beri task.wait() 
-        -- agar server tidak menolak (Mute/Rate limit) permintaan karena terlalu cepat (Spam).
         task.spawn(function()
+            local rs = game:GetService("ReplicatedStorage")
             for i = 1, 15 do
-                pcall(function()
-                    local args = {
-                        [1] = "Padi",
-                        [2] = i,
-                        [3] = "Rice"
-                    }
-                    game:GetService("ReplicatedStorage").Remotes.TutorialRemotes.HarvestCrop:FireServer(unpack(args))
-                end)
-                task.wait(0.1) -- Beri jeda 0.1 detik perlahan sebelum kirim panen ke-2, ke-3, dst
+                rs.Remotes.TutorialRemotes.HarvestCrop:FireServer("Padi", i, "Rice")
+                task.wait(0.1)
             end
         end)
     end
 })
 
 -- ==========================================
--- ROW 3: SELL CROP
+-- ROW 3: HARVEST ALL JAGUNG
+-- ==========================================
+TabFarming:CreateButtonRow({
+    Name = "Harvest All (Jagung)",
+    ButtonText = "Harvest",
+    Callback = function()
+        task.spawn(function()
+            local rs = game:GetService("ReplicatedStorage")
+            for i = 1, 15 do
+                rs.Remotes.TutorialRemotes.HarvestCrop:FireServer("Jagung", i, "Corn")
+                task.wait(0.1)
+            end
+        end)
+    end
+})
+
+-- ==========================================
+-- ROW 4: SELL CROP
 -- ==========================================
 TabFarming:CreateButtonRow({
     Name = "Sell Crop",
     ButtonText = "Sell",
     Callback = function()
-        pcall(function()
-            local args = {}
-            game:GetService("ReplicatedStorage").Remotes.TutorialRemotes.SellCrop:FireServer(unpack(args))
-        end)
+        local rs = game:GetService("ReplicatedStorage")
+        rs.Remotes.TutorialRemotes.SellCrop:FireServer()
     end
 })
 
