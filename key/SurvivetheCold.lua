@@ -50,7 +50,7 @@ local BLACKLIST = {
     "HumanoidRootPart", "Torso", "Board", "Proximity", "Meshes_cartello_cube", 
     "Campfire", "Post", "Window", "Chest", "meshes/cartello", "AchievementFrame", "SniperRifle",
     "2xSpeed", "Head", "Left Arm", "Right Arm", "Left Leg", "Right Leg", 
-    "EmptyHouseNPC", "OutfitNPC", "CraftingNPC", "Avatar", "BrokenWall", "cartello","keyboard","door",
+    "EmptyHouseNPC", "OutfitNPC", "CraftingNPC", "Avatar", "BrokenWall", "cartello","Keyboard","Door",
     "MainDoorPart", "Scavenger", "Relic Machine"
 }
 
@@ -124,11 +124,19 @@ local function checkObject(o)
     if not o then return end
     local t, rN = nil, ""
     
-    if o:IsA("ProximityPrompt") and o.Parent and (o.Parent:IsA("BasePart") or o.Parent:IsA("Model")) then 
-        t, rN = o.Parent, o.Parent.Name
-    elseif o:IsA("ClickDetector") or o:IsA("TouchTransmitter") then
-        if o.Parent and (o.Parent:IsA("BasePart") or o.Parent:IsA("Model")) then
-            t, rN = o.Parent, o.Parent.Name
+    if o:IsA("ProximityPrompt") or o:IsA("ClickDetector") then 
+        local p = o.Parent
+        if p and p:IsA("Attachment") then p = p.Parent end
+        if p and (p:IsA("BasePart") or p:IsA("Model")) and p ~= workspace then
+            t, rN = p, p.Name
+        end
+    elseif o:IsA("BillboardGui") or o:IsA("SurfaceGui") then
+        if not o:FindFirstAncestor("EzSurviveESP") and o.Name ~= "NameTag" and o.Name ~= "Chat" and o.Name ~= "HealthBar" then
+            local p = o.Adornee or o.Parent
+            if p and p:IsA("Attachment") then p = p.Parent end
+            if p and (p:IsA("BasePart") or p:IsA("Model")) and p ~= workspace and not p:FindFirstChild("Humanoid") then
+                t, rN = p, p.Name
+            end
         end
     elseif o:IsA("Tool") and o.Parent ~= player.Character and o.Parent ~= player.Backpack then
         t, rN = o.PrimaryPart or o:FindFirstChildWhichIsA("BasePart") or o, o.Name
@@ -142,8 +150,13 @@ local function checkObject(o)
     elseif (o:IsA("Part") or o:IsA("MeshPart") or o:IsA("UnionOperation")) and o.Parent ~= player.Character then
         if o.CanTouch and not o.Anchored and not o:FindFirstAncestorOfClass("Model") and not o:FindFirstAncestorOfClass("Tool") then 
             t, rN = o, o.Name 
-        -- Pengecekan kasar barang interaktif jika dia di dalam model tapi root model tidak spesifik
-        elseif o:FindFirstChildWhichIsA("ClickDetector") or o:FindFirstChildWhichIsA("ProximityPrompt") then
+        end
+    end
+    
+    -- Jaring ekstra asuransi untuk benda dengan kata kunci penting (jaga-jaga developernya iseng)
+    if not t and (o:IsA("BasePart") or o:IsA("Model")) and o.Parent ~= player.Character and o ~= workspace and o.Name ~= player.Name then
+        local ln = string.lower(o.Name)
+        if string.find(ln, "pet") or string.find(ln, "plank") then
             t, rN = o, o.Name
         end
     end
