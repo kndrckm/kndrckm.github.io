@@ -50,7 +50,7 @@ local BLACKLIST = {
     "HumanoidRootPart", "Torso", "Board", "Proximity", "Meshes_cartello_cube", 
     "Campfire", "Post", "Window", "Chest", "meshes/cartello", "AchievementFrame", "SniperRifle",
     "2xSpeed", "Head", "Left Arm", "Right Arm", "Left Leg", "Right Leg", 
-    "EmptyHouseNPC", "OutfitNPC", "CraftingNPC", "Avatar", "BrokenWall", "cartello",
+    "EmptyHouseNPC", "OutfitNPC", "CraftingNPC", "Avatar", "BrokenWall", "cartello","keyboard","door",
     "MainDoorPart"
 }
 
@@ -123,12 +123,20 @@ local function checkObject(o)
     
     if o:IsA("ProximityPrompt") and o.Parent and (o.Parent:IsA("BasePart") or o.Parent:IsA("Model")) then 
         t, rN = o.Parent, o.Parent.Name
-    elseif o:IsA("Model") and o:FindFirstChild("Humanoid") and o.Name ~= player.Name then 
-        t, rN = o, o.Name
-    elseif (o:IsA("ClickDetector") or o:IsA("TouchTransmitter")) and o.Parent then 
-        t, rN = o.Parent, o.Parent.Name
-    elseif (o:IsA("Part") or o:IsA("MeshPart")) and o.CanTouch and not o.Anchored and o.Parent ~= player.Character and o.Size.Magnitude < 10 and o.Size.Magnitude > 0.5 and not o:FindFirstAncestorOfClass("Model") then 
-        t, rN = o, o.Name 
+    elseif o:IsA("ClickDetector") or o:IsA("TouchTransmitter") then
+        if o.Parent and (o.Parent:IsA("BasePart") or o.Parent:IsA("Model")) then
+            t, rN = o.Parent, o.Parent.Name
+        end
+    elseif o:IsA("Tool") and o.Parent ~= player.Character and o.Parent ~= player.Backpack then
+        t, rN = o.PrimaryPart or o:FindFirstChildWhichIsA("BasePart") or o, o.Name
+    elseif o:IsA("Model") and o.Name ~= "Workspace" and o.Name ~= player.Name then 
+        if o:FindFirstChild("Humanoid") then
+            t, rN = o, o.Name
+        end
+    elseif (o:IsA("Part") or o:IsA("MeshPart") or o:IsA("UnionOperation")) and o.Parent ~= player.Character then
+        if o.CanTouch and not o.Anchored and not o:FindFirstAncestorOfClass("Model") and not o:FindFirstAncestorOfClass("Tool") then 
+            t, rN = o, o.Name 
+        end
     end
     
     if t and rN ~= "" and not isBlacklisted(rN) then
