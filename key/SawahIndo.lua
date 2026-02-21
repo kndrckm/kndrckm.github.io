@@ -221,19 +221,26 @@ TabFarming:CreateToggleRow({
                     TUpdate("Equip & Tanam ("..plotSize.."x)", "Menunggu Panen", "Proses...")
                     if char and char:FindFirstChild("HumanoidRootPart") then
                         local hum = char:FindFirstChildOfClass("Humanoid")
+                        local function getTool(parent)
+                            for _, v in ipairs(parent:GetChildren()) do
+                                if v:IsA("Tool") and string.find(v.Name, cData.SeedName) then return v end
+                            end
+                            return nil
+                        end
+                        
                         if hum then
-                            local heldCrop = char:FindFirstChild(cData.SeedName)
+                            local heldCrop = getTool(char)
                             if not heldCrop then
                                 hum:UnequipTools()
                                 task.wait(0.2)
-                                local inBp = player.Backpack:FindFirstChild(cData.SeedName)
+                                local inBp = getTool(player.Backpack)
                                 if inBp then
                                     hum:EquipTool(inBp)
                                     task.wait(0.4)
                                 end
                             end
-                            if not char:FindFirstChild(cData.SeedName) then
-                                local recheckBp = player.Backpack:FindFirstChild(cData.SeedName)
+                            if not getTool(char) then
+                                local recheckBp = getTool(player.Backpack)
                                 if recheckBp then
                                     hum:UnequipTools()
                                     task.wait(0.2)
@@ -243,7 +250,7 @@ TabFarming:CreateToggleRow({
                             end
                         end
                         
-                        if not char:FindFirstChild(cData.SeedName) then
+                        if not getTool(char) then
                             warn("Batal tanam putaran ini karena bibit target (" .. cData.SeedName .. ") gagal dipegang!")
                             task.wait(2)
                         else
@@ -337,13 +344,20 @@ TabFarming:CreateInputButtonRow({
             
             local cData = CROP_DATA[getgenv().SelectedCrop]
             local hum = char:FindFirstChildOfClass("Humanoid")
+            local function getTool(parent)
+                for _, v in ipairs(parent:GetChildren()) do
+                    if v:IsA("Tool") and string.find(v.Name, cData.SeedName) then return v end
+                end
+                return nil
+            end
+            
             if hum then
-                local heldCrop = char:FindFirstChild(cData.SeedName)
+                local heldCrop = getTool(char)
                 if not heldCrop then
                     hum:UnequipTools()
                     task.wait(0.2)
                     
-                    local inBp = player.Backpack:FindFirstChild(cData.SeedName)
+                    local inBp = getTool(player.Backpack)
                     if inBp then
                         hum:EquipTool(inBp)
                         task.wait(0.4)
@@ -355,7 +369,7 @@ TabFarming:CreateInputButtonRow({
             end
             
             -- Cek akhir manual
-            if not char:FindFirstChild(cData.SeedName) then
+            if not getTool(char) then
                 warn("Gagal menanam manual! Anda tidak memegang " .. cData.SeedName)
                 return
             end
