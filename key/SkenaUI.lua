@@ -7,6 +7,8 @@ elseif PlaceId == 134750290201751 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SurvivetheCold.lua"
 elseif PlaceId == 83369512629707 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SawahIndo.lua"
+elseif PlaceId == 91764591674792 then
+    SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/StopBrainrots.lua"
 else
     -- Game tidak disupport: Load Fallback Admin (untuk di-test / bypass oleh admin)
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/FallbackAdmin.lua"
