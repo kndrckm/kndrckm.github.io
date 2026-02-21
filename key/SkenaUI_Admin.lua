@@ -1,28 +1,16 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-
--- =====================================
--- DAFTAR AKSES ADMIN (WHITELIST ID)
--- =====================================
--- Masukkan UserId Roblox Anda dan teman/admin Anda di sini. 
--- UserId adalah angka unik yang ada di URL profil Roblox (contoh: roblox.com/users/12345678/profile)
 local WHITELISTED_ADMINS = {
     [4871650676] = true, -- UserId User (Akses Admin Utama)
 }
-
 local SkenaAdmin = {}
 
 function SkenaAdmin.Attach(Window, DebugData)
-    -- VERIFIKASI KEAMANAN: Cek apakah UserId pemain ada di tabel whitelist di atas
     if not WHITELISTED_ADMINS[player.UserId] then
-        -- Jika tidak terdaftar, batalkan pembuatan tab admin. Script akan diam-diam berhenti di sini.
         return 
     end
-
-    -- Jika berhasil lolos verifikasi, buat Tab Admin
-    local TabAdmin = Window:CreateTab("Admin", "database") 
+   local TabAdmin = Window:CreateTab("Admin", "database") 
     
-    -- Alat Dasar Admin (Universal)
     TabAdmin:CreateButtonRow({
         Name = "Copy My Position",
         ButtonText = "Copy Vector3",
@@ -41,7 +29,6 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
     
-    -- Alat Admin: Remote Spy Logger
     if not getgenv()._SKENA_SPY_HOOKED then
         local success, err = pcall(function()
             local function LogRemote(self, method, args)
