@@ -470,6 +470,9 @@ function SkenaUI:CreateWindow(Options)
             if Options.HasSpeed then
                 out.SpeedBox = attachTextBox("Spd", Options.DefaultSpeed, Options.OnSpeedChange, 40, 8, "Speed")
             end
+            if Options.HasInput then
+                out.InputBox = attachTextBox(Options.InputPlaceholder or "", Options.InputDefault or "", Options.OnInputChange, Options.InputWidth or 80, 8, Options.InputPrefix)
+            end
 
             return out
         end
@@ -582,6 +585,60 @@ function SkenaUI:CreateWindow(Options)
             ExecBtn.MouseEnter:Connect(function() TweenService:Create(ExecBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.RowHover}):Play() end)
             ExecBtn.MouseLeave:Connect(function() TweenService:Create(ExecBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.InputHdr}):Play() end)
             ExecBtn.MouseButton1Click:Connect(function() pcall(cb) end)
+        end
+
+        function TabData:CreateDoubleButtonRow(Options)
+            local Title = Options.Name or "Double Action"
+            local Btn1Text = Options.Button1Text or "Btn1"
+            local Btn2Text = Options.Button2Text or "Btn2"
+            local cb1 = Options.Callback1 or function() end
+            local cb2 = Options.Callback2 or function() end
+
+            local Row = AddRowContainer()
+
+            local Txt = Instance.new("TextLabel", Row)
+            Txt.Size = UDim2.new(0.4, 0, 1, 0)
+            Txt.Position = UDim2.new(0, 12, 0, 0)
+            Txt.BackgroundTransparency = 1
+            Txt.Text = Title
+            Txt.Font = Enum.Font.GothamMedium
+            Txt.TextSize = 13
+            Txt.TextColor3 = Palette.TextPrimary
+            Txt.TextXAlignment = Enum.TextXAlignment.Left
+
+            local RightContainer = Instance.new("Frame", Row)
+            RightContainer.Size = UDim2.new(0.6, -12, 1, 0)
+            RightContainer.Position = UDim2.new(0.4, 0, 0, 0)
+            RightContainer.BackgroundTransparency = 1
+            local RCLayout = Instance.new("UIListLayout", RightContainer)
+            RCLayout.FillDirection = Enum.FillDirection.Horizontal
+            RCLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+            RCLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+            RCLayout.Padding = UDim.new(0, 8)
+            RCLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+            local function SetupBtn(txt, callback, order)
+                local btn = Instance.new("TextButton", RightContainer)
+                btn.Size = UDim2.new(0, 80, 0, 24)
+                btn.BackgroundColor3 = Palette.InputHdr
+                btn.Text = txt
+                btn.TextColor3 = Palette.TextPrimary
+                btn.Font = Enum.Font.GothamMedium
+                btn.TextSize = 12
+                btn.AutoButtonColor = false
+                btn.LayoutOrder = order
+                Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+                local BStroke = Instance.new("UIStroke", btn)
+                BStroke.Color = Palette.Border
+                BStroke.Thickness = 1
+
+                btn.MouseEnter:Connect(function() TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.RowHover}):Play() end)
+                btn.MouseLeave:Connect(function() TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.InputHdr}):Play() end)
+                btn.MouseButton1Click:Connect(function() pcall(callback) end)
+            end
+            
+            SetupBtn(Btn1Text, cb1, 1)
+            SetupBtn(Btn2Text, cb2, 2)
         end
 
         function TabData:CreateInputRow(Options)
