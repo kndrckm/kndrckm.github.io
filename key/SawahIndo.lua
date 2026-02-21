@@ -36,9 +36,24 @@ local TabSettings = Window:CreateTab("Settings", "settings", true)
 -- ==========================================
 -- DATA KORDINAT LOKASI PETAK SAWAH
 -- ==========================================
--- Karena game mengizinkan bibit ditumpuk di titik yang sama (Stacking),
--- kita cukup menanam 15 biji di satu titik koordinat ini secara berulang.
-local STACK_POSITION = Vector3.new(-162.22613525390625, 39.296875, -345.8756408691406)
+getgenv().STACK_POSITION = Vector3.new(-160.55126953125, 39.296875, -347.9148254394531)
+
+-- ==========================================
+-- SETTER TITIK TANAM
+-- ==========================================
+TabFarming:CreateButtonRow({
+    Name = " [ Set Ulang Titik Tanam (Berdiri di Sawah) ]",
+    ButtonText = "Set",
+    Callback = function()
+        local char = game.Players.LocalPlayer.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            -- Turunkan Y sedikit agar menyentuh tanah persis
+            getgenv().STACK_POSITION = hrp.Position - Vector3.new(0, 2.5, 0)
+            warn("Titik Tanam Diperbarui ke: " .. tostring(getgenv().STACK_POSITION))
+        end
+    end
+})
 
 -- ==========================================
 -- MANUAL BUTTONS (JAGUNG)
@@ -61,7 +76,7 @@ TabFarming:CreateButtonRow({
         task.spawn(function()
             local rs = game:GetService("ReplicatedStorage")
             for i = 1, 15 do
-                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(STACK_POSITION) end)
+                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(getgenv().STACK_POSITION) end)
                 task.wait(0.12)
             end
         end)
@@ -113,7 +128,7 @@ TabFarming:CreateToggleRow({
                     -- 2. Tanam bertumpuk (Stack) di 1 titik
                     for i = 1, 15 do
                         if not getgenv().SkenaAutoFarm_Jagung then return end
-                        pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(STACK_POSITION) end)
+                        pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(getgenv().STACK_POSITION) end)
                         task.wait(0.15)
                     end
                     
