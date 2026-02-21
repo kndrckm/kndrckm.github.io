@@ -47,22 +47,36 @@ local TabSettings = Window:CreateTab("Settings", "settings", true)
 -- CROP DATA REFERENCE
 -- ==========================================
 local CROP_DATA = {
+    ["Padi"]   = { SeedName = "Bibit Padi",   EnglishName = "Rice" },
     ["Jagung"] = { SeedName = "Bibit Jagung", EnglishName = "Corn" },
     ["Tomat"]  = { SeedName = "Bibit Tomat",  EnglishName = "Tomato" },
-    ["Padi"]   = { SeedName = "Bibit Padi",   EnglishName = "Rice" },
     ["Terong"] = { SeedName = "Bibit Terong", EnglishName = "Eggplant" }
 }
-getgenv().SelectedCrop = "Jagung"
+getgenv().SelectedCrop = "Padi"
+
+local CROP_ORDER = {
+    { key = "Padi",   label = "Padi [lv. 0]" },
+    { key = "Jagung", label = "Jagung [lv. 20]" },
+    { key = "Tomat",  label = "Tomat [lv. 40]" },
+    { key = "Terong", label = "Terong [lv. 60]" },
+}
 
 local CropDrop = TabFarming:CreateDropdown({
     Name = " [ Target Tanaman (Global) ]",
     Callback = function(val)
+        -- Map label kembali ke key (e.g. "Padi [lv. 0]" -> "Padi")
+        for _, entry in ipairs(CROP_ORDER) do
+            if entry.label == val then
+                getgenv().SelectedCrop = entry.key
+                warn("Terpilih Tanaman: " .. entry.key)
+                return
+            end
+        end
         getgenv().SelectedCrop = val
-        warn("Terpilih Tanaman: " .. val)
     end
 })
-for cName, _ in pairs(CROP_DATA) do
-    CropDrop:AddItem(cName, cName == "Jagung")
+for _, entry in ipairs(CROP_ORDER) do
+    CropDrop:AddItem(entry.label, entry.key == "Padi")
 end
 
 -- ==========================================
@@ -325,77 +339,16 @@ TabFarming:CreateInputButtonRow({
     end
 })
 
-TabFarming:CreateInputButtonRow({
-    Name = "2. Tanam di Kaki",
-    Placeholder = "Jml",
-    Default = "15",
-    ButtonText = "Tanam",
-    Callback = function(inputValue)
-        local amount = tonumber(inputValue) or 15
-        task.spawn(function()
-            local char = player.Character
-            if not char or not char:FindFirstChild("HumanoidRootPart") then 
-                warn("Gagal menanam! Karakter tidak ditemukan.")
-                return 
-            end
-            
-            local cData = CROP_DATA[getgenv().SelectedCrop]
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            local function getTool(parent)
-                for _, v in ipairs(parent:GetChildren()) do
-                    if v:IsA("Tool") and string.find(v.Name, cData.SeedName) then return v end
-                end
-                return nil
-            end
-            
-            if hum then
-                local heldCrop = getTool(char)
-                if not heldCrop then
-                    hum:UnequipTools()
-                    task.wait(0.2)
-                    
-                    local inBp = getTool(player.Backpack)
-                    if inBp then
-                        hum:EquipTool(inBp)
-                        task.wait(0.4)
-                    else
-                        warn("Batal tanam manual: Bibit " .. cData.SeedName .. " tidak ada di tas!")
-                        return
-                    end
-                end
-            end
-            
-            -- Cek akhir manual
-            if not getTool(char) then
-                warn("Gagal menanam manual! Anda tidak memegang " .. cData.SeedName)
-                return
-            end
-            
-            local rs = game:GetService("ReplicatedStorage")
-            local startPos = char.HumanoidRootPart.Position
-            for i = 1, amount do
-                local angle = math.rad(math.random(0, 360))
-                local dist = 0.5 + math.random() * 1.5
-                local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
-                local pos = startPos + offset
-                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
-                task.wait(0.6)
-            end
-        end)
-    end
-})
-
 TabFarming:CreateButtonRow({
-    Name = "3. Sell All",
+    Name = "2. Sell All",
     ButtonText = "Jual",
     Callback = function()
         task.spawn(function()
             pcall(function()
                 local cData = CROP_DATA[getgenv().SelectedCrop]
                 local rs = game:GetService("ReplicatedStorage")
-                local sellAmt = 15 -- Harga default tebak
+                local sellAmt = 15
                 
-                -- Sadap data inventaris
                 local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
                 if typeof(inv) == "table" and typeof(inv.Items) == "table" then
                     for _, itemData in pairs(inv.Items) do
@@ -416,8 +369,22 @@ TabFarming:CreateButtonRow({
     end
 })
 
+-- Fast Interact (Default ON)
+getgenv().SkenaNoDelayInteract = true
+task.spawn(function()
+    while getgenv().SkenaNoDelayInteract do
+        for _, v in ipairs(workspace:GetDescendants()) do
+            if v:IsA("ProximityPrompt") and v.HoldDuration > 0 then
+                v.HoldDuration = 0
+            end
+        end
+        task.wait(1)
+    end
+end)
+
 TabFarming:CreateToggleRow({
     Name = "Fast Interact (No Hold E)",
+    Default = true,
     OnToggle = function(state)
         getgenv().SkenaNoDelayInteract = state
         if state then

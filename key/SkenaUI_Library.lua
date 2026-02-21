@@ -433,7 +433,7 @@ function SkenaUI:CreateWindow(Options)
             Knob.BackgroundColor3 = Palette.TextSecondary
             Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
 
-            local state = false
+            local state = Options.Default or false
 
             local function UpdateToggleRender(noAnim)
                 local targetColor = state and Palette.Accent or Palette.InputHdr
@@ -449,6 +449,8 @@ function SkenaUI:CreateWindow(Options)
                     TweenService:Create(Knob, TweenInfo.new(0.2), {BackgroundColor3 = knobColor, Position = knobPos}):Play()
                 end
             end
+            
+            if state then UpdateToggleRender(true) end
 
             ToggleBg.MouseButton1Click:Connect(function()
                 state = not state
