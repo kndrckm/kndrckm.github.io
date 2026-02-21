@@ -111,6 +111,20 @@ TabFarming:CreateToggleRow({
                     -- 2. Tanam Berulang di Titik Berdiri (1 Lot/Pijakan)
                     local char = player.Character
                     if char and char:FindFirstChild("HumanoidRootPart") then
+                        local hum = char:FindFirstChildOfClass("Humanoid")
+                        if hum then
+                            local heldCrop = char:FindFirstChild(cData.SeedName)
+                            if not heldCrop then
+                                local inBp = player.Backpack:FindFirstChild(cData.SeedName)
+                                if inBp then
+                                    hum:EquipTool(inBp)
+                                    task.wait(0.25)
+                                else
+                                    warn("Bibit tidak ditemukan di tangan maupun tas!")
+                                end
+                            end
+                        end
+                        
                         local pos = char.HumanoidRootPart.Position
                         for i = 1, plotSize do
                             if not getgenv().SkenaAutoFarm_Crop then return end
@@ -191,6 +205,23 @@ TabFarming:CreateInputButtonRow({
                 warn("Gagal menanam! Karakter tidak ditemukan.")
                 return 
             end
+            
+            local cData = CROP_DATA[getgenv().SelectedCrop]
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                local heldCrop = char:FindFirstChild(cData.SeedName)
+                if not heldCrop then
+                    local inBp = player.Backpack:FindFirstChild(cData.SeedName)
+                    if inBp then
+                        hum:EquipTool(inBp)
+                        task.wait(0.25)
+                    else
+                        warn("Batal tanam manual: Bibit tidak ada di tangan/tas!")
+                        return
+                    end
+                end
+            end
+            
             local pos = char.HumanoidRootPart.Position
             local rs = game:GetService("ReplicatedStorage")
             for i = 1, amount do
