@@ -339,15 +339,12 @@ function SkenaUI:CreateWindow(Options)
         
         local TabBtn, TabIcon, Indicator = CreateTabButton(TabName, IconID, isSettings)
 
-        local Page = Instance.new("ScrollingFrame", TabContainer)
-        Page.Size = UDim2.new(1, 0, 0, 0)
+        local Page = Instance.new("CanvasGroup", TabContainer)
+        Page.Size = UDim2.new(1, 0, 0, 150)
         Page.AutomaticSize = Enum.AutomaticSize.Y
         Page.BackgroundTransparency = 1
+        Page.GroupTransparency = 1
         Page.Visible = false
-        Page.CanvasSize = UDim2.new(0, 0, 0, 0)
-        Page.ScrollBarThickness = 0 -- Hiding scrollbar entirely as there is no Canvas limit
-        Page.ScrollBarImageColor3 = Palette.TextSecondary
-        Page.BorderSizePixel = 0
 
         local PageConstraint = Instance.new("UISizeConstraint", Page)
         PageConstraint.MinSize = Vector2.new(0, 180)
