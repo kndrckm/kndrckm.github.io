@@ -56,46 +56,26 @@ for cName, _ in pairs(CROP_DATA) do
 end
 
 -- ==========================================
--- SISTEM KALIBRASI (SMART PLOT DETECTOR)
+-- SETTINGS BATCH & DELAY
 -- ==========================================
-getgenv().PLOT_POSITIONS = getgenv().PLOT_POSITIONS or {}
-getgenv()._SKENA_CALIBRATING = false
+getgenv().AFK_PlantAmount = 15
+getgenv().AFK_HarvestDelay = 120
 
-if not getgenv()._SAWAH_HOOKED then
-    pcall(function()
-        local oldNamecall
-        oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
-            local method = getnamecallmethod()
-            if method == "FireServer" and tostring(self) == "PlantCrop" and getgenv()._SKENA_CALIBRATING then
-                local args = {...}
-                if typeof(args[1]) == "Vector3" then
-                    local pos = args[1]
-                    local found = false
-                    for _, p in ipairs(getgenv().PLOT_POSITIONS) do
-                        if (p - pos).Magnitude < 1 then found = true break end
-                    end
-                    if not found and #getgenv().PLOT_POSITIONS < 15 then
-                        table.insert(getgenv().PLOT_POSITIONS, pos)
-                        print("[Skena Hub] Tersimpan Titik Sawah #" .. #getgenv().PLOT_POSITIONS)
-                    end
-                end
-            end
-            return oldNamecall(self, ...)
-        end)
-        getgenv()._SAWAH_HOOKED = true
-    end)
-end
+TabFarming:CreateInputRow({
+    Name = " [ Jumlah Tanam per Loop ]",
+    Placeholder = "15",
+    Default = "15",
+    Callback = function(val)
+        getgenv().AFK_PlantAmount = tonumber(val) or 15
+    end
+})
 
-TabFarming:CreateToggleRow({
-    Name = " [ Mode Kalibrasi Lahan Sawah ]",
-    OnToggle = function(state)
-        getgenv()._SKENA_CALIBRATING = state
-        if state then
-            getgenv().PLOT_POSITIONS = {} -- Reset data saat mulai kalibrasi
-            warn("MODE KALIBRASI AKTIF. Silakan tanam 1 bibit secara MANUAL ke tiap 15 lubang tanah secara bergantian. Skrip akan merekam polanya.")
-        else
-            warn("KALIBRASI SELESAI. Total titik tersimpan: " .. tostring(#getgenv().PLOT_POSITIONS))
-        end
+TabFarming:CreateInputRow({
+    Name = " [ Waktu Tunggu / Panen (Detik) ]",
+    Placeholder = "120",
+    Default = "120",
+    Callback = function(val)
+        getgenv().AFK_HarvestDelay = tonumber(val) or 120
     end
 })
 
@@ -120,7 +100,7 @@ TabFarming:CreateToggleRow({
                 local rs = game:GetService("ReplicatedStorage")
                 while getgenv().SkenaAutoFarm_Crop do
                     local cData = CROP_DATA[getgenv().SelectedCrop]
-                    local plotSize = #getgenv().PLOT_POSITIONS > 0 and #getgenv().PLOT_POSITIONS or 15
+                    local plotSize = getgenv().AFK_PlantAmount or 15
                     
                     -- 1. Beli Bibit (Hanya jika dicentang)
                     if getgenv().AutoBuySeed then
@@ -128,21 +108,26 @@ TabFarming:CreateToggleRow({
                         task.wait(1)
                     end
                     
-                    if #getgenv().PLOT_POSITIONS > 0 then
-                        for _, pos in ipairs(getgenv().PLOT_POSITIONS) do
+                    -- 2. Tanam Berulang di Titik Berdiri (1 Lot/Pijakan)
+                    local char = player.Character
+                    if char and char:FindFirstChild("HumanoidRootPart") then
+                        local pos = char.HumanoidRootPart.Position
+                        for i = 1, plotSize do
                             if not getgenv().SkenaAutoFarm_Crop then return end
                             pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                             task.wait(0.25)
                         end
                     else
-                        warn("AUTO-FARM TERTUNDA: Anda belum merekam titik tanah via Kalibrasi.")
+                        warn("Karakter tidak ditemukan! Tanam ditunda 2 detik.")
+                        task.wait(2)
                     end
                     
-                    -- 3. Menunggu (Waktu Jagung Tumbuh)
-                    task.wait(120)
+                    -- 3. Menunggu (Waktu Tanaman Tumbuh)
+                    local hDelay = getgenv().AFK_HarvestDelay or 120
+                    task.wait(hDelay)
                     
-                    -- 4. Panen Otomatis
-                    for i = 1, 20 do
+                    -- 4. Panen Otomatis (Buffer di atas plotSize untuk menimpa sisa tanaman/lag)
+                    for i = 1, plotSize + 5 do
                         if not getgenv().SkenaAutoFarm_Crop then return end
                         pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer(getgenv().SelectedCrop, i, cData.EnglishName) end)
                         task.wait(0.35) 
@@ -172,7 +157,7 @@ TabFarming:CreateToggleRow({
 })
 
 TabFarming:CreateTextRow({
-    Text = "Step: (1) Nyalakan Kalibrasi, lalu tanam bibit manual ke dalam 15 petak bidang tanah. (2) Setelah selesai, matikan switch Kalibrasi. (3) Tekan Auto Farm AFK dan biarkan bot bermain liar."
+    Text = "Step: Atur Jumlah Target dan Waktu Tunggu, lalu nyalakan Auto Farm. Semua bibit akan ditanam berlipat-lipat secara ditumpuk tepat di tanah tempat karakter Anda berpijak."
 })
 
 -- ==========================================
@@ -193,17 +178,22 @@ TabFarming:CreateInputButtonRow({
     end
 })
 
-TabFarming:CreateButtonRow({
-    Name = "2. Tanam (Sesuai Kalibrasi)",
+TabFarming:CreateInputButtonRow({
+    Name = "2. Tanam di Kaki",
+    Placeholder = "Jml",
+    Default = "15",
     ButtonText = "Tanam",
-    Callback = function()
+    Callback = function(inputValue)
+        local amount = tonumber(inputValue) or 15
         task.spawn(function()
-            if #getgenv().PLOT_POSITIONS < 1 then
-                warn("Gagal menanam! Silakan lakukan Kalibrasi Lahan terlebih dahulu.")
-                return
+            local char = player.Character
+            if not char or not char:FindFirstChild("HumanoidRootPart") then 
+                warn("Gagal menanam! Karakter tidak ditemukan.")
+                return 
             end
+            local pos = char.HumanoidRootPart.Position
             local rs = game:GetService("ReplicatedStorage")
-            for _, pos in ipairs(getgenv().PLOT_POSITIONS) do
+            for i = 1, amount do
                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                 task.wait(0.25)
             end
