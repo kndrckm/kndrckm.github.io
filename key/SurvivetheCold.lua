@@ -56,7 +56,9 @@ local BLACKLIST = {
 }
 
 local EXACT_BLACKLIST = {
-    "Part", "GUISign2", "Plank", "Base", "Baseplate", "SpawnLocation", "Folder", "Model"
+    "Part", "GUISign1", "GUISign2", "Plank", "Base", "Baseplate", "SpawnLocation", "Folder", "Model",
+    "Sign", "Title", "Roof", "Entrance", "Carpet", "Carpet2", "Red Carpet", "Small Red Carpet", 
+    "PlacedPlank", "HB"
 }
 
 -- ==========================================
@@ -74,7 +76,8 @@ local function getCleanName(n, objContext)
         local genericNames = {
             yellow = true, green = true, red = true, blue = true, purple = true,
             tutorial = true, part = true, sphere = true, block = true, cylinder = true,
-            wedge = true, meshpart = true
+            wedge = true, meshpart = true, mesh = true, handle = true,
+            ["1"] = true, ["2"] = true, ["3"] = true, ["4"] = true, ["5"] = true
         }
         
         if genericNames[ln] then
