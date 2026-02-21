@@ -208,6 +208,49 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
 
+    -- Modul Ekstra: Scan Semua Remote di ReplicatedStorage
+    TabAdmin:CreateButtonRow({
+        Name = "Scan All Remotes (RS)",
+        ButtonText = "Scan",
+        Callback = function(btn)
+            local ok, errMsg = pcall(function()
+                local rs = game:GetService("ReplicatedStorage")
+                local lines = {"=== SKENA REMOTE SCANNER ===", "Location: ReplicatedStorage", ""}
+                local count = 0
+                
+                for _, obj in ipairs(rs:GetDescendants()) do
+                    if obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction") or obj:IsA("BindableEvent") or obj:IsA("BindableFunction") then
+                        count = count + 1
+                        local tag = obj.ClassName
+                        lines[#lines + 1] = "[" .. count .. "] (" .. tag .. ") " .. obj.Name .. " | " .. obj:GetFullName()
+                    end
+                end
+                
+                if count == 0 then
+                    warn("[Scan] Tidak ada Remote ditemukan di ReplicatedStorage.")
+                    animateBtn(btn, false)
+                    return
+                end
+                
+                local finalStr = table.concat(lines, "\n")
+                if setclipboard then
+                    setclipboard(finalStr)
+                    warn("[Scan] Berhasil copy " .. count .. " Remote ke clipboard!")
+                    animateBtn(btn, true)
+                else
+                    print(finalStr)
+                    warn("[Scan] Cetak ke F9 Console.")
+                    animateBtn(btn, false)
+                end
+            end)
+            
+            if not ok then
+                warn("[Scan Remote ERROR] " .. tostring(errMsg))
+                animateBtn(btn, false)
+            end
+        end
+    })
+
     -- Modul Ekstra: Auto-Touch (Brute-force Tycoon/Simulator)
     TabAdmin:CreateToggleRow({
         Name = "Auto-Touch All (Brute-force)",
