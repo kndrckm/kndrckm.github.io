@@ -48,9 +48,10 @@ local espDropdownObj = nil
 
 local BLACKLIST = {
     "HumanoidRootPart", "Torso", "Board", "Proximity", "Meshes_cartello_cube", 
-    "Campfire", "Post", "Window", "Chest", "meshes/cartello", " AchievementFrame", 
+    "Campfire", "Post", "Window", "Chest", "meshes/cartello", "AchievementFrame", 
     "2xSpeed", "Head", "Left Arm", "Right Arm", "Left Leg", "Right Leg", 
-    "EmptyHouseNPC", "OutfitNPC", "CraftingNPC", "Avatar", "BrokenWall", "cartello"
+    "EmptyHouseNPC", "OutfitNPC", "CraftingNPC", "Avatar", "BrokenWall", "cartello",
+    "MainDoorPart"
 }
 
 -- ==========================================
