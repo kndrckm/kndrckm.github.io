@@ -258,7 +258,7 @@ TabFarming:CreateToggleRow({
                             local rightVec = char.HumanoidRootPart.CFrame.RightVector
                             for i = 1, plotSize do
                                 if not getgenv().SkenaAutoFarm_Crop then return end
-                                local pos = startPos + (rightVec * ((i - 1) * 0.2))
+                                local pos = startPos + (rightVec * ((i - 1) * 0.5))
                                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                                 task.wait(0.6)
                             end
@@ -372,7 +372,7 @@ TabFarming:CreateInputButtonRow({
             local startPos = char.HumanoidRootPart.Position
             local rightVec = char.HumanoidRootPart.CFrame.RightVector
             for i = 1, amount do
-                local pos = startPos + (rightVec * ((i - 1) * 0.2))
+                local pos = startPos + (rightVec * ((i - 1) * 0.5))
                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                 task.wait(0.6)
             end
