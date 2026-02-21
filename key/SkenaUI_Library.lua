@@ -345,8 +345,7 @@ function SkenaUI:CreateWindow(Options)
         Page.BackgroundTransparency = 1
         Page.Visible = false
         Page.CanvasSize = UDim2.new(0, 0, 0, 0)
-        Page.AutomaticCanvasSize = Enum.AutomaticSize.Y
-        Page.ScrollBarThickness = 4
+        Page.ScrollBarThickness = 0 -- Hiding scrollbar entirely as there is no Canvas limit
         Page.ScrollBarImageColor3 = Palette.TextSecondary
         Page.BorderSizePixel = 0
 
