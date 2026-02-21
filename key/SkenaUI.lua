@@ -13,7 +13,7 @@ else
     return
 end
 
--- Eksekusi script spesifik game (dengan cache buster)
+-- Eksekusi script spesifik game (dengan cache buster)1
 local cacheBuster = "?t=" .. tostring(os.time())
 local success, err = pcall(function()
     loadstring(game:HttpGet(SkenaHub_CoreURL .. cacheBuster, true))()
