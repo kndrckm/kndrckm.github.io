@@ -97,20 +97,15 @@ TabFarming:CreateToggleRow({
                         for _, pos in ipairs(getgenv().PLOT_POSITIONS) do
                             if not getgenv().SkenaAutoFarm_Jagung then return end
                             pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
-                            task.wait(0.15)
+                            task.wait(0.25)
                         end
                     else
                         warn("AUTO-FARM TERTUNDA: Anda belum merekam titik tanah via Kalibrasi.")
                     end
                     
-                    task.wait(10)
-                    
-                    for i = 1, 15 do
-                        if not getgenv().SkenaAutoFarm_Jagung then return end
-                        pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer("Jagung", i, "Corn") end)
-                        task.wait(0.15)
-                    end
-                    task.wait(1.5)
+                    -- Tunggu game melakukan Auto-Harvest (estimasi 120 detik)
+                    -- Ubah angka 120 menjadi waktu yang akurat sesuai observasi Anda
+                    task.wait(120)
                     
                     pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 30) end)
                     task.wait(1.5)
@@ -150,28 +145,14 @@ TabFarming:CreateButtonRow({
             local rs = game:GetService("ReplicatedStorage")
             for _, pos in ipairs(getgenv().PLOT_POSITIONS) do
                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
-                task.wait(0.12)
+                task.wait(0.25)
             end
         end)
     end
 })
 
 TabFarming:CreateButtonRow({
-    Name = "3. Harvest All (Jagung)",
-    ButtonText = "Panen",
-    Callback = function()
-        task.spawn(function()
-            local rs = game:GetService("ReplicatedStorage")
-            for i = 1, 15 do
-                pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer("Jagung", i, "Corn") end)
-                task.wait(0.12)
-            end
-        end)
-    end
-})
-
-TabFarming:CreateButtonRow({
-    Name = "4. Sell All Jagung",
+    Name = "3. Sell All Jagung",
     ButtonText = "Jual",
     Callback = function()
         pcall(function()
