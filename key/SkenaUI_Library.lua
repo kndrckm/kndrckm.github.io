@@ -264,7 +264,6 @@ function SkenaUI:CreateWindow(Options)
 
     local CardConstraint = Instance.new("UISizeConstraint", Card)
     CardConstraint.MinSize = Vector2.new(0, 180)
-    CardConstraint.MaxSize = Vector2.new(math.huge, 340)
 
     local CardCorner = Instance.new("UICorner", Card)
     CardCorner.CornerRadius = UDim.new(0, 8)
@@ -341,25 +340,16 @@ function SkenaUI:CreateWindow(Options)
         local TabBtn, TabIcon, Indicator = CreateTabButton(TabName, IconID, isSettings)
 
         local Page = Instance.new("CanvasGroup", TabContainer)
-        Page.Size = UDim2.new(1, 0, 1, 0)
+        Page.Size = UDim2.new(1, 0, 0, 150)
+        Page.AutomaticSize = Enum.AutomaticSize.Y
         Page.BackgroundTransparency = 1
         Page.GroupTransparency = 1
         Page.Visible = false
 
-        local Scroll = Instance.new("ScrollingFrame", Page)
-        Scroll.Size = UDim2.new(1, 0, 1, 0)
-        Scroll.BackgroundTransparency = 1
-        Scroll.BorderSizePixel = 0
-        Scroll.ScrollBarThickness = 3
-        Scroll.ScrollBarImageColor3 = Palette.Accent
-        Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-        Scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+        local PageConstraint = Instance.new("UISizeConstraint", Page)
+        PageConstraint.MinSize = Vector2.new(0, 180)
         
-        local ScrollConstraint = Instance.new("UISizeConstraint", Scroll)
-        ScrollConstraint.MinSize = Vector2.new(0, 180)  -- min 3 rows
-        ScrollConstraint.MaxSize = Vector2.new(math.huge, 324) -- max 6 rows
-        
-        local PLayout = Instance.new("UIListLayout", Scroll)
+        local PLayout = Instance.new("UIListLayout", Page)
         PLayout.SortOrder = Enum.SortOrder.LayoutOrder
         PLayout.Padding = UDim.new(0, 4)
 
@@ -370,7 +360,7 @@ function SkenaUI:CreateWindow(Options)
         if not WindowObj.CurrentTab then WindowObj:SelectTab(TabName) end
 
         -- Header within Tab
-        local Header = Instance.new("TextLabel", Scroll)
+        local Header = Instance.new("TextLabel", Page)
         Header.Size = UDim2.new(1, 0, 0, 36)
         Header.BackgroundTransparency = 1
         Header.Text = TabName
@@ -381,7 +371,7 @@ function SkenaUI:CreateWindow(Options)
 
         -- Utility to add a generic Row Container
         local function AddRowContainer()
-            local Row = Instance.new("Frame", Scroll)
+            local Row = Instance.new("Frame", Page)
             Row.Size = UDim2.new(1, 0, 0, 44)
             Row.BackgroundColor3 = Palette.RowItem
             Row.BorderSizePixel = 0
@@ -613,7 +603,7 @@ function SkenaUI:CreateWindow(Options)
         function TabData:CreateTextRow(Options)
             local Text = Options.Text or "Description string here"
 
-            local Row = Instance.new("Frame", Scroll)
+            local Row = Instance.new("Frame", Page)
             Row.Size = UDim2.new(1, 0, 0, 0)
             Row.AutomaticSize = Enum.AutomaticSize.Y
             Row.BackgroundTransparency = 1
@@ -735,7 +725,7 @@ function SkenaUI:CreateWindow(Options)
             local Title = Options.Name or "Dropdown"
             local cb = Options.Callback or function() end
             
-            local Row = Instance.new("Frame", Scroll)
+            local Row = Instance.new("Frame", Page)
             Row.Size = UDim2.new(1, 0, 0, 0)
             Row.AutomaticSize = Enum.AutomaticSize.Y
             Row.BackgroundColor3 = Palette.RowItem
@@ -859,7 +849,7 @@ function SkenaUI:CreateWindow(Options)
         function TabData:CreateMultiSelectDropdown(Options)
             local Title = Options.Name or "Dropdown"
             
-            local Row = Instance.new("Frame", Scroll)
+            local Row = Instance.new("Frame", Page)
             Row.Size = UDim2.new(1, 0, 0, 0)
             Row.AutomaticSize = Enum.AutomaticSize.Y
             Row.BackgroundColor3 = Palette.RowItem
