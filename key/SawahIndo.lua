@@ -259,7 +259,7 @@ TabFarming:CreateToggleRow({
                             for i = 1, plotSize do
                                 if not getgenv().SkenaAutoFarm_Crop then return end
                                 local angle = math.rad(math.random(0, 360))
-                                local dist = math.random() * 1.5
+                                local dist = 0.5 + math.random() * 1.5
                                 local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
                                 local pos = startPos + offset
                                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
@@ -375,7 +375,7 @@ TabFarming:CreateInputButtonRow({
             local startPos = char.HumanoidRootPart.Position
             for i = 1, amount do
                 local angle = math.rad(math.random(0, 360))
-                local dist = math.random() * 1.5
+                local dist = 0.5 + math.random() * 1.5
                 local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
                 local pos = startPos + offset
                 pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
