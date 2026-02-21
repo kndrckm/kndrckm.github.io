@@ -69,7 +69,7 @@ end
 -- SETTINGS BATCH & DELAY
 -- ==========================================
 getgenv().AFK_PlantAmount = 15
-getgenv().AFK_HarvestDelay = 300
+getgenv().AFK_HarvestDelay = 60
 
 TabFarming:CreateInputRow({
     Name = " [ Jumlah Tanam per Loop ]",
@@ -82,10 +82,10 @@ TabFarming:CreateInputRow({
 
 TabFarming:CreateInputRow({
     Name = " [ Waktu Tunggu / Panen (Detik) ]",
-    Placeholder = "300",
-    Default = "300",
+    Placeholder = "60",
+    Default = "60",
     Callback = function(val)
-        getgenv().AFK_HarvestDelay = tonumber(val) or 300
+        getgenv().AFK_HarvestDelay = tonumber(val) or 60
     end
 })
 
@@ -211,8 +211,8 @@ TabFarming:CreateToggleRow({
                     if char then getCount(char) end
                     getCount(player.Backpack)
                     
-                    -- 1. Beli Bibit
-                    if getgenv().AutoBuySeed and currentSeeds <= 15 then
+                    -- 1. Beli Bibit (hanya jika stok < 15)
+                    if getgenv().AutoBuySeed and currentSeeds < 15 then
                         TUpdate("Membeli Bibit ("..cData.SeedName..")", "Equip & Tanam", "1s")
                         pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", cData.SeedName, plotSize) end)
                         task.wait(1)
