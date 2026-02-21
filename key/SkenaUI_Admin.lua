@@ -43,35 +43,40 @@ function SkenaAdmin.Attach(Window, DebugData)
     
     -- Alat Admin: Remote Spy Logger
     if not getgenv()._SKENA_SPY_HOOKED then
-        pcall(function()
-            local gm = getrawmetatable(game)
-            setreadonly(gm, false)
-            local oldNamecall = gm.__namecall
-            
-            gm.__namecall = newcclosure(function(self, ...)
+        local success, err = pcall(function()
+            local oldNamecall
+            oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
                 local method = getnamecallmethod()
+                
                 if getgenv()._SKENA_IS_SPYING and (method == "FireServer" or method == "InvokeServer") then
+                    -- Hindari loop/error internal
                     local args = {...}
-                    local pName = "UnknownParent"
-                    pcall(function() pName = tostring(self.Parent) end)
-                    
-                    local logLine = string.format("\n[Remote] %s.%s (%s)", pName, tostring(self), method)
-                    for i, v in ipairs(args) do
-                        local tStr = typeof(v)
-                        local vStr = tostring(v)
-                        if tStr == "string" then vStr = '"' .. vStr .. '"' end
-                        logLine = logLine .. string.format("\n  [%d] = %s  (%s)", i, vStr, tStr)
-                    end
-                    table.insert(getgenv()._SKENA_SPY_LOGS, logLine)
+                    task.spawn(function()
+                        pcall(function()
+                            local pName = tostring(self.Parent)
+                            local logLine = string.format("\n[Remote] %s.%s (%s)", pName, tostring(self), method)
+                            for i, v in ipairs(args) do
+                                local tStr = typeof(v)
+                                local vStr = tostring(v)
+                                if tStr == "string" then vStr = '"' .. vStr .. '"' end
+                                logLine = logLine .. string.format("\n  [%d] = %s  (%s)", i, vStr, tStr)
+                            end
+                            table.insert(getgenv()._SKENA_SPY_LOGS, logLine)
+                        end)
+                    end)
                 end
                 
                 return oldNamecall(self, ...)
             end)
-            setreadonly(gm, true)
+            
             getgenv()._SKENA_SPY_HOOKED = true
             getgenv()._SKENA_SPY_LOGS = {}
             getgenv()._SKENA_IS_SPYING = false
         end)
+        
+        if not success then
+            warn("[Skena Spy] Executor tidak mensupport hookmetamethod! Error: " .. tostring(err))
+        end
     end
 
     TabAdmin:CreateToggleRow({
@@ -105,26 +110,35 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
     
-    -- Modul 1: Dump ESP Data (jika skrip asalnya mengirim data ESP)
-    if DebugData and DebugData.CapturedPaths then
-        TabAdmin:CreateButtonRow({
-            Name = "Copy Captured ESP Data",
-            ButtonText = "Copy to Clipboard",
-            Callback = function()
-                local lines = {"=== ESP RAW DATA DUMP ==="}
-                for path, cN in pairs(DebugData.CapturedPaths) do
-                    table.insert(lines, "[" .. tostring(cN) .. "]  =>  " .. tostring(path))
-                end
-                local finalStr = table.concat(lines, "\n")
-                if setclipboard then
-                    setclipboard(finalStr)
-                else
-                    print(finalStr)
-                    warn("Executor tidak mendukung setclipboard. Cek menu console (F9)!")
-                end
+    -- Modul 1: Dump ESP Data (Tampil Universal)
+    TabAdmin:CreateButtonRow({
+        Name = "Copy Captured ESP Data",
+        ButtonText = "Copy to Clipboard",
+        Callback = function()
+            local paths = (DebugData and DebugData.CapturedPaths) or {}
+            
+            -- Count elements
+            local count = 0
+            for _ in pairs(paths) do count = count + 1 end
+            
+            if count == 0 then
+                warn("Game ini tidak mendaftarkan ESP Data / Belum ada data ditangkap di layar.")
+                return
             end
-        })
-    end
+
+            local lines = {"=== ESP RAW DATA DUMP ==="}
+            for path, cN in pairs(paths) do
+                table.insert(lines, "[" .. tostring(cN) .. "]  =>  " .. tostring(path))
+            end
+            local finalStr = table.concat(lines, "\n")
+            if setclipboard then
+                setclipboard(finalStr)
+            else
+                print(finalStr)
+                warn("Executor tidak mendukung setclipboard. Cek menu console (F9)!")
+            end
+        end
+    })
 end
 
 return SkenaAdmin

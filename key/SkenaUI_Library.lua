@@ -155,14 +155,14 @@ function SkenaUI:CreateWindow(Options)
     WindowObj.TitleText = TitleText
 
     local ControlContainer = Instance.new("Frame", TitleBar)
-    ControlContainer.Size = UDim2.new(0, 92, 1, 0)
-    ControlContainer.Position = UDim2.new(1, -92, 0, 0)
+    ControlContainer.Size = UDim2.new(0, 64, 1, 0)
+    ControlContainer.Position = UDim2.new(1, -72, 0, 0)
     ControlContainer.BackgroundTransparency = 1
 
-    -- Seamless window buttons
+    -- Modern floating window buttons
     local Minibtn = Instance.new("TextButton", ControlContainer)
-    Minibtn.Size = UDim2.new(0, 46, 1, 0)
-    Minibtn.Position = UDim2.new(0, 0, 0, 0)
+    Minibtn.Size = UDim2.new(0, 26, 0, 26)
+    Minibtn.Position = UDim2.new(0, 0, 0.5, -13)
     Minibtn.Text = "-"
     Minibtn.BackgroundColor3 = Palette.Background
     Minibtn.BackgroundTransparency = 1
@@ -170,10 +170,11 @@ function SkenaUI:CreateWindow(Options)
     Minibtn.Font = Enum.Font.GothamMedium
     Minibtn.TextSize = 14
     Minibtn.BorderSizePixel = 0
+    Instance.new("UICorner", Minibtn).CornerRadius = UDim.new(0, 6)
 
     local CloseBtn = Instance.new("TextButton", ControlContainer)
-    CloseBtn.Size = UDim2.new(0, 46, 1, 0)
-    CloseBtn.Position = UDim2.new(0, 46, 0, 0)
+    CloseBtn.Size = UDim2.new(0, 26, 0, 26)
+    CloseBtn.Position = UDim2.new(0, 32, 0.5, -13)
     CloseBtn.Text = "X"
     CloseBtn.BackgroundColor3 = Palette.Background
     CloseBtn.BackgroundTransparency = 1
@@ -181,6 +182,7 @@ function SkenaUI:CreateWindow(Options)
     CloseBtn.Font = Enum.Font.GothamMedium
     CloseBtn.TextSize = 14
     CloseBtn.BorderSizePixel = 0
+    Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
 
     -- Hover logic for window controls
     Minibtn.MouseEnter:Connect(function() Minibtn.BackgroundTransparency = 0; Minibtn.BackgroundColor3 = Palette.RowHover end)
@@ -230,11 +232,14 @@ function SkenaUI:CreateWindow(Options)
 
     -- Inner Card (Right)
     local Card = Instance.new("Frame", BodyFrame)
-    Card.Size = UDim2.new(1, -60, 0, 0) 
+    Card.Size = UDim2.new(1, -60, 0, 150) 
     Card.Position = UDim2.new(0, 55, 0, 0)
     Card.AutomaticSize = Enum.AutomaticSize.Y
     Card.BackgroundColor3 = Palette.Card
     Card.BorderSizePixel = 0
+
+    local CardConstraint = Instance.new("UISizeConstraint", Card)
+    CardConstraint.MinSize = Vector2.new(0, 180)
 
     local CardCorner = Instance.new("UICorner", Card)
     CardCorner.CornerRadius = UDim.new(0, 8)
@@ -311,11 +316,14 @@ function SkenaUI:CreateWindow(Options)
         local TabBtn, TabIcon, Indicator = CreateTabButton(TabName, IconID, isSettings)
 
         local Page = Instance.new("CanvasGroup", TabContainer)
-        Page.Size = UDim2.new(1, 0, 0, 0)
+        Page.Size = UDim2.new(1, 0, 0, 150)
         Page.AutomaticSize = Enum.AutomaticSize.Y
         Page.BackgroundTransparency = 1
         Page.GroupTransparency = 1
         Page.Visible = false
+
+        local PageConstraint = Instance.new("UISizeConstraint", Page)
+        PageConstraint.MinSize = Vector2.new(0, 180)
         
         local PLayout = Instance.new("UIListLayout", Page)
         PLayout.SortOrder = Enum.SortOrder.LayoutOrder
