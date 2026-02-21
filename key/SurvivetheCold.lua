@@ -280,7 +280,6 @@ local Window = SkenaUI:CreateWindow({
 })
 
 local TabMods = Window:CreateTab("Mods", "gamepad-2") 
-local TabAdmin = Window:CreateTab("Admin", "database") 
 local TabSettings = Window:CreateTab("Settings", "settings", true) 
 
 -- ROW 1: SPEED MOD
@@ -342,27 +341,6 @@ TabMods:CreateDoubleButtonRow({
 })
 
 -- ==========================================
--- ISI TAB ADMIN
--- ==========================================
-TabAdmin:CreateButtonRow({
-    Name = "Copy Captured ESP Data",
-    ButtonText = "Copy to Clipboard",
-    Callback = function()
-        local lines = {"=== ESP RAW DATA DUMP ==="}
-        for path, cN in pairs(capturedPaths) do
-            table.insert(lines, "[" .. cN .. "]  =>  " .. path)
-        end
-        local finalStr = table.concat(lines, "\n")
-        if setclipboard then
-            setclipboard(finalStr)
-        else
-            print(finalStr)
-            warn("Executor tidak mendukung setclipboard. Data telah di-print ke console (F9)!")
-        end
-    end
-})
-
--- ==========================================
 -- ISI TAB SETTINGS
 -- ==========================================
 TabSettings:CreateInputRow({
@@ -373,6 +351,18 @@ TabSettings:CreateInputRow({
         Window:SetToggleKey(keyStr)
     end
 })
+
+-- ==========================================
+-- ATTACH ADMIN MODULE ONLINE
+-- ==========================================
+task.spawn(function()
+    local success, SkenaAdmin = pcall(function()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SkenaUI_Admin.lua"))()
+    end)
+    if success and SkenaAdmin then
+        SkenaAdmin.Attach(Window, { CapturedPaths = capturedPaths })
+    end
+end)
 
 
 -- ==========================================
