@@ -54,6 +54,10 @@ local BLACKLIST = {
     "MainDoorPart", "Scavenger", "Relic Machine"
 }
 
+local EXACT_BLACKLIST = {
+    "Part", "GUISign2", "Plank", "Base", "Baseplate", "SpawnLocation", "Folder", "Model"
+}
+
 -- ==========================================
 -- ESP & LOGIC FUNCTIONS
 -- ==========================================
@@ -67,6 +71,12 @@ local function isBlacklisted(n)
     if string.match(n, "^Avatar%d+$") then return true end
     if string.match(n, "^Cube%.%d+$") then return true end
     if string.lower(n) == "cube" then return true end
+    
+    for _, b in ipairs(EXACT_BLACKLIST) do
+        if n == b then return true end
+        if string.lower(n) == string.lower(b) then return true end
+    end
+    
     for _, b in ipairs(BLACKLIST) do 
         if string.find(n, b) then return true end 
     end
@@ -156,7 +166,7 @@ local function checkObject(o)
     -- Jaring ekstra asuransi untuk benda dengan kata kunci penting (jaga-jaga developernya iseng)
     if not t and (o:IsA("BasePart") or o:IsA("Model")) and o.Parent ~= player.Character and o ~= workspace and o.Name ~= player.Name then
         local ln = string.lower(o.Name)
-        if string.find(ln, "pet") or string.find(ln, "plank") then
+        if string.find(ln, "pet") then
             t, rN = o, o.Name
         end
     end
