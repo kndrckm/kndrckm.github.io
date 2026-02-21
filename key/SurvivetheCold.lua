@@ -43,7 +43,8 @@ local espEnabled = false
 local espFolder = nil
 local activeTween = nil
 local speedKey = Enum.KeyCode.X
-local currentFilterText = ""
+local itemFilters = {}
+local espDropdownObj = nil
 
 local BLACKLIST = {
     "HumanoidRootPart", "Torso", "Board", "Proximity", "Meshes_cartello_cube", 
@@ -87,7 +88,7 @@ local function addHighlight(target, cName, rName)
         hl.OutlineTransparency = 0
         hl.OutlineColor = Color3.fromRGB(52, 199, 89) -- iOS Green from original script
         
-        if currentFilterText ~= "" and not string.find(string.lower(cName), string.lower(currentFilterText)) then
+        if itemFilters[cName] == false then
             hl.Enabled = false
         else
             hl.Enabled = true
@@ -132,25 +133,52 @@ local function checkObject(o)
     if t and rN ~= "" and not isBlacklisted(rN) then
         local cN = getCleanName(rN)
         if not isBlacklisted(cN) then 
+            if espDropdownObj then
+                espDropdownObj:AddItem(cN, true, function(state)
+                    itemFilters[cN] = state
+                    if espFolder then
+                        for _, hl in pairs(espFolder:GetChildren()) do
+                            if hl:IsA("Highlight") and hl:FindFirstChild("NameTag") then
+                                if hl.NameTag.TextLabel.Text == cN then
+                                    hl.Enabled = state
+                                    hl.NameTag.Enabled = state
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+            if itemFilters[cN] == nil then itemFilters[cN] = true end
             if espEnabled then addHighlight(t, cN, rN) end 
         end
     end
 end
 
-local function tweenTo(tPos)
+local currentMoveTarget = nil
+local function moveToPos(tPos)
     local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
     local hum = player.Character and player.Character:FindFirstChild("Humanoid")
     if hrp and hum then
         if hum.Sit then hum.Sit = false end
-        if activeTween then activeTween:Cancel() end
-        local dist = (hrp.Position - tPos).Magnitude
-        local duration = dist / TP_SPEED
-        activeTween = TweenService:Create(hrp, TweenInfo.new(duration, Enum.EasingStyle.Linear), {CFrame = CFrame.new(tPos) * hrp.CFrame.Rotation})
-        hum.PlatformStand = true
-        activeTween:Play()
-        activeTween.Completed:Connect(function() 
-            hum.PlatformStand = false
-            activeTween = nil 
+        if activeTween then activeTween:Cancel() activeTween = nil end
+        currentMoveTarget = tPos
+        hum:MoveTo(tPos)
+        
+        task.spawn(function()
+            local loopCount = 0
+            while currentMoveTarget == tPos and hum.Parent and hrp.Parent do
+                local dist = (hrp.Position * Vector3.new(1,0,1) - tPos * Vector3.new(1,0,1)).Magnitude
+                if dist < 5 then
+                    currentMoveTarget = nil
+                    break
+                end
+                -- Coba pastikan karakter terus mengejar
+                if loopCount % 5 == 0 then
+                    hum:MoveTo(tPos)
+                end
+                task.wait(0.2)
+                loopCount = loopCount + 1
+            end
         end)
     end
 end
@@ -214,30 +242,10 @@ TabMods:CreateToggleRow({
 })
 
 -- ROW 3: ESP & FILTER
-TabMods:CreateToggleRow({
+espDropdownObj = TabMods:CreateMultiSelectDropdown({
     Name = "ESP Highlight",
-    HasInput = true,
-    InputPlaceholder = "Ex: Wood..",
-    InputDefault = "",
-    InputWidth = 80,
-    OnInputChange = function(val)
-        currentFilterText = val
-        if espFolder then
-            for _, hl in pairs(espFolder:GetChildren()) do
-                if hl:IsA("Highlight") and hl:FindFirstChild("NameTag") then
-                    local cName = hl.NameTag.TextLabel.Text
-                    if currentFilterText ~= "" and not string.find(string.lower(cName), string.lower(currentFilterText)) then
-                        hl.Enabled = false
-                        hl.NameTag.Enabled = false
-                    else
-                        hl.Enabled = true
-                        hl.NameTag.Enabled = true
-                    end
-                end
-            end
-        end
-    end,
-    OnToggle = function(state)
+    HasMainToggle = true,
+    OnMainToggle = function(state)
         espEnabled = state
         clearESP()
         if espEnabled then
@@ -258,11 +266,11 @@ TabMods:CreateToggleRow({
 
 -- ROW 4: DOUBLE TELEPORT BUTTON
 TabMods:CreateDoubleButtonRow({
-    Name = "Teleportation",
+    Name = "Move to",
     Button1Text = "Clothes",
     Button2Text = "Food",
-    Callback1 = function() tweenTo(TP_CLOTHES_POS) end,
-    Callback2 = function() tweenTo(TP_FOOD_POS) end
+    Callback1 = function() moveToPos(TP_CLOTHES_POS) end,
+    Callback2 = function() moveToPos(TP_FOOD_POS) end
 })
 
 -- ==========================================

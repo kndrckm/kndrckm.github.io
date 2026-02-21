@@ -641,6 +641,155 @@ function SkenaUI:CreateWindow(Options)
             SetupBtn(Btn2Text, cb2, 2)
         end
 
+        function TabData:CreateMultiSelectDropdown(Options)
+            local Title = Options.Name or "Dropdown"
+            
+            local Row = Instance.new("Frame", Page)
+            Row.Size = UDim2.new(1, 0, 0, 0)
+            Row.AutomaticSize = Enum.AutomaticSize.Y
+            Row.BackgroundColor3 = Palette.RowItem
+            Row.BorderSizePixel = 0
+            Instance.new("UICorner", Row).CornerRadius = UDim.new(0, 6)
+            local Stroke = Instance.new("UIStroke", Row)
+            Stroke.Color = Palette.Border
+            Stroke.Thickness = 1
+            
+            local Header = Instance.new("Frame", Row)
+            Header.Size = UDim2.new(1, 0, 0, 44)
+            Header.BackgroundTransparency = 1
+            
+            local Txt = Instance.new("TextLabel", Header)
+            Txt.Size = UDim2.new(0.4, 0, 1, 0)
+            Txt.Position = UDim2.new(0, 12, 0, 0)
+            Txt.BackgroundTransparency = 1
+            Txt.Text = Title
+            Txt.Font = Enum.Font.GothamMedium
+            Txt.TextSize = 13
+            Txt.TextColor3 = Palette.TextPrimary
+            Txt.TextXAlignment = Enum.TextXAlignment.Left
+
+            local RightContainer = Instance.new("Frame", Header)
+            RightContainer.Size = UDim2.new(0.6, -12, 1, 0)
+            RightContainer.Position = UDim2.new(0.4, 0, 0, 0)
+            RightContainer.BackgroundTransparency = 1
+            local RCLayout = Instance.new("UIListLayout", RightContainer)
+            RCLayout.FillDirection = Enum.FillDirection.Horizontal
+            RCLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+            RCLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+            RCLayout.Padding = UDim.new(0, 8)
+            
+            local ToggleBg, Knob, mainState
+            if Options.HasMainToggle then
+                ToggleBg = Instance.new("TextButton", RightContainer)
+                ToggleBg.Size = UDim2.new(0, 44, 0, 22)
+                ToggleBg.BackgroundColor3 = Palette.InputHdr
+                ToggleBg.Text = ""
+                ToggleBg.AutoButtonColor = false
+                Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(1, 0)
+                local TStroke = Instance.new("UIStroke", ToggleBg)
+                TStroke.Color = Palette.Border
+                TStroke.Thickness = 1
+
+                Knob = Instance.new("Frame", ToggleBg)
+                Knob.Size = UDim2.new(0, 14, 0, 14)
+                Knob.Position = UDim2.new(0, 4, 0.5, -7)
+                Knob.BackgroundColor3 = Palette.TextSecondary
+                Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
+
+                mainState = false
+                local function UpdateMainToggle(noAnim)
+                    local targetColor = mainState and Palette.Accent or Palette.InputHdr
+                    local knobColor = mainState and Color3.fromRGB(0,0,0) or Palette.TextSecondary
+                    local knobPos = mainState and UDim2.new(1, -18, 0.5, -7) or UDim2.new(0, 4, 0.5, -7)
+                    if noAnim then
+                        ToggleBg.BackgroundColor3 = targetColor
+                        Knob.BackgroundColor3 = knobColor
+                        Knob.Position = knobPos
+                    else
+                        TweenService:Create(ToggleBg, TweenInfo.new(0.2), {BackgroundColor3 = targetColor}):Play()
+                        TweenService:Create(Knob, TweenInfo.new(0.2), {BackgroundColor3 = knobColor, Position = knobPos}):Play()
+                    end
+                end
+
+                ToggleBg.MouseButton1Click:Connect(function()
+                    mainState = not mainState
+                    UpdateMainToggle(false)
+                    if Options.OnMainToggle then pcall(Options.OnMainToggle, mainState) end
+                end)
+            end
+
+            local ExpandBtn = Instance.new("TextButton", RightContainer)
+            ExpandBtn.Size = UDim2.new(0, 100, 0, 24)
+            ExpandBtn.BackgroundColor3 = Palette.InputHdr
+            ExpandBtn.Text = "Filter ▾"
+            ExpandBtn.TextColor3 = Palette.TextSecondary
+            ExpandBtn.Font = Enum.Font.GothamMedium
+            ExpandBtn.TextSize = 12
+            ExpandBtn.AutoButtonColor = false
+            Instance.new("UICorner", ExpandBtn).CornerRadius = UDim.new(0, 4)
+            local EStroke = Instance.new("UIStroke", ExpandBtn)
+            EStroke.Color = Palette.Border
+            EStroke.Thickness = 1
+            ExpandBtn.MouseEnter:Connect(function() TweenService:Create(ExpandBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.RowHover}):Play() end)
+            ExpandBtn.MouseLeave:Connect(function() TweenService:Create(ExpandBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.InputHdr}):Play() end)
+
+            local DropFrame = Instance.new("Frame", Row)
+            DropFrame.Size = UDim2.new(1, 0, 0, 0)
+            DropFrame.Position = UDim2.new(0, 0, 0, 44)
+            DropFrame.BackgroundTransparency = 1
+            DropFrame.ClipsDescendants = true
+            
+            local Scroll = Instance.new("ScrollingFrame", DropFrame)
+            Scroll.Size = UDim2.new(1, -16, 1, -8)
+            Scroll.Position = UDim2.new(0, 8, 0, 0)
+            Scroll.BackgroundTransparency = 1
+            Scroll.ScrollBarThickness = 3
+            Scroll.ScrollBarImageColor3 = Palette.Accent
+            Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+            Scroll.BorderSizePixel = 0
+            
+            local SList = Instance.new("UIListLayout", Scroll)
+            SList.Padding = UDim.new(0, 4)
+            SList.SortOrder = Enum.SortOrder.LayoutOrder
+            
+            local isExpanded = false
+            ExpandBtn.MouseButton1Click:Connect(function()
+                isExpanded = not isExpanded
+                ExpandBtn.Text = isExpanded and "Filter ▴" or "Filter ▾"
+                TweenService:Create(DropFrame, TweenInfo.new(0.25, Enum.EasingStyle.Cubic), {Size = isExpanded and UDim2.new(1, 0, 0, 120) or UDim2.new(1, 0, 0, 0)}):Play()
+            end)
+
+            local out = {}
+            local addedItems = {}
+            function out:AddItem(itemStr, defaultState, callback)
+                if addedItems[itemStr] then return end
+                addedItems[itemStr] = true
+                
+                local Itm = Instance.new("TextButton", Scroll)
+                Itm.Size = UDim2.new(1, -8, 0, 26)
+                Itm.BackgroundColor3 = defaultState and Palette.AccentDark or Palette.InputHdr
+                Itm.Text = "  " .. itemStr
+                Itm.TextXAlignment = Enum.TextXAlignment.Left
+                Itm.TextColor3 = defaultState and Color3.new(1,1,1) or Palette.TextSecondary
+                Itm.Font = Enum.Font.GothamMedium
+                Itm.TextSize = 12
+                Itm.AutoButtonColor = false
+                Instance.new("UICorner", Itm).CornerRadius = UDim.new(0,4)
+                
+                local currState = defaultState
+                Itm.MouseButton1Click:Connect(function()
+                    currState = not currState
+                    Itm.BackgroundColor3 = currState and Palette.AccentDark or Palette.InputHdr
+                    Itm.TextColor3 = currState and Color3.new(1,1,1) or Palette.TextSecondary
+                    pcall(callback, currState)
+                end)
+                
+                Scroll.CanvasSize = UDim2.new(0,0,0, SList.AbsoluteContentSize.Y + 10)
+            end
+            
+            return out
+        end
+
         function TabData:CreateInputRow(Options)
             local Title = Options.Name or "Input"
             local Placeholder = Options.Placeholder or ""
