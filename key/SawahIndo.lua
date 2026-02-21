@@ -4,6 +4,15 @@ local MarketplaceService = game:GetService("MarketplaceService")
 local player = Players.LocalPlayer
 
 -- ==========================================
+-- CLEANUP OLD MEMORY (BUNUH PHANTOM LOOP)
+-- ==========================================
+pcall(function()
+    getgenv().SkenaAutoFarm_Jagung = false
+    getgenv().SkenaAutoFarm_Crop = false
+    getgenv()._SKENA_CALIBRATING = false
+end)
+
+-- ==========================================
 -- INIT SKENA UI
 -- ==========================================
 local SkenaUI_Loaded = false
