@@ -22,6 +22,25 @@ function SkenaAdmin.Attach(Window, DebugData)
     -- Jika berhasil lolos verifikasi, buat Tab Admin
     local TabAdmin = Window:CreateTab("Admin", "database") 
     
+    -- Alat Dasar Admin (Universal)
+    TabAdmin:CreateButtonRow({
+        Name = "Copy My Position",
+        ButtonText = "Copy Vector3",
+        Callback = function()
+            local char = player.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                local p = hrp.Position
+                local posStr = string.format("Vector3.new(%.3f, %.3f, %.3f)", p.X, p.Y, p.Z)
+                if setclipboard then
+                    setclipboard(posStr)
+                else
+                    warn("Posisi anda: " .. posStr)
+                end
+            end
+        end
+    })
+    
     -- Modul 1: Dump ESP Data (jika skrip asalnya mengirim data ESP)
     if DebugData and DebugData.CapturedPaths then
         TabAdmin:CreateButtonRow({
