@@ -885,6 +885,57 @@ function SkenaUI:CreateWindow(Options)
             end)
         end
 
+        function TabData:CreateInputButtonRow(Options)
+            local Title = Options.Name or "Input Action"
+            local Placeholder = Options.Placeholder or ""
+            local Default = Options.Default or ""
+            local BtnText = Options.ButtonText or "Run"
+            local cb = Options.Callback or function() end
+
+            local Row = AddRowContainer()
+
+            local Txt = Instance.new("TextLabel", Row)
+            Txt.Size = UDim2.new(0.4, 0, 1, 0)
+            Txt.Position = UDim2.new(0, 12, 0, 0)
+            Txt.BackgroundTransparency = 1
+            Txt.Text = Title
+            Txt.Font = Enum.Font.GothamMedium
+            Txt.TextSize = 13
+            Txt.TextColor3 = Palette.TextPrimary
+            Txt.TextXAlignment = Enum.TextXAlignment.Left
+
+            local ExecBtn = Instance.new("TextButton", Row)
+            ExecBtn.Size = UDim2.new(0, 50, 0, 24)
+            ExecBtn.Position = UDim2.new(1, -62, 0.5, -12)
+            ExecBtn.BackgroundColor3 = Palette.Accent
+            ExecBtn.Text = BtnText
+            ExecBtn.Font = Enum.Font.GothamMedium
+            ExecBtn.TextSize = 12
+            ExecBtn.TextColor3 = Color3.new(1, 1, 1)
+            Instance.new("UICorner", ExecBtn).CornerRadius = UDim.new(0, 4)
+
+            local Box = Instance.new("TextBox", Row)
+            Box.Size = UDim2.new(0, 40, 0, 24)
+            Box.Position = UDim2.new(1, -108, 0.5, -12)
+            Box.BackgroundColor3 = Palette.InputHdr
+            Box.Text = tostring(Default)
+            Box.PlaceholderText = Placeholder
+            Box.TextColor3 = Palette.TextPrimary
+            Box.Font = Enum.Font.GothamMedium
+            Box.TextSize = 12
+            Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 4)
+            local BStroke = Instance.new("UIStroke", Box)
+            BStroke.Color = Palette.Border
+            BStroke.Thickness = 1
+
+            ExecBtn.MouseEnter:Connect(function() ExecBtn.BackgroundColor3 = Palette.AccentDark end)
+            ExecBtn.MouseLeave:Connect(function() ExecBtn.BackgroundColor3 = Palette.Accent end)
+
+            ExecBtn.MouseButton1Click:Connect(function()
+                pcall(function() cb(Box.Text) end)
+            end)
+        end
+
         return TabData
     end
     

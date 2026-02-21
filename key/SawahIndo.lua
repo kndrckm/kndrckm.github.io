@@ -116,7 +116,7 @@ TabFarming:CreateToggleRow({
                     task.wait(1.5)
                     
                     -- 5. Jual
-                    pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 30) end)
+                    pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 9999) end)
                     task.wait(1.5)
                 end
             end)
@@ -131,13 +131,16 @@ TabFarming:CreateTextRow({
 -- ==========================================
 -- MANUAL BUTTONS (JAGUNG)
 -- ==========================================
-TabFarming:CreateButtonRow({
-    Name = "1. Beli Bibit Jagung (15x)",
+TabFarming:CreateInputButtonRow({
+    Name = "1. Beli Bibit Jagung",
+    Placeholder = "Jml",
+    Default = "15",
     ButtonText = "Beli",
-    Callback = function()
+    Callback = function(inputValue)
+        local amount = tonumber(inputValue) or 15
         pcall(function()
             local rs = game:GetService("ReplicatedStorage")
-            rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", 15)
+            rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", amount)
         end)
     end
 })
@@ -166,7 +169,8 @@ TabFarming:CreateButtonRow({
     Callback = function()
         pcall(function()
             local rs = game:GetService("ReplicatedStorage")
-            rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 30)
+            -- Ditembak dengan angka fantastis agar terjual berapapun sampai habis di Inventory
+            rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 9999)
         end)
     end
 })
