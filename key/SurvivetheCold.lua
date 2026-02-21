@@ -61,10 +61,30 @@ local EXACT_BLACKLIST = {
 -- ==========================================
 -- ESP & LOGIC FUNCTIONS
 -- ==========================================
-local function getCleanName(n) 
+local function getCleanName(n, objContext) 
     if string.match(n, "^BrokenWall%d+$") then return "BrokenWall" end
     if string.match(n, "^Cube%.%d+$") then return "Cube" end
-    return n:split("_")[1] or n 
+    
+    local clean = n:split("_")[1] or n 
+    
+    -- Jaring konteks untuk nama-nama generik
+    if objContext and objContext.Parent and objContext.Parent ~= workspace then
+        local ln = string.lower(clean)
+        local genericNames = {
+            yellow = true, green = true, red = true, blue = true, purple = true,
+            tutorial = true, part = true, sphere = true, block = true, cylinder = true,
+            wedge = true, meshpart = true
+        }
+        
+        if genericNames[ln] then
+            local pName = objContext.Parent.Name
+            if pName ~= "Workspace" and not string.match(pName, "Folder") and not string.match(pName, "^Model$") then
+                return "[" .. pName .. "] " .. clean
+            end
+        end
+    end
+    
+    return clean
 end
 
 local function isBlacklisted(n) 
@@ -172,7 +192,7 @@ local function checkObject(o)
     end
     
     if t and rN ~= "" and not isBlacklisted(rN) then
-        local cN = getCleanName(rN)
+        local cN = getCleanName(rN, t)
         if not isBlacklisted(cN) then 
             if espDropdownObj then
                 espDropdownObj:AddItem(cN, true, function(state)
