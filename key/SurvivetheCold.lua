@@ -51,7 +51,7 @@ local BLACKLIST = {
     "Campfire", "Post", "Window", "Chest", "meshes/cartello", "AchievementFrame", "SniperRifle",
     "2xSpeed", "Head", "Left Arm", "Right Arm", "Left Leg", "Right Leg", 
     "EmptyHouseNPC", "OutfitNPC", "CraftingNPC", "Avatar", "BrokenWall", "cartello","keyboard","door",
-    "MainDoorPart"
+    "MainDoorPart", "Scavenger", "Relic Machine"
 }
 
 -- ==========================================
@@ -59,11 +59,14 @@ local BLACKLIST = {
 -- ==========================================
 local function getCleanName(n) 
     if string.match(n, "^BrokenWall%d+$") then return "BrokenWall" end
+    if string.match(n, "^Cube%.%d+$") then return "Cube" end
     return n:split("_")[1] or n 
 end
 
 local function isBlacklisted(n) 
     if string.match(n, "^Avatar%d+$") then return true end
+    if string.match(n, "^Cube%.%d+$") then return true end
+    if string.lower(n) == "cube" then return true end
     for _, b in ipairs(BLACKLIST) do 
         if string.find(n, b) then return true end 
     end
@@ -132,10 +135,16 @@ local function checkObject(o)
     elseif o:IsA("Model") and o.Name ~= "Workspace" and o.Name ~= player.Name then 
         if o:FindFirstChild("Humanoid") then
             t, rN = o, o.Name
+        elseif o.PrimaryPart and not o.PrimaryPart.Anchored and o.Parent ~= player.Character then
+            -- Benda model murni lepas (mis. Kotak supply atau drop item kompleks)
+            t, rN = o, o.Name
         end
     elseif (o:IsA("Part") or o:IsA("MeshPart") or o:IsA("UnionOperation")) and o.Parent ~= player.Character then
         if o.CanTouch and not o.Anchored and not o:FindFirstAncestorOfClass("Model") and not o:FindFirstAncestorOfClass("Tool") then 
             t, rN = o, o.Name 
+        -- Pengecekan kasar barang interaktif jika dia di dalam model tapi root model tidak spesifik
+        elseif o:FindFirstChildWhichIsA("ClickDetector") or o:FindFirstChildWhichIsA("ProximityPrompt") then
+            t, rN = o, o.Name
         end
     end
     
