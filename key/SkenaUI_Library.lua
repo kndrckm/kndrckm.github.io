@@ -58,16 +58,14 @@ function SkenaUI:CreateWindow(Options)
 
     local DragFrame = Instance.new("Frame", SG)
     DragFrame.Name = "DragFrame"
-    DragFrame.Size = UDim2.new(0, 450, 0, 50) 
-    DragFrame.Position = UDim2.new(0.5, -225, 0.15, 0)
-    DragFrame.AutomaticSize = Enum.AutomaticSize.Y
+    DragFrame.Size = UDim2.new(0, 450, 0, 420) 
+    DragFrame.Position = UDim2.new(0.5, -225, 0.5, -210)
     DragFrame.BackgroundTransparency = 1
     DragFrame.Active = true
 
     local Main = Instance.new("CanvasGroup", DragFrame)
     Main.Name = "Main"
-    Main.Size = UDim2.new(1, 0, 0, 0) 
-    Main.AutomaticSize = Enum.AutomaticSize.Y 
+    Main.Size = UDim2.new(1, 0, 1, 0) 
     Main.BackgroundColor3 = Palette.Background
     Main.BorderSizePixel = 0
     
@@ -223,9 +221,8 @@ function SkenaUI:CreateWindow(Options)
 
     -- Under Title Bar
     local BodyFrame = Instance.new("Frame", Main)
-    BodyFrame.Size = UDim2.new(1, 0, 0, 5) 
+    BodyFrame.Size = UDim2.new(1, 0, 1, -32)
     BodyFrame.Position = UDim2.new(0, 0, 0, 32)
-    BodyFrame.AutomaticSize = Enum.AutomaticSize.Y
     BodyFrame.BackgroundTransparency = 1
     
     local BodyPadding = Instance.new("UIPadding", BodyFrame)
@@ -257,14 +254,11 @@ function SkenaUI:CreateWindow(Options)
 
     -- Inner Card (Right)
     local Card = Instance.new("Frame", BodyFrame)
-    Card.Size = UDim2.new(1, -60, 0, 150) 
+    Card.Size = UDim2.new(1, -60, 1, -8)
     Card.Position = UDim2.new(0, 55, 0, 0)
-    Card.AutomaticSize = Enum.AutomaticSize.Y
     Card.BackgroundColor3 = Palette.Card
     Card.BorderSizePixel = 0
-
-    local CardConstraint = Instance.new("UISizeConstraint", Card)
-    CardConstraint.MinSize = Vector2.new(0, 180)
+    Card.ClipsDescendants = true
 
     local CardCorner = Instance.new("UICorner", Card)
     CardCorner.CornerRadius = UDim.new(0, 8)
@@ -272,14 +266,25 @@ function SkenaUI:CreateWindow(Options)
     local CardStroke = Instance.new("UIStroke", Card)
     CardStroke.Color = Palette.Border
     CardStroke.Thickness = 1
-    
-    local CardPadding = Instance.new("UIPadding", Card)
-    CardPadding.PaddingTop = UDim.new(0, 8)
-    CardPadding.PaddingBottom = UDim.new(0, 8)
-    CardPadding.PaddingLeft = UDim.new(0, 8)
-    CardPadding.PaddingRight = UDim.new(0, 8)
 
-    local TabContainer = Instance.new("Folder", Card)
+    -- ScrollingFrame inside Card
+    local CardScroll = Instance.new("ScrollingFrame", Card)
+    CardScroll.Size = UDim2.new(1, 0, 1, 0)
+    CardScroll.BackgroundTransparency = 1
+    CardScroll.BorderSizePixel = 0
+    CardScroll.ScrollBarThickness = 3
+    CardScroll.ScrollBarImageColor3 = Palette.Accent
+    CardScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    CardScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    CardScroll.ScrollingDirection = Enum.ScrollingDirection.Y
+    
+    local ScrollPadding = Instance.new("UIPadding", CardScroll)
+    ScrollPadding.PaddingTop = UDim.new(0, 8)
+    ScrollPadding.PaddingBottom = UDim.new(0, 8)
+    ScrollPadding.PaddingLeft = UDim.new(0, 8)
+    ScrollPadding.PaddingRight = UDim.new(0, 8)
+
+    local TabContainer = Instance.new("Folder", CardScroll)
     TabContainer.Name = "Tabs"
     
     local function CreateTabButton(TabName, IconID, isSettings)
