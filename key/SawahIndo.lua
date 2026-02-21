@@ -36,23 +36,9 @@ local TabSettings = Window:CreateTab("Settings", "settings", true)
 -- ==========================================
 -- DATA KORDINAT LOKASI PETAK SAWAH
 -- ==========================================
-local PLOT_POSITIONS = {
-    Vector3.new(-63.81907653808594, 37.296875, -289.13531494140625),
-    Vector3.new(-63.25303268432617, 37.296875, -289.9723815917969),
-    Vector3.new(-62.667564392089844, 37.296875, -291.13800048828125),
-    Vector3.new(-63.12100601196289, 37.296875, -291.4932861328125),
-    Vector3.new(-63.52046203613281, 37.296875, -293.7101745605469),
-    Vector3.new(-63.930274963378906, 37.296875, -294.2054748535156),
-    Vector3.new(-61.150390625, 37.296875, -290.20855712890625),
-    Vector3.new(-61.150390625, 37.296875, -288.2495422363281),
-    Vector3.new(-60.30989074707031, 37.296875, -290.603271484375),
-    Vector3.new(-61.092796325683594, 37.296875, -294.01849365234375),
-    Vector3.new(-62.351627349853516, 37.296875, -295.30804443359375),
-    Vector3.new(-62.87940979003906, 37.296875, -296.0554504394531),
-    Vector3.new(-61.06902313232422, 37.296875, -296.35931396484375),
-    Vector3.new(-59.88715744018555, 37.296875, -292.9075927734375),
-    Vector3.new(-61.07583999633789, 37.296875, -293.1001892089844)
-}
+-- Karena game mengizinkan bibit ditumpuk di titik yang sama (Stacking),
+-- kita cukup menanam 15 biji di satu titik koordinat ini secara berulang.
+local STACK_POSITION = Vector3.new(-162.22613525390625, 39.296875, -345.8756408691406)
 
 -- ==========================================
 -- MANUAL BUTTONS (JAGUNG)
@@ -74,8 +60,8 @@ TabFarming:CreateButtonRow({
     Callback = function()
         task.spawn(function()
             local rs = game:GetService("ReplicatedStorage")
-            for _, pos in ipairs(PLOT_POSITIONS) do
-                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
+            for i = 1, 15 do
+                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(STACK_POSITION) end)
                 task.wait(0.12)
             end
         end)
@@ -124,10 +110,10 @@ TabFarming:CreateToggleRow({
                     pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", 15) end)
                     task.wait(1)
                     
-                    -- 2. Tanam di semua titik
-                    for _, pos in ipairs(PLOT_POSITIONS) do
+                    -- 2. Tanam bertumpuk (Stack) di 1 titik
+                    for i = 1, 15 do
                         if not getgenv().SkenaAutoFarm_Jagung then return end
-                        pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
+                        pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(STACK_POSITION) end)
                         task.wait(0.15)
                     end
                     

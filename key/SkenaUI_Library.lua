@@ -86,6 +86,7 @@ function SkenaUI:CreateWindow(Options)
     TweenService:Create(MainScale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = 1}):Play()
 
     local uiVisible = true
+    local isScaled = false -- state track untuk logic original
     local function ToggleUIAnim()
         uiVisible = not uiVisible
         if uiVisible then
@@ -93,7 +94,10 @@ function SkenaUI:CreateWindow(Options)
             MainScale.Scale = 0.85
             Main.GroupTransparency = 1
             TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {GroupTransparency = 0}):Play()
-            TweenService:Create(MainScale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = 1}):Play()
+            
+            -- Restore ke skala aslinya menyesuaikan kondisi terakhir
+            local targetScale = isScaled and 0.75 or 1 
+            TweenService:Create(MainScale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = targetScale}):Play()
         else
             local tw = TweenService:Create(Main, TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {GroupTransparency = 1})
             TweenService:Create(MainScale, TweenInfo.new(0.2, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Scale = 0.9}):Play()
@@ -155,14 +159,26 @@ function SkenaUI:CreateWindow(Options)
     WindowObj.TitleText = TitleText
 
     local ControlContainer = Instance.new("Frame", TitleBar)
-    ControlContainer.Size = UDim2.new(0, 64, 1, 0)
-    ControlContainer.Position = UDim2.new(1, -72, 0, 0)
+    ControlContainer.Size = UDim2.new(0, 96, 1, 0)
+    ControlContainer.Position = UDim2.new(1, -104, 0, 0)
     ControlContainer.BackgroundTransparency = 1
 
     -- Modern floating window buttons
+    local ScaleBtn = Instance.new("TextButton", ControlContainer)
+    ScaleBtn.Size = UDim2.new(0, 26, 0, 26)
+    ScaleBtn.Position = UDim2.new(0, 0, 0.5, -13)
+    ScaleBtn.Text = "☐" -- Logo Square
+    ScaleBtn.BackgroundColor3 = Palette.Background
+    ScaleBtn.BackgroundTransparency = 1
+    ScaleBtn.TextColor3 = Palette.TextPrimary
+    ScaleBtn.Font = Enum.Font.GothamMedium
+    ScaleBtn.TextSize = 14
+    ScaleBtn.BorderSizePixel = 0
+    Instance.new("UICorner", ScaleBtn).CornerRadius = UDim.new(0, 6)
+
     local Minibtn = Instance.new("TextButton", ControlContainer)
     Minibtn.Size = UDim2.new(0, 26, 0, 26)
-    Minibtn.Position = UDim2.new(0, 0, 0.5, -13)
+    Minibtn.Position = UDim2.new(0, 32, 0.5, -13)
     Minibtn.Text = "-"
     Minibtn.BackgroundColor3 = Palette.Background
     Minibtn.BackgroundTransparency = 1
@@ -174,7 +190,7 @@ function SkenaUI:CreateWindow(Options)
 
     local CloseBtn = Instance.new("TextButton", ControlContainer)
     CloseBtn.Size = UDim2.new(0, 26, 0, 26)
-    CloseBtn.Position = UDim2.new(0, 32, 0.5, -13)
+    CloseBtn.Position = UDim2.new(0, 64, 0.5, -13)
     CloseBtn.Text = "X"
     CloseBtn.BackgroundColor3 = Palette.Background
     CloseBtn.BackgroundTransparency = 1
@@ -185,10 +201,18 @@ function SkenaUI:CreateWindow(Options)
     Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
 
     -- Hover logic for window controls
+    ScaleBtn.MouseEnter:Connect(function() ScaleBtn.BackgroundTransparency = 0; ScaleBtn.BackgroundColor3 = Palette.RowHover end)
+    ScaleBtn.MouseLeave:Connect(function() ScaleBtn.BackgroundTransparency = 1 end)
     Minibtn.MouseEnter:Connect(function() Minibtn.BackgroundTransparency = 0; Minibtn.BackgroundColor3 = Palette.RowHover end)
     Minibtn.MouseLeave:Connect(function() Minibtn.BackgroundTransparency = 1 end)
     CloseBtn.MouseEnter:Connect(function() CloseBtn.BackgroundTransparency = 0; CloseBtn.BackgroundColor3 = Palette.RedHover end)
     CloseBtn.MouseLeave:Connect(function() CloseBtn.BackgroundTransparency = 1 end)
+
+    ScaleBtn.MouseButton1Click:Connect(function()
+        isScaled = not isScaled
+        local targetScale = isScaled and 0.75 or 1
+        TweenService:Create(MainScale, TweenInfo.new(0.3, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Scale = targetScale}):Play()
+    end)
 
     Minibtn.MouseButton1Click:Connect(function()
         ToggleUIAnim()
