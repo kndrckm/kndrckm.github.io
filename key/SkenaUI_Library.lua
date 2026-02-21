@@ -345,21 +345,17 @@ function SkenaUI:CreateWindow(Options)
         Page.BackgroundTransparency = 1
         Page.Visible = false
         Page.CanvasSize = UDim2.new(0, 0, 0, 0)
+        Page.AutomaticCanvasSize = Enum.AutomaticSize.Y
         Page.ScrollBarThickness = 4
         Page.ScrollBarImageColor3 = Palette.TextSecondary
         Page.BorderSizePixel = 0
 
         local PageConstraint = Instance.new("UISizeConstraint", Page)
         PageConstraint.MinSize = Vector2.new(0, 180)
-        PageConstraint.MaxSize = Vector2.new(99999, 330)
         
         local PLayout = Instance.new("UIListLayout", Page)
         PLayout.SortOrder = Enum.SortOrder.LayoutOrder
         PLayout.Padding = UDim.new(0, 4)
-        
-        PLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            Page.CanvasSize = UDim2.new(0, 0, 0, PLayout.AbsoluteContentSize.Y + 10)
-        end)
 
         WindowObj.Tabs[TabName] = { Button = TabBtn, Icon = TabIcon, Indicator = Indicator, Page = Page }
         
