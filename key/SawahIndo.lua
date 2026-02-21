@@ -34,7 +34,24 @@ local TabFarming = Window:CreateTab("Farming", "wheat")
 local TabSettings = Window:CreateTab("Settings", "settings", true) 
 
 -- ==========================================
--- ROW 1: HARVEST ALL PADI
+-- ROW 1: BELI BIBIT
+-- ==========================================
+TabFarming:CreateButtonRow({
+    Name = "Beli Bibit (Padi)",
+    ButtonText = "Beli",
+    Callback = function()
+        pcall(function()
+            local args = {
+                [1] = 0,
+                [2] = false
+            }
+            game:GetService("ReplicatedStorage").Remotes.TutorialRemotes.GetBibit:FireServer(unpack(args))
+        end)
+    end
+})
+
+-- ==========================================
+-- ROW 2: HARVEST ALL PADI
 -- ==========================================
 TabFarming:CreateButtonRow({
     Name = "Harvest All (Padi)",
@@ -59,7 +76,7 @@ TabFarming:CreateButtonRow({
 })
 
 -- ==========================================
--- ROW 2: SELL CROP
+-- ROW 3: SELL CROP
 -- ==========================================
 TabFarming:CreateButtonRow({
     Name = "Sell Crop",
