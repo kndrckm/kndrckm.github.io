@@ -95,6 +95,7 @@ local function isBlacklisted(n)
     if string.match(n, "^Avatar%d+$") then return true end
     if string.match(n, "^Cube%.%d+$") then return true end
     if string.lower(n) == "cube" then return true end
+    if string.match(n, "%[x%d+%]") then return true end
     
     for _, b in ipairs(EXACT_BLACKLIST) do
         if n == b then return true end
