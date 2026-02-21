@@ -34,23 +34,45 @@ local TabFarming = Window:CreateTab("Farming", "wheat")
 local TabSettings = Window:CreateTab("Settings", "settings", true) 
 
 -- ==========================================
--- DATA KORDINAT LOKASI PETAK SAWAH
+-- SISTEM KALIBRASI (SMART PLOT DETECTOR)
 -- ==========================================
-getgenv().STACK_POSITION = Vector3.new(-160.55126953125, 39.296875, -347.9148254394531)
+getgenv().PLOT_POSITIONS = getgenv().PLOT_POSITIONS or {}
+getgenv()._SKENA_CALIBRATING = false
 
--- ==========================================
--- SETTER TITIK TANAM
--- ==========================================
-TabFarming:CreateButtonRow({
-    Name = " [ Set Ulang Titik Tanam (Berdiri di Sawah) ]",
-    ButtonText = "Set",
-    Callback = function()
-        local char = game.Players.LocalPlayer.Character
-        local hrp = char and char:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            -- Turunkan Y sedikit agar menyentuh tanah persis
-            getgenv().STACK_POSITION = hrp.Position - Vector3.new(0, 2.5, 0)
-            warn("Titik Tanam Diperbarui ke: " .. tostring(getgenv().STACK_POSITION))
+if not getgenv()._SAWAH_HOOKED then
+    pcall(function()
+        local oldNamecall
+        oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+            local method = getnamecallmethod()
+            if method == "FireServer" and tostring(self) == "PlantCrop" and getgenv()._SKENA_CALIBRATING then
+                local args = {...}
+                if typeof(args[1]) == "Vector3" then
+                    local pos = args[1]
+                    local found = false
+                    for _, p in ipairs(getgenv().PLOT_POSITIONS) do
+                        if (p - pos).Magnitude < 1 then found = true break end
+                    end
+                    if not found and #getgenv().PLOT_POSITIONS < 15 then
+                        table.insert(getgenv().PLOT_POSITIONS, pos)
+                        print("[Skena Hub] Tersimpan Titik Sawah #" .. #getgenv().PLOT_POSITIONS)
+                    end
+                end
+            end
+            return oldNamecall(self, ...)
+        end)
+        getgenv()._SAWAH_HOOKED = true
+    end)
+end
+
+TabFarming:CreateToggleRow({
+    Name = " [ Mode Kalibrasi Lahan Sawah ]",
+    OnToggle = function(state)
+        getgenv()._SKENA_CALIBRATING = state
+        if state then
+            getgenv().PLOT_POSITIONS = {} -- Reset data saat mulai kalibrasi
+            warn("MODE KALIBRASI AKTIF. Silakan tanam 1 bibit secara MANUAL ke tiap 15 lubang tanah secara bergantian. Skrip akan merekam polanya.")
+        else
+            warn("KALIBRASI SELESAI. Total titik tersimpan: " .. tostring(#getgenv().PLOT_POSITIONS))
         end
     end
 })
@@ -74,9 +96,13 @@ TabFarming:CreateButtonRow({
     ButtonText = "Tanam",
     Callback = function()
         task.spawn(function()
+            if #getgenv().PLOT_POSITIONS < 1 then
+                warn("Gagal menanam! Silakan lakukan Kalibrasi Lahan terlebih dahulu.")
+                return
+            end
             local rs = game:GetService("ReplicatedStorage")
-            for i = 1, 15 do
-                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(getgenv().STACK_POSITION) end)
+            for _, pos in ipairs(getgenv().PLOT_POSITIONS) do
+                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
                 task.wait(0.12)
             end
         end)
@@ -125,11 +151,15 @@ TabFarming:CreateToggleRow({
                     pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", "Bibit Jagung", 15) end)
                     task.wait(1)
                     
-                    -- 2. Tanam bertumpuk (Stack) di 1 titik
-                    for i = 1, 15 do
-                        if not getgenv().SkenaAutoFarm_Jagung then return end
-                        pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(getgenv().STACK_POSITION) end)
-                        task.wait(0.15)
+                    -- 2. Tanam di semua titik hasil kalibrasi
+                    if #getgenv().PLOT_POSITIONS > 0 then
+                        for _, pos in ipairs(getgenv().PLOT_POSITIONS) do
+                            if not getgenv().SkenaAutoFarm_Jagung then return end
+                            pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
+                            task.wait(0.15)
+                        end
+                    else
+                        warn("AUTO-FARM TERTUNDA: Anda belum merekam titik tanah via Kalibrasi.")
                     end
                     
                     -- 3. Menunggu (Asumsi Jagung Tumbuh Butuh ~15-20 detik)
