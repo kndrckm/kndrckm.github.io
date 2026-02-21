@@ -40,18 +40,34 @@ TabFarming:CreateButtonRow({
     Name = "Harvest All (Padi)",
     ButtonText = "Harvest",
     Callback = function()
-        pcall(function()
-            local remote = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
-            if remote and remote:FindFirstChild("TutorialRemotes") and remote.TutorialRemotes:FindFirstChild("HarvestCrop") then
-                for i = 1, 15 do
+        -- Gunakan task.spawn agar UI tidak macet, dan beri task.wait() 
+        -- agar server tidak menolak (Mute/Rate limit) permintaan karena terlalu cepat (Spam).
+        task.spawn(function()
+            for i = 1, 15 do
+                pcall(function()
                     local args = {
                         [1] = "Padi",
                         [2] = i,
                         [3] = "Rice"
                     }
-                    remote.TutorialRemotes.HarvestCrop:FireServer(unpack(args))
-                end
+                    game:GetService("ReplicatedStorage").Remotes.TutorialRemotes.HarvestCrop:FireServer(unpack(args))
+                end)
+                task.wait(0.1) -- Beri jeda 0.1 detik perlahan sebelum kirim panen ke-2, ke-3, dst
             end
+        end)
+    end
+})
+
+-- ==========================================
+-- ROW 2: SELL CROP
+-- ==========================================
+TabFarming:CreateButtonRow({
+    Name = "Sell Crop",
+    ButtonText = "Sell",
+    Callback = function()
+        pcall(function()
+            local args = {}
+            game:GetService("ReplicatedStorage").Remotes.TutorialRemotes.SellCrop:FireServer(unpack(args))
         end)
     end
 })
