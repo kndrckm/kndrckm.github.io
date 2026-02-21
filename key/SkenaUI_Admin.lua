@@ -7,8 +7,7 @@ local player = Players.LocalPlayer
 -- Masukkan UserId Roblox Anda dan teman/admin Anda di sini. 
 -- UserId adalah angka unik yang ada di URL profil Roblox (contoh: roblox.com/users/12345678/profile)
 local WHITELISTED_ADMINS = {
-    [123456789] = true, -- Ganti dengan UserId Anda sebenarnya
-    [987654321] = true, -- Contoh jika ada Admin ke-2
+    [4871650676] = true, -- UserId User (Akses Admin Utama)
 }
 
 local SkenaAdmin = {}
