@@ -103,10 +103,19 @@ TabFarming:CreateToggleRow({
                         warn("AUTO-FARM TERTUNDA: Anda belum merekam titik tanah via Kalibrasi.")
                     end
                     
-                    -- Tunggu game melakukan Auto-Harvest (estimasi 120 detik)
-                    -- Ubah angka 120 menjadi waktu yang akurat sesuai observasi Anda
-                    task.wait(120)
+                    -- 3. Menunggu (Waktu Jagung Tumbuh = Sekitar 15-20 detik)
+                    -- Sesuaikan angka ini bila ternyata jagung belum 100% muncul dan siap dipanen
+                    task.wait(18)
                     
+                    -- 4. Panen Otomatis (Instan)
+                    for i = 1, 15 do
+                        if not getgenv().SkenaAutoFarm_Jagung then return end
+                        pcall(function() rs.Remotes.TutorialRemotes.HarvestCrop:FireServer("Jagung", i, "Corn") end)
+                        task.wait(0.2)
+                    end
+                    task.wait(1.5)
+                    
+                    -- 5. Jual
                     pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", "Jagung", 30) end)
                     task.wait(1.5)
                 end
