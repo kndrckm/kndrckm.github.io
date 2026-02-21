@@ -339,15 +339,20 @@ function SkenaUI:CreateWindow(Options)
         
         local TabBtn, TabIcon, Indicator = CreateTabButton(TabName, IconID, isSettings)
 
-        local Page = Instance.new("CanvasGroup", TabContainer)
-        Page.Size = UDim2.new(1, 0, 0, 150)
+        local Page = Instance.new("ScrollingFrame", TabContainer)
+        Page.Size = UDim2.new(1, 0, 0, 0)
         Page.AutomaticSize = Enum.AutomaticSize.Y
         Page.BackgroundTransparency = 1
-        Page.GroupTransparency = 1
         Page.Visible = false
+        Page.CanvasSize = UDim2.new(0, 0, 0, 0)
+        Page.AutomaticCanvasSize = Enum.AutomaticSize.Y
+        Page.ScrollBarThickness = 4
+        Page.ScrollBarImageColor3 = Palette.TextSecondary
+        Page.BorderSizePixel = 0
 
         local PageConstraint = Instance.new("UISizeConstraint", Page)
         PageConstraint.MinSize = Vector2.new(0, 180)
+        PageConstraint.MaxSize = Vector2.new(99999, 330)
         
         local PLayout = Instance.new("UIListLayout", Page)
         PLayout.SortOrder = Enum.SortOrder.LayoutOrder
