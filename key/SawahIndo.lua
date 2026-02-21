@@ -102,14 +102,24 @@ TabFarming:CreateToggleRow({
                     local cData = CROP_DATA[getgenv().SelectedCrop]
                     local plotSize = getgenv().AFK_PlantAmount or 15
                     
-                    -- 1. Beli Bibit (Hanya jika dicentang)
-                    if getgenv().AutoBuySeed then
+                    local currentSeeds = 0
+                    local char = player.Character
+                    if char then
+                        for _, v in ipairs(char:GetChildren()) do
+                            if v.Name == cData.SeedName then currentSeeds = currentSeeds + 1 end
+                        end
+                    end
+                    for _, v in ipairs(player.Backpack:GetChildren()) do
+                        if v.Name == cData.SeedName then currentSeeds = currentSeeds + 1 end
+                    end
+                    
+                    -- 1. Beli Bibit (Hanya jika dicentang dan bibit di tas <= 15)
+                    if getgenv().AutoBuySeed and currentSeeds <= 15 then
                         pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", cData.SeedName, plotSize) end)
                         task.wait(1)
                     end
                     
                     -- 2. Tanam Berulang di Titik Berdiri (1 Lot/Pijakan)
-                    local char = player.Character
                     if char and char:FindFirstChild("HumanoidRootPart") then
                         local hum = char:FindFirstChildOfClass("Humanoid")
                         if hum then
@@ -118,9 +128,17 @@ TabFarming:CreateToggleRow({
                                 local inBp = player.Backpack:FindFirstChild(cData.SeedName)
                                 if inBp then
                                     hum:EquipTool(inBp)
-                                    task.wait(0.25)
+                                    task.wait(0.4)
                                 else
-                                    warn("Bibit tidak ditemukan di tangan maupun tas!")
+                                    warn("Bibit " .. cData.SeedName .. " habis atau tidak ditemukan!")
+                                end
+                            end
+                            -- Fallback memastikan berhasil equip sebelum tembak menanam
+                            if not char:FindFirstChild(cData.SeedName) then
+                                local recheckBp = player.Backpack:FindFirstChild(cData.SeedName)
+                                if recheckBp then
+                                    hum:EquipTool(recheckBp)
+                                    task.wait(0.4)
                                 end
                             end
                         end
