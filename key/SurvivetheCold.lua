@@ -45,6 +45,7 @@ local activeTween = nil
 local speedKey = Enum.KeyCode.X
 local itemFilters = {}
 local espDropdownObj = nil
+local capturedPaths = {}
 
 local BLACKLIST = {
     "HumanoidRootPart", "Torso", "Board", "Proximity", "Meshes_cartello_cube", 
@@ -194,6 +195,7 @@ local function checkObject(o)
     if t and rN ~= "" and not isBlacklisted(rN) then
         local cN = getCleanName(rN, t)
         if not isBlacklisted(cN) then 
+            capturedPaths[t:GetFullName()] = cN
             if espDropdownObj then
                 espDropdownObj:AddItem(cN, true, function(state)
                     itemFilters[cN] = state
@@ -274,6 +276,7 @@ local Window = SkenaUI:CreateWindow({
 })
 
 local TabMods = Window:CreateTab("Mods", "gamepad-2") 
+local TabAdmin = Window:CreateTab("Admin", "database") 
 local TabSettings = Window:CreateTab("Settings", "settings", true) 
 
 -- ROW 1: SPEED MOD
@@ -332,6 +335,27 @@ TabMods:CreateDoubleButtonRow({
     Button2Text = "Food",
     Callback1 = function() moveToPos(TP_CLOTHES_POS) end,
     Callback2 = function() moveToPos(TP_FOOD_POS) end
+})
+
+-- ==========================================
+-- ISI TAB ADMIN
+-- ==========================================
+TabAdmin:CreateButtonRow({
+    Name = "Copy Captured ESP Data",
+    ButtonText = "Copy to Clipboard",
+    Callback = function()
+        local lines = {"=== ESP RAW DATA DUMP ==="}
+        for path, cN in pairs(capturedPaths) do
+            table.insert(lines, "[" .. cN .. "]  =>  " .. path)
+        end
+        local finalStr = table.concat(lines, "\n")
+        if setclipboard then
+            setclipboard(finalStr)
+        else
+            print(finalStr)
+            warn("Executor tidak mendukung setclipboard. Data telah di-print ke console (F9)!")
+        end
+    end
 })
 
 -- ==========================================
