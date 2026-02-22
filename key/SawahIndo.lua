@@ -407,6 +407,10 @@ TabFarming:CreateToggleRow({
 -- ==========================================
 -- ISI TAB SETTINGS
 -- ==========================================
+TabSettings:CreateTextRow({
+    Text = getgenv()._SKENA_ANTI_AFK and "🟢 Anti-AFK Active" or "🔴 Anti-AFK Failed"
+})
+
 TabSettings:CreateInputRow({
     Name = "UI Toggle Key",
     Placeholder = "Z",

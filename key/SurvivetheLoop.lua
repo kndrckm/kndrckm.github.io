@@ -197,6 +197,10 @@ TabMods:CreateToggleRow({
 -- ==========================================
 -- ISI TAB SETTINGS
 -- ==========================================
+TabSettings:CreateTextRow({
+    Text = getgenv()._SKENA_ANTI_AFK and "🟢 Anti-AFK Active" or "🔴 Anti-AFK Failed"
+})
+
 TabSettings:CreateInputRow({
     Name = "Menu Toggle Key",
     Default = "Z",

@@ -5,6 +5,7 @@ pcall(function()
         VirtualUser:CaptureController()
         VirtualUser:ClickButton2(Vector2.new())
     end)
+    getgenv()._SKENA_ANTI_AFK = true
 end)
 
 local PlaceId = game.PlaceId
