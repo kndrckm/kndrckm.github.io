@@ -47,19 +47,66 @@ local TabSettings = Window:CreateTab("Settings", "settings", true)
 -- CROP DATA REFERENCE
 -- ==========================================
 local CROP_DATA = {
-    ["Padi"]   = { SeedName = "Bibit Padi",   EnglishName = "Rice" },
-    ["Jagung"] = { SeedName = "Bibit Jagung", EnglishName = "Corn" },
-    ["Tomat"]  = { SeedName = "Bibit Tomat",  EnglishName = "Tomato" },
-    ["Terong"] = { SeedName = "Bibit Terong", EnglishName = "Eggplant" }
+    ["Padi"]       = { SeedName = "Bibit Padi",       EnglishName = "Rice" },
+    ["Jagung"]     = { SeedName = "Bibit Jagung",     EnglishName = "Corn" },
+    ["Tomat"]      = { SeedName = "Bibit Tomat",      EnglishName = "Tomato" },
+    ["Terong"]     = { SeedName = "Bibit Terong",     EnglishName = "Eggplant" },
+    ["Strawberry"] = { SeedName = "Bibit Strawberry", EnglishName = "Strawberry" }
 }
 getgenv().SelectedCrop = "Padi"
 
 local CROP_ORDER = {
-    { key = "Padi",   label = "Padi [lv. 0]" },
-    { key = "Jagung", label = "Jagung [lv. 20]" },
-    { key = "Tomat",  label = "Tomat [lv. 40]" },
-    { key = "Terong", label = "Terong [lv. 60]" },
+    { key = "Padi",       label = "Padi [lv. 0]" },
+    { key = "Jagung",     label = "Jagung [lv. 20]" },
+    { key = "Tomat",      label = "Tomat [lv. 40]" },
+    { key = "Terong",     label = "Terong [lv. 60]" },
+    { key = "Strawberry", label = "Strawberry [lv. 80]" },
 }
+
+-- Helper: Jual semua jenis tanaman + sawit
+local function SellAllTypes()
+    local rs = game:GetService("ReplicatedStorage")
+    local remotes = rs.Remotes.TutorialRemotes
+    local totalSold = 0
+    
+    -- 1. Jual semua tanaman biasa (GET_LIST)
+    pcall(function()
+        local inv = remotes.RequestSell:InvokeServer("GET_LIST")
+        if typeof(inv) == "table" and typeof(inv.Items) == "table" then
+            for _, itemData in pairs(inv.Items) do
+                if typeof(itemData) == "table" and tonumber(itemData.Owned) and tonumber(itemData.Owned) > 0 then
+                    local name = itemData.Name or itemData.DisplayName
+                    local amt = tonumber(itemData.Owned)
+                    pcall(function()
+                        remotes.RequestSell:InvokeServer("SELL", name, amt)
+                    end)
+                    totalSold = totalSold + amt
+                    task.wait(0.3)
+                end
+            end
+        end
+    end)
+    
+    -- 2. Jual sawit (GET_SAWIT_LIST)
+    pcall(function()
+        local sawitInv = remotes.RequestSell:InvokeServer("GET_SAWIT_LIST")
+        if typeof(sawitInv) == "table" and typeof(sawitInv.Items) == "table" then
+            for _, itemData in pairs(sawitInv.Items) do
+                if typeof(itemData) == "table" and tonumber(itemData.Owned) and tonumber(itemData.Owned) > 0 then
+                    local id = itemData.Id or itemData.Name
+                    local amt = tonumber(itemData.Owned)
+                    pcall(function()
+                        remotes.RequestSell:InvokeServer("SELL_SAWIT", id, amt)
+                    end)
+                    totalSold = totalSold + amt
+                    task.wait(0.3)
+                end
+            end
+        end
+    end)
+    
+    return totalSold
+end
 
 local CropDrop = TabFarming:CreateDropdown({
     Name = " [ Target Tanaman (Global) ]",
@@ -294,22 +341,12 @@ TabFarming:CreateToggleRow({
                     end
                     task.wait(1.5)
                     
-                    -- 4. Jual Pintar
-                    TUpdate("Menganalisa Tas (Jual)", "Restart Loop", "Proses...")
-                    local sellAmt = plotSize
-                    pcall(function()
-                        local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
-                        if typeof(inv) == "table" and typeof(inv.Items) == "table" then
-                            for _, itemData in pairs(inv.Items) do
-                                if typeof(itemData) == "table" and (itemData.Name == getgenv().SelectedCrop or itemData.DisplayName == cData.EnglishName) then
-                                    sellAmt = tonumber(itemData.Owned) or sellAmt
-                                    break
-                                end
-                            end
-                        end
-                    end)
-                    
-                    pcall(function() rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", getgenv().SelectedCrop, sellAmt) end)
+                    -- 4. Jual Pintar (Semua jenis tanaman + sawit)
+                    TUpdate("Menjual Semua Hasil", "Restart Loop", "Proses...")
+                    local totalSold = SellAllTypes()
+                    if totalSold > 0 then
+                        warn("[Sell All] Berhasil jual " .. totalSold .. " item")
+                    end
                     task.wait(1.5)
                 end
             end)
@@ -340,31 +377,16 @@ TabFarming:CreateInputButtonRow({
 })
 
 TabFarming:CreateButtonRow({
-    Name = "2. Sell All",
+    Name = "2. Sell All (Semua Jenis)",
     ButtonText = "Jual",
     Callback = function()
         task.spawn(function()
-            pcall(function()
-                local cData = CROP_DATA[getgenv().SelectedCrop]
-                local rs = game:GetService("ReplicatedStorage")
-                local sellAmt = 15
-                
-                local inv = rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("GET_LIST")
-                if typeof(inv) == "table" and typeof(inv.Items) == "table" then
-                    for _, itemData in pairs(inv.Items) do
-                        if typeof(itemData) == "table" and (itemData.Name == getgenv().SelectedCrop or itemData.DisplayName == cData.EnglishName) then
-                            sellAmt = tonumber(itemData.Owned) or sellAmt
-                            break
-                        end
-                    end
-                end
-                
-                if sellAmt > 0 then
-                    rs.Remotes.TutorialRemotes.RequestSell:InvokeServer("SELL", getgenv().SelectedCrop, sellAmt)
-                else
-                    warn("Inventaris kosong atau GET_LIST gagal dilacak!")
-                end
-            end)
+            local totalSold = SellAllTypes()
+            if totalSold > 0 then
+                warn("[Sell All] Berhasil jual " .. totalSold .. " item (tanaman + sawit)")
+            else
+                warn("[Sell All] Inventaris kosong / tidak ada yang dijual.")
+            end
         end)
     end
 })
