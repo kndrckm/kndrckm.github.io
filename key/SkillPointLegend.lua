@@ -225,8 +225,8 @@ getgenv().SelectedMobWorld = MOB_LABELS[1] and MOB_LABELS[1].world or nil
 -- TAB MAIN
 -- ==========================================
 
--- Dropdown: Target Mob (hanya yang sudah di-mapping)
-local MobDrop = TabMain:CreateDropdown({
+-- Dropdown + Toggle: Target Mob & Auto TP
+local MobDrop = TabMain:CreateDropdownToggle({
     Name = " [ Target Mob ]",
     Columns = 2,
     Callback = function(val)
@@ -239,16 +239,7 @@ local MobDrop = TabMain:CreateDropdown({
                 return
             end
         end
-    end
-})
-for _, entry in ipairs(MOB_LABELS) do
-    MobDrop:AddItem(entry.label, entry.key == MOB_LABELS[1].key)
-end
-
--- Auto TP to Selected Mob (filtered by type)
-RegisterLoop("_SKENA_AUTO_TP_MOB")
-TabMain:CreateToggleRow({
-    Name = "Auto TP to Mob",
+    end,
     OnToggle = function(state)
         getgenv()._SKENA_AUTO_TP_MOB = state
         if state then
@@ -258,30 +249,24 @@ TabMain:CreateToggleRow({
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
                     if not hrp then task.wait(0.5) continue end
                     
-                    -- Check if we are in the correct world first
                     local targetWorld = getgenv().SelectedMobWorld
                     if targetWorld and WORLDS[targetWorld] then
                         local worldBasePos = WORLDS[targetWorld]
                         local distToWorld = (hrp.Position - worldBasePos).Magnitude
-                        -- If we are too far from the world base (e.g., > 1000 studs), teleport there first
                         if distToWorld > 1000 then
                             warn("[AutoTP] Teleporting to world base: " .. targetWorld)
                             steppedTeleport(CFrame.new(worldBasePos))
                             task.wait(0.5)
-                            continue -- Restart loop to find mob now that we are in the world
+                            continue
                         end
                     end
                     
-                    -- Skip mob yang sudah dekat (< 10 stud), cari yang berikutnya di world ini
                     local mob, dist = getClosestMob(getgenv().SelectedMobParts, 10)
                     if mob then
                         local mobHRP = mob:FindFirstChild("HumanoidRootPart")
                         if mobHRP then
                             hrp.CFrame = mobHRP.CFrame * CFrame.new(0, 0, 3)
                         end
-                    else
-                        -- No mob of this type in range, might be dead or despawned.
-                        -- Default behavior is to wait.
                     end
                     task.wait(0.5)
                 end
@@ -289,35 +274,8 @@ TabMain:CreateToggleRow({
         end
     end
 })
-
--- ==========================================
--- AUTO ATTACK (multiple methods)
--- ==========================================
-local ATTACK_METHODS = {
-    { key = "mouse1click",   label = "mouse1click" },
-    { key = "keypress_f",    label = "Keypress F" },
-    { key = "keypress_e",    label = "Keypress E" },
-    { key = "tool_activate", label = "Tool Activate" },
-    { key = "vim_click",     label = "VIM Click" },
-}
-getgenv()._SKENA_ATTACK_METHOD = "mouse1click"
-
-local AtkDrop = TabMain:CreateDropdown({
-    Name = " [ Attack Method ]",
-    Columns = 2,
-    KeepOpen = true,
-    Callback = function(val)
-        for _, m in ipairs(ATTACK_METHODS) do
-            if m.label == val then
-                getgenv()._SKENA_ATTACK_METHOD = m.key
-                warn("Attack Method: " .. m.key)
-                return
-            end
-        end
-    end
-})
-for _, m in ipairs(ATTACK_METHODS) do
-    AtkDrop:AddItem(m.label, m.key == "mouse1click")
+for _, entry in ipairs(MOB_LABELS) do
+    MobDrop:AddItem(entry.label, entry.key == MOB_LABELS[1].key)
 end
 
 local VIM = game:GetService("VirtualInputManager")
@@ -345,9 +303,31 @@ local function doAttack()
     end)
 end
 
-RegisterLoop("_SKENA_AUTO_ATTACK")
-TabMain:CreateToggleRow({
-    Name = "Auto Attack",
+-- ==========================================
+-- AUTO ATTACK (multiple methods)
+-- ==========================================
+local ATTACK_METHODS = {
+    { key = "mouse1click",   label = "mouse1click" },
+    { key = "keypress_f",    label = "Keypress F" },
+    { key = "keypress_e",    label = "Keypress E" },
+    { key = "tool_activate", label = "Tool Activate" },
+    { key = "vim_click",     label = "VIM Click" },
+}
+getgenv()._SKENA_ATTACK_METHOD = "mouse1click"
+
+local AtkDrop = TabMain:CreateDropdownToggle({
+    Name = " [ Attack Method ]",
+    Columns = 2,
+    KeepOpen = true,
+    Callback = function(val)
+        for _, m in ipairs(ATTACK_METHODS) do
+            if m.label == val then
+                getgenv()._SKENA_ATTACK_METHOD = m.key
+                warn("Attack Method: " .. m.key)
+                return
+            end
+        end
+    end,
     OnToggle = function(state)
         getgenv()._SKENA_AUTO_ATTACK = state
         if state then
@@ -360,6 +340,9 @@ TabMain:CreateToggleRow({
         end
     end
 })
+for _, m in ipairs(ATTACK_METHODS) do
+    AtkDrop:AddItem(m.label, m.key == "mouse1click")
+end
 
 -- ==========================================
 -- KILL AURA (WIP - slider + toggle)
@@ -425,8 +408,9 @@ TabMain:CreateTextRow({
     Text = "── Identifikasi Mob ──"
 })
 
-local IdentifyDrop = TabMain:CreateDropdown({
+local IdentifyDrop = TabMain:CreateDropdownButton({
     Name = " [ Scan Live Mobs ]",
+    ButtonText = "Scan",
     Columns = 2,
     KeepOpen = true,
     Callback = function(val)
@@ -442,23 +426,19 @@ local IdentifyDrop = TabMain:CreateDropdown({
                 end
             end
         end
-    end
-})
-
-TabMain:CreateButtonRow({
-    Name = "Refresh Mob List",
-    ButtonText = "Scan",
-    Callback = function(btn)
+    end,
+    OnButton = function()
         local npcsF = workspace:FindFirstChild("Npcs")
         if not npcsF then warn("[Scan] Folder Npcs tidak ada!") return end
         
-        -- Clear existing dropdown items
-        for _, data in ipairs(IdentifyDrop.Items) do
+        -- Default to global if needed
+        local dropToUse = IdentifyDrop -- Self reference trick
+        
+        for _, data in ipairs(dropToUse.Items) do
             pcall(function() data.Btn:Destroy() end)
         end
-        IdentifyDrop.Items = {}
+        dropToUse.Items = {}
         
-        -- Show ALL mobs (no dedup), label with known name
         local allMobs = {}
         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
         
@@ -480,7 +460,7 @@ TabMain:CreateButtonRow({
         table.sort(allMobs, function(a, b) return a.dist < b.dist end)
         
         for i, m in ipairs(allMobs) do
-            IdentifyDrop:AddItem(m.knownName .. " #" .. i .. " | ID:" .. m.id .. (m.knownName == "???" and (" (" .. m.parts .. "p)") or ""), i == 1)
+            dropToUse:AddItem(m.knownName .. " #" .. i .. " | ID:" .. m.id .. (m.knownName == "???" and (" (" .. m.parts .. "p)") or ""), i == 1)
         end
         
         warn("[Scan] " .. #allMobs .. " mob total.")
