@@ -39,9 +39,9 @@ local function RegisterLoop(flagName)
 end
 
 -- ==========================================
--- HELPER: Find closest mob
+-- HELPER: Find closest mob (filter by parts fingerprint)
 -- ==========================================
-local function getClosestMob()
+local function getClosestMob(targetParts)
     local npcsFolder = workspace:FindFirstChild("Npcs")
     if not npcsFolder then return nil end
     
@@ -56,6 +56,11 @@ local function getClosestMob()
         if mob:IsA("Model") then
             local mobHRP = mob:FindFirstChild("HumanoidRootPart")
             if mobHRP then
+                -- Filter by parts count if specified
+                if targetParts then
+                    local parts = #mob:GetDescendants()
+                    if parts ~= targetParts then continue end
+                end
                 local dist = (hrp.Position - mobHRP.Position).Magnitude
                 if dist < closestDist then
                     closestDist = dist
@@ -79,39 +84,60 @@ TabMain:CreateTextRow({
 })
 
 -- ==========================================
--- MOB LIST (dari referensi game, belum di-mapping)
+-- MOB LIST (fingerprinted by parts count)
 -- ==========================================
 local MOB_LIST = {
-    { name = "Pig",             hp = "800" },
-    { name = "Turtle",          hp = "2.5k" },
-    { name = "Caveman",         hp = "4.5k" },
-    { name = "Spider",          hp = "12.5k" },
-    { name = "Mammoth",         hp = "75k" },
-    { name = "Warlock",         hp = "100k" },
-    { name = "Spartan",         hp = "250k" },
-    { name = "Reaper",          hp = "750k" },
-    { name = "Angel",           hp = "1.5m" },
-    { name = "Cowboy",          hp = "15m" },
-    { name = "Ghost",           hp = "60m" },
-    { name = "Totem Sentinel",  hp = "250m" },
-    { name = "Mummy",           hp = "500m" },
-    { name = "Blightleap",      hp = "2.5b" },
-    { name = "Bonepicker",      hp = "25b" },
-    { name = "Oculon",          hp = "100b" },
-    { name = "Magmaton",        hp = "600b" },
+    { name = "Pig",             hp = "800",    parts = 109 },
+    { name = "Turtle",          hp = "2.5k",   parts = 157 },
+    { name = "Caveman",         hp = "4.5k",   parts = 311 },
+    { name = "Spider",          hp = "12.5k",  parts = 107 },
+    { name = "Mammoth",         hp = "75k",    parts = 141 },
+    { name = "Viperbloom",      hp = "125k",   parts = 255 },
+    { name = "Warlock",         hp = "100k",   parts = nil }, -- belum diketahui
+    { name = "Spartan",         hp = "250k",   parts = nil },
+    { name = "Reaper",          hp = "750k",   parts = nil },
+    { name = "Angel",           hp = "1.5m",   parts = nil },
+    { name = "Cowboy",          hp = "15m",    parts = nil },
+    { name = "Ghost",           hp = "60m",    parts = nil },
+    { name = "Totem Sentinel",  hp = "250m",   parts = nil },
+    { name = "Mummy",           hp = "500m",   parts = nil },
+    { name = "Blightleap",      hp = "2.5b",   parts = nil },
+    { name = "Bonepicker",      hp = "25b",    parts = nil },
+    { name = "Oculon",          hp = "100b",   parts = nil },
+    { name = "Magmaton",        hp = "600b",   parts = nil },
 }
 
+local BOSS_LIST = {
+    { name = "Dino",       hp = "250k",  parts = 267 },
+    { name = "Arachenex",  hp = "450k",  parts = 144 },
+    { name = "Grimroot",   hp = "950k",  parts = 497 },
+    { name = "Minotaur",   hp = "30b",   parts = 263 },
+}
+
+-- Build fingerprint lookup: parts -> mob name
+local PARTS_TO_NAME = {}
+for _, m in ipairs(MOB_LIST) do
+    if m.parts then PARTS_TO_NAME[m.parts] = m.name end
+end
+for _, m in ipairs(BOSS_LIST) do
+    if m.parts then PARTS_TO_NAME[m.parts] = m.name .. " (Boss)" end
+end
+
+-- Only show mobs with known fingerprints in Target Mob dropdown
 local MOB_LABELS = {}
 for _, m in ipairs(MOB_LIST) do
-    table.insert(MOB_LABELS, { key = m.name, label = m.name .. " [" .. m.hp .. "]" })
+    if m.parts then
+        table.insert(MOB_LABELS, { key = m.name, parts = m.parts, label = m.name .. " [" .. m.hp .. "]" })
+    end
 end
-getgenv().SelectedMob = MOB_LIST[1].name
+getgenv().SelectedMob = MOB_LABELS[1] and MOB_LABELS[1].key or "Pig"
+getgenv().SelectedMobParts = MOB_LABELS[1] and MOB_LABELS[1].parts or nil
 
 -- ==========================================
 -- TAB MAIN
 -- ==========================================
 
--- Dropdown: Target Mob (untuk auto-farm nanti)
+-- Dropdown: Target Mob (hanya yang sudah di-mapping)
 local MobDrop = TabMain:CreateDropdown({
     Name = " [ Target Mob ]",
     Columns = 2,
@@ -119,18 +145,18 @@ local MobDrop = TabMain:CreateDropdown({
         for _, entry in ipairs(MOB_LABELS) do
             if entry.label == val then
                 getgenv().SelectedMob = entry.key
-                warn("Target Mob: " .. entry.key)
+                getgenv().SelectedMobParts = entry.parts
+                warn("Target: " .. entry.key .. " (" .. entry.parts .. "p)")
                 return
             end
         end
-        getgenv().SelectedMob = val
     end
 })
 for _, entry in ipairs(MOB_LABELS) do
-    MobDrop:AddItem(entry.label, entry.key == MOB_LIST[1].name)
+    MobDrop:AddItem(entry.label, entry.key == MOB_LABELS[1].key)
 end
 
--- Auto TP to Selected Mob (closest)
+-- Auto TP to Selected Mob (filtered by type)
 RegisterLoop("_SKENA_AUTO_TP_MOB")
 TabMain:CreateToggleRow({
     Name = "Auto TP to Mob",
@@ -139,7 +165,7 @@ TabMain:CreateToggleRow({
         if state then
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_TP_MOB do
-                    local mob, dist = getClosestMob()
+                    local mob, dist = getClosestMob(getgenv().SelectedMobParts)
                     if mob then
                         local mobHRP = mob:FindFirstChild("HumanoidRootPart")
                         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
@@ -216,19 +242,17 @@ TabMain:CreateToggleRow({
 
 -- ==========================================
 -- IDENTIFY MOBS (Scan & TP via Dropdown)
+-- Untuk temukan mob baru yang belum di-mapping
 -- ==========================================
 TabMain:CreateTextRow({
     Text = "── Identifikasi Mob ──"
 })
 
--- Scan Npcs folder, collect unique mob types by child count (as fingerprint)
-getgenv()._SKENA_SCANNED_MOBS = {}
-
 local IdentifyDrop = TabMain:CreateDropdown({
     Name = " [ Scan Live Mobs ]",
     Columns = 2,
     Callback = function(val)
-        -- Parse ID from label: "ID:57 (136p)"
+        -- Parse ID from label: "Pig | ID:173"
         local mobId = string.match(val, "ID:(%d+)")
         if mobId then
             local npcsF = workspace:FindFirstChild("Npcs")
@@ -238,10 +262,8 @@ local IdentifyDrop = TabMain:CreateDropdown({
                     local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
                     if hrp then
                         hrp.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-                        warn("[TP] Teleported ke Mob ID: " .. mobId)
+                        warn("[TP] " .. val)
                     end
-                else
-                    warn("[TP] Mob " .. mobId .. " tidak ditemukan / hilang")
                 end
             end
         end
@@ -261,10 +283,8 @@ TabMain:CreateButtonRow({
         end
         IdentifyDrop.Items = {}
         
-        -- Collect mobs, de-duplicate by child count (fingerprint)
         local seen = {}
         local uniqueMobs = {}
-        
         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
         
         for _, mob in ipairs(npcsF:GetChildren()) do
@@ -274,23 +294,24 @@ TabMain:CreateButtonRow({
                     seen[parts] = true
                     local mobHRP = mob.HumanoidRootPart
                     local dist = hrp and math.floor((hrp.Position - mobHRP.Position).Magnitude) or 0
+                    local knownName = PARTS_TO_NAME[parts] or "???"
                     table.insert(uniqueMobs, {
                         id = mob.Name,
                         parts = parts,
-                        dist = dist
+                        dist = dist,
+                        knownName = knownName
                     })
                 end
             end
         end
         
-        -- Sort by distance
         table.sort(uniqueMobs, function(a, b) return a.dist < b.dist end)
         
         for i, m in ipairs(uniqueMobs) do
-            IdentifyDrop:AddItem("ID:" .. m.id .. " (" .. m.parts .. "p)", i == 1)
+            IdentifyDrop:AddItem(m.knownName .. " | ID:" .. m.id .. " (" .. m.parts .. "p)", i == 1)
         end
         
-        warn("[Scan] " .. #uniqueMobs .. " tipe mob unik ditemukan. Pilih di dropdown untuk TP.")
+        warn("[Scan] " .. #uniqueMobs .. " tipe mob unik.")
     end
 })
 
