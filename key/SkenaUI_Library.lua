@@ -992,10 +992,31 @@ function SkenaUI:CreateWindow(Options)
             Header.Size = UDim2.new(1, 0, 0, 44)
             Header.BackgroundTransparency = 1
             
-            -- Left side: Toggle
-            local ToggleBg = Instance.new("TextButton", Header)
+            -- Left side: Title
+            local Txt = Instance.new("TextLabel", Header)
+            Txt.Size = UDim2.new(0.4, 0, 1, 0)
+            Txt.Position = UDim2.new(0, 12, 0, 0)
+            Txt.BackgroundTransparency = 1
+            Txt.Text = Title
+            Txt.Font = Enum.Font.GothamMedium
+            Txt.TextSize = 13
+            Txt.TextColor3 = Palette.TextPrimary
+            Txt.TextXAlignment = Enum.TextXAlignment.Left
+
+            -- Right: Container
+            local RightContainer = Instance.new("Frame", Header)
+            RightContainer.Size = UDim2.new(0.6, -12, 1, 0)
+            RightContainer.Position = UDim2.new(0.4, 0, 0, 0)
+            RightContainer.BackgroundTransparency = 1
+            local RCLayout = Instance.new("UIListLayout", RightContainer)
+            RCLayout.FillDirection = Enum.FillDirection.Horizontal
+            RCLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+            RCLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+            RCLayout.Padding = UDim.new(0, 8)
+            
+            -- Right side: Toggle
+            local ToggleBg = Instance.new("TextButton", RightContainer)
             ToggleBg.Size = UDim2.new(0, 44, 0, 22)
-            ToggleBg.Position = UDim2.new(0, 12, 0.5, -11)
             ToggleBg.BackgroundColor3 = Palette.InputHdr
             ToggleBg.Text = ""
             ToggleBg.AutoButtonColor = false
@@ -1030,28 +1051,6 @@ function SkenaUI:CreateWindow(Options)
                 UpdateMainToggle(false)
                 pcall(tcb, mainState)
             end)
-
-            -- Middle: Title
-            local Txt = Instance.new("TextLabel", Header)
-            Txt.Size = UDim2.new(0.3, 0, 1, 0)
-            Txt.Position = UDim2.new(0, 68, 0, 0)
-            Txt.BackgroundTransparency = 1
-            Txt.Text = Title
-            Txt.Font = Enum.Font.GothamMedium
-            Txt.TextSize = 13
-            Txt.TextColor3 = Palette.TextPrimary
-            Txt.TextXAlignment = Enum.TextXAlignment.Left
-
-            -- Right: Dropdown Button
-            local RightContainer = Instance.new("Frame", Header)
-            RightContainer.Size = UDim2.new(0.5, -12, 1, 0)
-            RightContainer.Position = UDim2.new(0.5, 0, 0, 0)
-            RightContainer.BackgroundTransparency = 1
-            local RCLayout = Instance.new("UIListLayout", RightContainer)
-            RCLayout.FillDirection = Enum.FillDirection.Horizontal
-            RCLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-            RCLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-            RCLayout.Padding = UDim.new(0, 8)
             
             local DropLabel = Instance.new("TextLabel", RightContainer)
             DropLabel.Size = UDim2.new(0, 110, 0, 24)
@@ -1194,10 +1193,31 @@ function SkenaUI:CreateWindow(Options)
             Header.Size = UDim2.new(1, 0, 0, 44)
             Header.BackgroundTransparency = 1
             
-            -- Left side: Button
-            local ActionBtn = Instance.new("TextButton", Header)
+            -- Left side: Title
+            local Txt = Instance.new("TextLabel", Header)
+            Txt.Size = UDim2.new(0.4, 0, 1, 0)
+            Txt.Position = UDim2.new(0, 12, 0, 0)
+            Txt.BackgroundTransparency = 1
+            Txt.Text = Title
+            Txt.Font = Enum.Font.GothamMedium
+            Txt.TextSize = 13
+            Txt.TextColor3 = Palette.TextPrimary
+            Txt.TextXAlignment = Enum.TextXAlignment.Left
+
+            -- Right: Container
+            local RightContainer = Instance.new("Frame", Header)
+            RightContainer.Size = UDim2.new(0.6, -12, 1, 0)
+            RightContainer.Position = UDim2.new(0.4, 0, 0, 0)
+            RightContainer.BackgroundTransparency = 1
+            local RCLayout = Instance.new("UIListLayout", RightContainer)
+            RCLayout.FillDirection = Enum.FillDirection.Horizontal
+            RCLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+            RCLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+            RCLayout.Padding = UDim.new(0, 8)
+            
+            -- Right side: Button
+            local ActionBtn = Instance.new("TextButton", RightContainer)
             ActionBtn.Size = UDim2.new(0, 50, 0, 24)
-            ActionBtn.Position = UDim2.new(0, 12, 0.5, -12)
             ActionBtn.BackgroundColor3 = Palette.InputHdr
             ActionBtn.Text = btnText
             ActionBtn.TextColor3 = Palette.TextSecondary
@@ -1212,28 +1232,6 @@ function SkenaUI:CreateWindow(Options)
             ActionBtn.MouseEnter:Connect(function() TweenService:Create(ActionBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.RowHover}):Play() end)
             ActionBtn.MouseLeave:Connect(function() TweenService:Create(ActionBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.InputHdr}):Play() end)
             ActionBtn.MouseButton1Click:Connect(function() pcall(bcb) end)
-
-            -- Middle: Title
-            local Txt = Instance.new("TextLabel", Header)
-            Txt.Size = UDim2.new(0.3, 0, 1, 0)
-            Txt.Position = UDim2.new(0, 74, 0, 0)
-            Txt.BackgroundTransparency = 1
-            Txt.Text = Title
-            Txt.Font = Enum.Font.GothamMedium
-            Txt.TextSize = 13
-            Txt.TextColor3 = Palette.TextPrimary
-            Txt.TextXAlignment = Enum.TextXAlignment.Left
-
-            -- Right: Dropdown Button
-            local RightContainer = Instance.new("Frame", Header)
-            RightContainer.Size = UDim2.new(0.5, -12, 1, 0)
-            RightContainer.Position = UDim2.new(0.5, 0, 0, 0)
-            RightContainer.BackgroundTransparency = 1
-            local RCLayout = Instance.new("UIListLayout", RightContainer)
-            RCLayout.FillDirection = Enum.FillDirection.Horizontal
-            RCLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-            RCLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-            RCLayout.Padding = UDim.new(0, 8)
             
             local DropLabel = Instance.new("TextLabel", RightContainer)
             DropLabel.Size = UDim2.new(0, 110, 0, 24)
