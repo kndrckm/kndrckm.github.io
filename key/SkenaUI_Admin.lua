@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local WHITELISTED_ADMINS = {
     [4871650676] = true, -- UserId User (Akses Admin Utama)
+    [72548092] = true,
 }
 local SkenaAdmin = {}
 
