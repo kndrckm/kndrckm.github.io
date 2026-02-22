@@ -317,6 +317,134 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
 
+    -- Modul Ekstra: ESP ProximityPrompt
+    TabAdmin:CreateToggleRow({
+        Name = "ESP ProximityPrompt",
+        OnToggle = function(state)
+            getgenv()._SKENA_ESP_PP = state
+            if state then
+                task.spawn(function()
+                    while getgenv()._SKENA_ESP_PP do
+                        for _, obj in ipairs(workspace:GetDescendants()) do
+                            if obj:IsA("ProximityPrompt") and obj.Parent and obj.Parent:IsA("BasePart") then
+                                local part = obj.Parent
+                                if not part:FindFirstChild("_SkenaESP") then
+                                    pcall(function()
+                                        local bb = Instance.new("BillboardGui")
+                                        bb.Name = "_SkenaESP"
+                                        bb.Size = UDim2.new(0, 200, 0, 50)
+                                        bb.StudsOffset = Vector3.new(0, 3, 0)
+                                        bb.AlwaysOnTop = true
+                                        bb.Parent = part
+                                        
+                                        local lbl = Instance.new("TextLabel", bb)
+                                        lbl.Size = UDim2.new(1, 0, 1, 0)
+                                        lbl.BackgroundTransparency = 0.5
+                                        lbl.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                                        lbl.TextColor3 = Color3.fromRGB(0, 255, 100)
+                                        lbl.Font = Enum.Font.GothamBold
+                                        lbl.TextSize = 12
+                                        lbl.TextWrapped = true
+                                        Instance.new("UICorner", lbl).CornerRadius = UDim.new(0, 4)
+                                        
+                                        local action = obj.ActionText ~= "" and obj.ActionText or "E"
+                                        local objText = obj.ObjectText ~= "" and obj.ObjectText or part.Name
+                                        lbl.Text = "[" .. action .. "] " .. objText
+                                        
+                                        -- Highlight part
+                                        if not part:FindFirstChild("_SkenaHighlight") then
+                                            local hl = Instance.new("Highlight")
+                                            hl.Name = "_SkenaHighlight"
+                                            hl.FillColor = Color3.fromRGB(0, 255, 100)
+                                            hl.FillTransparency = 0.7
+                                            hl.OutlineColor = Color3.fromRGB(0, 255, 100)
+                                            hl.OutlineTransparency = 0
+                                            hl.Parent = part
+                                        end
+                                    end)
+                                end
+                            end
+                        end
+                        task.wait(2)
+                    end
+                    -- Cleanup saat dimatikan
+                    for _, obj in ipairs(workspace:GetDescendants()) do
+                        if obj.Name == "_SkenaESP" or obj.Name == "_SkenaHighlight" then
+                            pcall(function() obj:Destroy() end)
+                        end
+                    end
+                end)
+            end
+        end
+    })
+
+    -- Modul Ekstra: Auto Interact All + Log
+    getgenv()._SKENA_INTERACT_LOGS = getgenv()._SKENA_INTERACT_LOGS or {}
+    TabAdmin:CreateToggleRow({
+        Name = "Auto Interact All (Log)",
+        OnToggle = function(state)
+            getgenv()._SKENA_AUTO_INTERACT_ADMIN = state
+            if state then
+                getgenv()._SKENA_INTERACT_LOGS = {}
+                task.spawn(function()
+                    local lp = game.Players.LocalPlayer
+                    while getgenv()._SKENA_AUTO_INTERACT_ADMIN do
+                        local char = lp.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        if hrp and fireproximityprompt then
+                            for _, obj in ipairs(workspace:GetDescendants()) do
+                                if obj:IsA("ProximityPrompt") and obj.Enabled then
+                                    local part = obj.Parent
+                                    if part and part:IsA("BasePart") then
+                                        local dist = (hrp.Position - part.Position).Magnitude
+                                        if dist < 30 then
+                                            local action = obj.ActionText ~= "" and obj.ActionText or "E"
+                                            local objText = obj.ObjectText ~= "" and obj.ObjectText or ""
+                                            local logEntry = string.format("[%.1fs] Action: %s | Object: %s | Part: %s | Path: %s | Dist: %.1f",
+                                                os.clock(), action, objText, part.Name, part:GetFullName(), dist)
+                                            table.insert(getgenv()._SKENA_INTERACT_LOGS, logEntry)
+                                            pcall(function()
+                                                fireproximityprompt(obj)
+                                            end)
+                                            task.wait(0.15)
+                                        end
+                                    end
+                                end
+                            end
+                        elseif not fireproximityprompt then
+                            warn("[Skena] fireproximityprompt tidak didukung!")
+                            getgenv()._SKENA_AUTO_INTERACT_ADMIN = false
+                            break
+                        end
+                        task.wait(0.5)
+                    end
+                end)
+            end
+        end
+    })
+
+    TabAdmin:CreateButtonRow({
+        Name = "Copy Interact Logs",
+        ButtonText = "Copy",
+        Callback = function(btn)
+            local logs = getgenv()._SKENA_INTERACT_LOGS
+            if not logs or #logs == 0 then
+                warn("[Interact] Belum ada interaksi yang dicatat.")
+                animateBtn(btn, false)
+                return
+            end
+            local finalStr = "=== SKENA INTERACT LOG (" .. #logs .. " entries) ===\n" .. table.concat(logs, "\n")
+            if setclipboard then
+                setclipboard(finalStr)
+                warn("[Interact] " .. #logs .. " log dicopy ke clipboard!")
+                animateBtn(btn, true)
+            else
+                print(finalStr)
+                animateBtn(btn, false)
+            end
+        end
+    })
+
     -- Modul 1: Dump ESP Data (Tampil Universal)
     TabAdmin:CreateButtonRow({
         Name = "Copy Captured ESP Data",
