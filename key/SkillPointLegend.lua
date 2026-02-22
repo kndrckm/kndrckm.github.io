@@ -542,7 +542,7 @@ local function toggleBlackScreen(state)
                 blackScreenGui = Instance.new("ScreenGui")
                 blackScreenGui.Name = "SkenaBlackScreen"
                 blackScreenGui.IgnoreGuiInset = true
-                -- Taruh di belakang HUD utama tapi di depan 3D Camera
+                -- Taruh di belakang HUD utama
                 blackScreenGui.DisplayOrder = -100 
                 
                 local bg = Instance.new("Frame", blackScreenGui)
@@ -551,18 +551,14 @@ local function toggleBlackScreen(state)
                 bg.BorderSizePixel = 0
             end
             
-            -- Matikan 3D rendering jika executor support (sangat menghemat CPU)
-            pcall(function() RunService:Set3dRenderingEnabled(false) end)
-            
-            local targetParent = pcall(function() return game:GetService("CoreGui") end) and game:GetService("CoreGui") or player.PlayerGui
-            blackScreenGui.Parent = targetParent
+            -- Some executors put CoreGui very high. We'll use PlayerGui to be safe and ensure our UI (DisplayOrder 0) stays above it
+            blackScreenGui.Parent = player.PlayerGui
         end)
     else
         pcall(function()
             if blackScreenGui then
                 blackScreenGui.Parent = nil
             end
-            pcall(function() RunService:Set3dRenderingEnabled(true) end)
         end)
     end
 end
