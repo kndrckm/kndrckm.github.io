@@ -43,18 +43,37 @@ end
 -- TAB MAIN
 -- ==========================================
 
--- 1. Auto Collect Earnings
-RegisterLoop("_SKENA_AUTO_COLLECT_EGG")
+-- 1. Auto Interact All ProximityPrompts (fireproximityprompt)
+RegisterLoop("_SKENA_AUTO_INTERACT")
 TabMain:CreateToggleRow({
-    Name = "Auto Collect Earnings",
+    Name = "Auto Interact All (Nearby)",
     OnToggle = function(state)
-        getgenv()._SKENA_AUTO_COLLECT_EGG = state
+        getgenv()._SKENA_AUTO_INTERACT = state
         if state then
             task.spawn(function()
-                while getgenv()._SKENA_AUTO_COLLECT_EGG do
-                    pcall(function()
-                        instances._collectEarnings:FireServer(raw())
-                    end)
+                while getgenv()._SKENA_AUTO_INTERACT do
+                    local char = player.Character
+                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                    if hrp and fireproximityprompt then
+                        for _, obj in ipairs(workspace:GetDescendants()) do
+                            if obj:IsA("ProximityPrompt") and obj.Enabled then
+                                local part = obj.Parent
+                                if part and part:IsA("BasePart") then
+                                    local dist = (hrp.Position - part.Position).Magnitude
+                                    if dist < 30 then
+                                        pcall(function()
+                                            fireproximityprompt(obj)
+                                        end)
+                                        task.wait(0.1)
+                                    end
+                                end
+                            end
+                        end
+                    elseif not fireproximityprompt then
+                        warn("[Skena] Executor tidak mendukung fireproximityprompt!")
+                        getgenv()._SKENA_AUTO_INTERACT = false
+                        break
+                    end
                     task.wait(0.5)
                 end
             end)
@@ -62,19 +81,46 @@ TabMain:CreateToggleRow({
     end
 })
 
--- 2. Auto Sell Stack
-RegisterLoop("_SKENA_AUTO_SELL_EGG")
+-- 2. Auto Collect & Sell (Teleport Loop)
+RegisterLoop("_SKENA_AUTO_FARM_LOOP")
 TabMain:CreateToggleRow({
-    Name = "Auto Sell Stack",
+    Name = "Auto Farm (TP Collect → Sell)",
     OnToggle = function(state)
-        getgenv()._SKENA_AUTO_SELL_EGG = state
+        getgenv()._SKENA_AUTO_FARM_LOOP = state
         if state then
             task.spawn(function()
-                while getgenv()._SKENA_AUTO_SELL_EGG do
-                    pcall(function()
-                        instances._sellStack:FireServer(raw())
-                    end)
-                    task.wait(0.5)
+                while getgenv()._SKENA_AUTO_FARM_LOOP do
+                    local char = player.Character
+                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                    if not hrp then task.wait(1) continue end
+                    
+                    -- Cari semua ProximityPrompt dan kategorikan
+                    local prompts = {}
+                    for _, obj in ipairs(workspace:GetDescendants()) do
+                        if obj:IsA("ProximityPrompt") and obj.Enabled then
+                            local part = obj.Parent
+                            if part and part:IsA("BasePart") then
+                                table.insert(prompts, {prompt = obj, position = part.Position, name = obj.ObjectText ~= "" and obj.ObjectText or part.Name})
+                            end
+                        end
+                    end
+                    
+                    -- Teleport ke setiap prompt, fire, lalu lanjut
+                    for _, data in ipairs(prompts) do
+                        if not getgenv()._SKENA_AUTO_FARM_LOOP then break end
+                        pcall(function()
+                            hrp.CFrame = CFrame.new(data.position + Vector3.new(0, 3, 0))
+                        end)
+                        task.wait(0.3)
+                        pcall(function()
+                            if fireproximityprompt then
+                                fireproximityprompt(data.prompt)
+                            end
+                        end)
+                        task.wait(0.5)
+                    end
+                    
+                    task.wait(1)
                 end
             end)
         end
