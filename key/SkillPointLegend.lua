@@ -39,6 +39,34 @@ local function RegisterLoop(flagName)
 end
 
 -- ==========================================
+-- HELPER: Check if mob is alive
+-- ==========================================
+local function isMobAlive(mob)
+    -- Check 1: HumanoidRootPart anchored = dead/despawning
+    local hrp = mob:FindFirstChild("HumanoidRootPart")
+    if not hrp then return false end
+    if hrp.Anchored then return false end
+    
+    -- Check 2: deadAnim playing on Animator
+    local animCtrl = mob:FindFirstChildWhichIsA("AnimationController")
+    if animCtrl then
+        local animator = animCtrl:FindFirstChildWhichIsA("Animator")
+        if animator then
+            for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
+                if track.Animation and track.Animation.Name == "deadAnim" then
+                    return false
+                end
+            end
+        end
+    end
+    
+    -- Check 3: Transparency of main parts (dead mobs often fade out)
+    if hrp.Transparency >= 0.9 then return false end
+    
+    return true
+end
+
+-- ==========================================
 -- HELPER: Find closest mob (filter by parts fingerprint)
 -- ==========================================
 local function getClosestMob(targetParts, minDist)
@@ -56,7 +84,7 @@ local function getClosestMob(targetParts, minDist)
     for _, mob in ipairs(npcsFolder:GetChildren()) do
         if mob:IsA("Model") then
             local mobHRP = mob:FindFirstChild("HumanoidRootPart")
-            if mobHRP then
+            if mobHRP and isMobAlive(mob) then
                 if targetParts then
                     local parts = #mob:GetDescendants()
                     if parts ~= targetParts then continue end
