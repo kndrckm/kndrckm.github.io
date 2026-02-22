@@ -17,11 +17,63 @@ local Window = SkenaUI.CreateWindow("SkenaHub", "My Anime Egg Farm", false)
 local TabMain = Window:CreateTab("Main", "zap", false)
 local TabSettings = Window:CreateTab("Settings", "settings", true)
 
+local instances = rs:WaitForChild("Modules"):WaitForChild("Internals"):WaitForChild("Skeleton"):WaitForChild("Conduit"):WaitForChild("Instances")
+
+-- Kill phantom loops
+pcall(function()
+    if getgenv()._SKENA_EGG_LOOPS then
+        for _, flag in pairs(getgenv()._SKENA_EGG_LOOPS) do
+            getgenv()[flag] = false
+        end
+    end
+end)
+getgenv()._SKENA_EGG_LOOPS = {}
+
+local function RegisterLoop(flagName)
+    getgenv()[flagName] = false
+    table.insert(getgenv()._SKENA_EGG_LOOPS, flagName)
+end
+
 -- ==========================================
--- TAB MAIN (Kosong - Siap diisi)
+-- TAB MAIN
 -- ==========================================
-TabMain:CreateTextRow({
-    Text = "Fitur sedang dalam pengembangan. Gunakan tab Admin untuk scan Remote dan TouchInterest."
+
+-- 1. Auto Collect Earnings
+RegisterLoop("_SKENA_AUTO_COLLECT_EGG")
+TabMain:CreateToggleRow({
+    Name = "Auto Collect Earnings",
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_COLLECT_EGG = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_COLLECT_EGG do
+                    pcall(function()
+                        instances._collectEarnings:FireServer({})
+                    end)
+                    task.wait(0.5)
+                end
+            end)
+        end
+    end
+})
+
+-- 2. Auto Sell Stack
+RegisterLoop("_SKENA_AUTO_SELL_EGG")
+TabMain:CreateToggleRow({
+    Name = "Auto Sell Stack",
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_SELL_EGG = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_SELL_EGG do
+                    pcall(function()
+                        instances._sellStack:FireServer({})
+                    end)
+                    task.wait(0.5)
+                end
+            end)
+        end
+    end
 })
 
 -- ==========================================
