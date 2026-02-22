@@ -812,6 +812,7 @@ function SkenaUI:CreateWindow(Options)
             local Title = Options.Name or "Dropdown"
             local cb = Options.Callback or function() end
             local columns = Options.Columns or 1
+            local keepOpen = Options.KeepOpen or false
             local itemH = 26
             local gridGap = 4
             
@@ -940,8 +941,10 @@ function SkenaUI:CreateWindow(Options)
                     Itm.TextColor3 = Color3.new(1,1,1)
                     DropLabel.Text = itemStr .. " v"
                     
-                    isExpanded = false
-                    TweenService:Create(DropFrame, TweenInfo.new(0.15), {Size = UDim2.new(1, 0, 0, 0)}):Play()
+                    if not keepOpen then
+                        isExpanded = false
+                        TweenService:Create(DropFrame, TweenInfo.new(0.15), {Size = UDim2.new(1, 0, 0, 0)}):Play()
+                    end
                     
                     pcall(cb, itemStr)
                 end)

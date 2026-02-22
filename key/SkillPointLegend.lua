@@ -74,6 +74,33 @@ local function getClosestMob(targetParts)
 end
 
 -- ==========================================
+-- HELPER: Stepped teleport (long distance)
+-- ==========================================
+local function steppedTeleport(targetCFrame)
+    local char = player.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    
+    local startPos = hrp.Position
+    local endPos = targetCFrame.Position
+    local totalDist = (endPos - startPos).Magnitude
+    
+    if totalDist <= 100 then
+        hrp.CFrame = targetCFrame
+        return
+    end
+    
+    -- Teleport in 100-stud steps
+    local steps = math.ceil(totalDist / 100)
+    for i = 1, steps do
+        local alpha = i / steps
+        local pos = startPos:Lerp(endPos, alpha)
+        hrp.CFrame = CFrame.new(pos) * (targetCFrame - targetCFrame.Position)
+        task.wait(0.1)
+    end
+end
+
+-- ==========================================
 -- STATUS
 -- ==========================================
 local npcsFolder = workspace:FindFirstChild("Npcs")
@@ -251,6 +278,7 @@ TabMain:CreateTextRow({
 local IdentifyDrop = TabMain:CreateDropdown({
     Name = " [ Scan Live Mobs ]",
     Columns = 2,
+    KeepOpen = true,
     Callback = function(val)
         -- Parse ID from label: "Pig | ID:173"
         local mobId = string.match(val, "ID:(%d+)")
@@ -259,11 +287,8 @@ local IdentifyDrop = TabMain:CreateDropdown({
             if npcsF then
                 local mob = npcsF:FindFirstChild(mobId)
                 if mob and mob:FindFirstChild("HumanoidRootPart") then
-                    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        hrp.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-                        warn("[TP] " .. val)
-                    end
+                    steppedTeleport(mob.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3))
+                    warn("[TP] " .. val)
                 end
             end
         end
