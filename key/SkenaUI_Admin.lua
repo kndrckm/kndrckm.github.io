@@ -49,58 +49,62 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
     
+    -- Selalu update fungsi LogRemote (agar re-exec mendapat versi terbaru)
+    getgenv()._SKENA_SPY_SERIALIZE = function(v, depth)
+        depth = depth or 0
+        if depth > 3 then return "..." end
+        local ok, result = pcall(function()
+            local t = typeof(v)
+            if t == "string" then return '"' .. v .. '"'
+            elseif t == "number" or t == "boolean" then return tostring(v)
+            elseif t == "nil" then return "nil"
+            elseif t == "table" then
+                local parts = {}
+                local indent = string.rep("  ", depth + 1)
+                for k, val in pairs(v) do
+                    parts[#parts + 1] = indent .. "[" .. getgenv()._SKENA_SPY_SERIALIZE(k, depth + 1) .. "] = " .. getgenv()._SKENA_SPY_SERIALIZE(val, depth + 1)
+                end
+                if #parts == 0 then return "{}" end
+                return "{\n" .. table.concat(parts, ",\n") .. "\n" .. string.rep("  ", depth) .. "}"
+            elseif t == "Instance" then return v:GetFullName()
+            elseif t == "Vector3" then return string.format("Vector3.new(%.2f, %.2f, %.2f)", v.X, v.Y, v.Z)
+            elseif t == "CFrame" then return string.format("CFrame.new(%.2f, %.2f, %.2f)", v.X, v.Y, v.Z)
+            elseif t == "Color3" then return string.format("Color3.new(%.2f, %.2f, %.2f)", v.R, v.G, v.B)
+            elseif t == "EnumItem" then return tostring(v)
+            else return tostring(v) .. " (" .. t .. ")"
+            end
+        end)
+        if ok then return result else return tostring(v) end
+    end
+
+    getgenv()._SKENA_SPY_LOG_FN = function(self, method, args)
+        local timeSec = os.clock()
+        local gap = 0
+        if getgenv()._SKENA_SPY_LAST_TIME then
+            gap = timeSec - getgenv()._SKENA_SPY_LAST_TIME
+        end
+        getgenv()._SKENA_SPY_LAST_TIME = timeSec
+
+        task.spawn(function()
+            pcall(function()
+                local pName = tostring(self.Parent)
+                local logLine = string.format("\n[+%.3fs GAP] [Remote] %s.%s (%s)", gap, pName, tostring(self), method)
+                for i, v in ipairs(args) do
+                    logLine = logLine .. string.format("\n  [%d] = %s", i, getgenv()._SKENA_SPY_SERIALIZE(v, 1))
+                end
+                table.insert(getgenv()._SKENA_SPY_LOGS, logLine)
+            end)
+        end)
+    end
+
     if not getgenv()._SKENA_SPY_HOOKED then
         local success, err = pcall(function()
-            local function serializeValue(v, depth)
-                depth = depth or 0
-                if depth > 3 then return "..." end
-                local t = typeof(v)
-                if t == "string" then return '"' .. v .. '"'
-                elseif t == "number" or t == "boolean" then return tostring(v)
-                elseif t == "nil" then return "nil"
-                elseif t == "table" then
-                    local parts = {}
-                    local indent = string.rep("  ", depth + 1)
-                    for k, val in pairs(v) do
-                        parts[#parts + 1] = indent .. "[" .. serializeValue(k) .. "] = " .. serializeValue(val, depth + 1)
-                    end
-                    if #parts == 0 then return "{}" end
-                    return "{\n" .. table.concat(parts, ",\n") .. "\n" .. string.rep("  ", depth) .. "}"
-                elseif t == "Instance" then return v:GetFullName()
-                elseif t == "Vector3" then return string.format("Vector3.new(%.2f, %.2f, %.2f)", v.X, v.Y, v.Z)
-                elseif t == "CFrame" then return string.format("CFrame.new(%.2f, %.2f, %.2f)", v.X, v.Y, v.Z)
-                elseif t == "Color3" then return string.format("Color3.new(%.2f, %.2f, %.2f)", v.R, v.G, v.B)
-                elseif t == "EnumItem" then return tostring(v)
-                else return tostring(v) .. " (" .. t .. ")"
-                end
-            end
-
-            local function LogRemote(self, method, args)
-                local timeSec = os.clock()
-                local gap = 0
-                if getgenv()._SKENA_SPY_LAST_TIME then
-                    gap = timeSec - getgenv()._SKENA_SPY_LAST_TIME
-                end
-                getgenv()._SKENA_SPY_LAST_TIME = timeSec
-
-                task.spawn(function()
-                    pcall(function()
-                        local pName = tostring(self.Parent)
-                        local logLine = string.format("\n[+%.3fs GAP] [Remote] %s.%s (%s)", gap, pName, tostring(self), method)
-                        for i, v in ipairs(args) do
-                            logLine = logLine .. string.format("\n  [%d] = %s", i, serializeValue(v, 1))
-                        end
-                        table.insert(getgenv()._SKENA_SPY_LOGS, logLine)
-                    end)
-                end)
-            end
-
             -- 1. Hook via Namecall (Metode Umum)
             local oldNamecall
             oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
                 local method = getnamecallmethod()
                 if getgenv()._SKENA_IS_SPYING and (method == "FireServer" or method == "InvokeServer") then
-                    LogRemote(self, method, {...})
+                    getgenv()._SKENA_SPY_LOG_FN(self, method, {...})
                 end
                 return oldNamecall(self, ...)
             end)
@@ -111,13 +115,13 @@ function SkenaAdmin.Attach(Window, DebugData)
             
             local oldFireServer
             oldFireServer = hookfunction(dummyEvent.FireServer, function(self, ...)
-                if getgenv()._SKENA_IS_SPYING then LogRemote(self, "FireServer", {...}) end
+                if getgenv()._SKENA_IS_SPYING then getgenv()._SKENA_SPY_LOG_FN(self, "FireServer", {...}) end
                 return oldFireServer(self, ...)
             end)
             
             local oldInvokeServer
             oldInvokeServer = hookfunction(dummyFunc.InvokeServer, function(self, ...)
-                if getgenv()._SKENA_IS_SPYING then LogRemote(self, "InvokeServer", {...}) end
+                if getgenv()._SKENA_IS_SPYING then getgenv()._SKENA_SPY_LOG_FN(self, "InvokeServer", {...}) end
                 return oldInvokeServer(self, ...)
             end)
             
