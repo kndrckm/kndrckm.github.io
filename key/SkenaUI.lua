@@ -1,3 +1,12 @@
+-- Anti-AFK (Global untuk semua game)
+pcall(function()
+    local VirtualUser = game:GetService("VirtualUser")
+    game.Players.LocalPlayer.Idled:Connect(function()
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new())
+    end)
+end)
+
 local PlaceId = game.PlaceId
 local SkenaHub_CoreURL = ""
 
