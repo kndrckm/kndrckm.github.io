@@ -94,35 +94,7 @@ TabMain:CreateToggleRow({
     end
 })
 
--- 2. Kill Aura (Auto Kill semua player lain)
-RegisterLoop("_SKENA_PLAYER_AURA")
-TabMain:CreateToggleRow({
-    Name = "Kill All Players",
-    OnToggle = function(state)
-        getgenv()._SKENA_PLAYER_AURA = state
-        if state then
-            if not DamageRemote then
-                warn("[Skena] dealdamage remote tidak ditemukan!")
-                getgenv()._SKENA_PLAYER_AURA = false
-                return
-            end
-            task.spawn(function()
-                while getgenv()._SKENA_PLAYER_AURA do
-                    pcall(function()
-                        for _, plr in pairs(Players:GetPlayers()) do
-                            if plr ~= player and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-                                DamageRemote:FireServer({"Melee", plr.Character.HumanoidRootPart.Position, plr.Character})
-                            end
-                        end
-                    end)
-                    task.wait(0.2)
-                end
-            end)
-        end
-    end
-})
-
--- 3. Give Infinite SP (Overflow trick)
+-- 2. Give Infinite SP (Overflow trick)
 TabMain:CreateButtonRow({
     Name = "Give Infinite SP",
     ButtonText = "GET SP",
