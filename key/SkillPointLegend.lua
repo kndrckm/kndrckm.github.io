@@ -343,16 +343,23 @@ local StatDrop = TabMain:CreateDropdownToggle({
                         local statBtn = statsGui.Container.Main.Content.Frame.Frame.ScrollingFrame:FindFirstChild(targetStat)
                         if statBtn and statBtn:FindFirstChild("Main") and statBtn.Main:FindFirstChild("Right") then
                             local maxBtn = statBtn.Main.Right.BtnHolderUpgr.Frame:FindFirstChild("Button")
-                            if maxBtn and maxBtn.Visible then
-                                -- Get center of button
-                                local absPos = maxBtn.AbsolutePosition
-                                local absSize = maxBtn.AbsoluteSize
-                                local centerX = absPos.X + (absSize.X / 2)
-                                local centerY = absPos.Y + (absSize.Y / 2)
+                            if maxBtn then
+                                -- Try to fire the connection directly
+                                local fired = false
+                                if getconnections then
+                                    for _, conn in ipairs(getconnections(maxBtn.MouseButton1Click)) do
+                                        if conn.Function then
+                                            conn.Function()
+                                            fired = true
+                                        end
+                                    end
+                                end
                                 
-                                VIM:SendMouseButtonEvent(centerX, centerY, 0, true, game, 1)
-                                task.wait(0.05)
-                                VIM:SendMouseButtonEvent(centerX, centerY, 0, false, game, 1)
+                                -- Fallback to fireclickdetector style but for UI if supported (some executors map this to mouse1click)
+                                if not fired and mouse1click then
+                                    -- Very hard to fallback reliably without VIM or connections
+                                    warn("Executor doesn't support getconnections, Auto Stats might not work.")
+                                end
                             end
                         end
                     end)
