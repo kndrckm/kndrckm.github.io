@@ -186,6 +186,90 @@ TabMain:CreateToggleRow({
 })
 
 -- ==========================================
+-- IDENTIFY MOBS (Scan & TP satu per satu)
+-- ==========================================
+getgenv()._SKENA_MOB_SCAN_LIST = {}
+getgenv()._SKENA_MOB_SCAN_IDX = 0
+
+TabMain:CreateTextRow({
+    Text = "── Identifikasi Mob ──"
+})
+
+TabMain:CreateButtonRow({
+    Name = "Scan Semua Mob",
+    ButtonText = "Scan",
+    Callback = function(btn)
+        local npcsF = workspace:FindFirstChild("Npcs")
+        if not npcsF then warn("[Scan] Folder Npcs tidak ditemukan!") return end
+        
+        local list = {}
+        local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        
+        for _, mob in ipairs(npcsF:GetChildren()) do
+            if mob:IsA("Model") and mob:FindFirstChild("HumanoidRootPart") then
+                local mobHRP = mob:FindFirstChild("HumanoidRootPart")
+                local dist = hrp and (hrp.Position - mobHRP.Position).Magnitude or 0
+                table.insert(list, {
+                    model = mob,
+                    id = mob.Name,
+                    dist = dist,
+                    pos = string.format("(%.0f, %.0f, %.0f)", mobHRP.Position.X, mobHRP.Position.Y, mobHRP.Position.Z)
+                })
+            end
+        end
+        
+        -- Sort by distance
+        table.sort(list, function(a, b) return a.dist < b.dist end)
+        
+        getgenv()._SKENA_MOB_SCAN_LIST = list
+        getgenv()._SKENA_MOB_SCAN_IDX = 0
+        warn("[Scan] Ditemukan " .. #list .. " mob. Klik 'Next >' untuk mulai TP.")
+    end
+})
+
+TabMain:CreateDoubleButtonRow({
+    Name = "TP ke Mob",
+    Button1Text = "< Prev",
+    Button2Text = "Next >",
+    Callback1 = function()
+        local list = getgenv()._SKENA_MOB_SCAN_LIST
+        if not list or #list == 0 then warn("[ID] Scan dulu!") return end
+        local idx = getgenv()._SKENA_MOB_SCAN_IDX - 1
+        if idx < 1 then idx = #list end
+        getgenv()._SKENA_MOB_SCAN_IDX = idx
+        
+        local mob = list[idx]
+        if mob and mob.model and mob.model:FindFirstChild("HumanoidRootPart") then
+            local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.CFrame = mob.model.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                warn(string.format("[ID] Mob %d/%d | ID: %s | Pos: %s", idx, #list, mob.id, mob.pos))
+            end
+        else
+            warn("[ID] Mob " .. idx .. " sudah tidak ada, skip.")
+        end
+    end,
+    Callback2 = function()
+        local list = getgenv()._SKENA_MOB_SCAN_LIST
+        if not list or #list == 0 then warn("[ID] Scan dulu!") return end
+        local idx = getgenv()._SKENA_MOB_SCAN_IDX + 1
+        if idx > #list then idx = 1 end
+        getgenv()._SKENA_MOB_SCAN_IDX = idx
+        
+        local mob = list[idx]
+        if mob and mob.model and mob.model:FindFirstChild("HumanoidRootPart") then
+            local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.CFrame = mob.model.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                warn(string.format("[ID] Mob %d/%d | ID: %s | Pos: %s", idx, #list, mob.id, mob.pos))
+            end
+        else
+            warn("[ID] Mob " .. idx .. " sudah tidak ada, skip.")
+        end
+    end
+})
+
+-- ==========================================
 -- TAB BOSSES (TP via Gate system)
 -- ==========================================
 TabBoss:CreateTextRow({
