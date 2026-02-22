@@ -42,28 +42,28 @@ end
 -- HELPER: Check if mob is alive
 -- ==========================================
 local function isMobAlive(mob)
-    -- Check 1: HumanoidRootPart anchored = dead/despawning
-    local hrp = mob:FindFirstChild("HumanoidRootPart")
-    if not hrp then return false end
-    if hrp.Anchored then return false end
-    
-    -- Check 2: deadAnim playing on Animator
-    local animCtrl = mob:FindFirstChildWhichIsA("AnimationController")
-    if animCtrl then
-        local animator = animCtrl:FindFirstChildWhichIsA("Animator")
-        if animator then
-            for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
-                if track.Animation and track.Animation.Name == "deadAnim" then
-                    return false
+    local ok, alive = pcall(function()
+        local hrp = mob:FindFirstChild("HumanoidRootPart")
+        if not hrp then return false end
+        if hrp.Anchored then return false end
+        if hrp.Transparency >= 0.9 then return false end
+        
+        -- deadAnim check (wrapped safely)
+        local animCtrl = mob:FindFirstChildWhichIsA("AnimationController")
+        if animCtrl then
+            local animator = animCtrl:FindFirstChildWhichIsA("Animator")
+            if animator then
+                for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
+                    if track.Animation and string.find(track.Animation.Name, "dead") then
+                        return false
+                    end
                 end
             end
         end
-    end
-    
-    -- Check 3: Transparency of main parts (dead mobs often fade out)
-    if hrp.Transparency >= 0.9 then return false end
-    
-    return true
+        
+        return true
+    end)
+    return ok and alive
 end
 
 -- ==========================================
@@ -87,7 +87,16 @@ local function getClosestMob(targetParts, minDist)
             if mobHRP and isMobAlive(mob) then
                 if targetParts then
                     local parts = #mob:GetDescendants()
-                    if parts ~= targetParts then continue end
+                    -- targetParts can be a table of valid values
+                    local match = false
+                    if type(targetParts) == "table" then
+                        for _, p in ipairs(targetParts) do
+                            if parts == p then match = true break end
+                        end
+                    else
+                        match = (parts == targetParts)
+                    end
+                    if not match then continue end
                 end
                 local dist = (hrp.Position - mobHRP.Position).Magnitude
                 if dist >= minDist and dist < closestDist then
@@ -153,14 +162,14 @@ TabMain:CreateTextRow({
 -- MOB LIST (fingerprinted by parts count)
 -- ==========================================
 local MOB_LIST = {
-    { name = "Pig",             hp = "800",    parts = 109 },
-    { name = "Turtle",          hp = "2.5k",   parts = 157 },
-    { name = "Caveman",         hp = "4.5k",   parts = 311 },
-    { name = "Spider",          hp = "12.5k",  parts = 107 },
-    { name = "Mammoth",         hp = "75k",    parts = 141 },
-    { name = "Warlock",         hp = "100k",   parts = 162 },
-    { name = "Viperbloom",      hp = "125k",   parts = 255 },
-    { name = "Spartan",         hp = "250k",   parts = 189 },
+    { name = "Pig",             hp = "800",    parts = {109} },
+    { name = "Turtle",          hp = "2.5k",   parts = {157} },
+    { name = "Caveman",         hp = "4.5k",   parts = {311} },
+    { name = "Spider",          hp = "12.5k",  parts = {107} },
+    { name = "Mammoth",         hp = "75k",    parts = {141} },
+    { name = "Warlock",         hp = "100k",   parts = {162} },
+    { name = "Viperbloom",      hp = "125k",   parts = {255} },
+    { name = "Spartan",         hp = "250k",   parts = {189, 177} },
     { name = "Reaper",          hp = "750k",   parts = nil }, -- belum diketahui
     { name = "Angel",           hp = "1.5m",   parts = nil },
     { name = "Cowboy",          hp = "15m",    parts = nil },
@@ -174,21 +183,25 @@ local MOB_LIST = {
 }
 
 local BOSS_LIST = {
-    { name = "Chief",      hp = "25k",    parts = 321 },
-    { name = "Dino",       hp = "250k",   parts = 267 },
-    { name = "Arachenex",  hp = "450k",   parts = 144 },
-    { name = "Grimroot",   hp = "950k",   parts = 497 },
-    { name = "Leonidas",   hp = "1.25m",  parts = 163 },
-    { name = "Minotaur",   hp = "30b",    parts = 263 },
+    { name = "Chief",      hp = "25k",    parts = {321} },
+    { name = "Dino",       hp = "250k",   parts = {267} },
+    { name = "Arachenex",  hp = "450k",   parts = {144} },
+    { name = "Grimroot",   hp = "950k",   parts = {497} },
+    { name = "Leonidas",   hp = "1.25m",  parts = {163, 164} },
+    { name = "Minotaur",   hp = "30b",    parts = {263} },
 }
 
 -- Build fingerprint lookup: parts -> mob name
 local PARTS_TO_NAME = {}
 for _, m in ipairs(MOB_LIST) do
-    if m.parts then PARTS_TO_NAME[m.parts] = m.name end
+    if m.parts then
+        for _, p in ipairs(m.parts) do PARTS_TO_NAME[p] = m.name end
+    end
 end
 for _, m in ipairs(BOSS_LIST) do
-    if m.parts then PARTS_TO_NAME[m.parts] = m.name .. " (Boss)" end
+    if m.parts then
+        for _, p in ipairs(m.parts) do PARTS_TO_NAME[p] = m.name .. " (Boss)" end
+    end
 end
 
 -- Only show mobs with known fingerprints in Target Mob dropdown
