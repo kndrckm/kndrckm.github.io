@@ -130,10 +130,10 @@ local MOB_LIST = {
     { name = "Caveman",         hp = "4.5k",   parts = 311 },
     { name = "Spider",          hp = "12.5k",  parts = 107 },
     { name = "Mammoth",         hp = "75k",    parts = 141 },
+    { name = "Warlock",         hp = "100k",   parts = 162 },
     { name = "Viperbloom",      hp = "125k",   parts = 255 },
-    { name = "Warlock",         hp = "100k",   parts = nil }, -- belum diketahui
-    { name = "Spartan",         hp = "250k",   parts = nil },
-    { name = "Reaper",          hp = "750k",   parts = nil },
+    { name = "Spartan",         hp = "250k",   parts = 189 },
+    { name = "Reaper",          hp = "750k",   parts = nil }, -- belum diketahui
     { name = "Angel",           hp = "1.5m",   parts = nil },
     { name = "Cowboy",          hp = "15m",    parts = nil },
     { name = "Ghost",           hp = "60m",    parts = nil },
@@ -146,10 +146,12 @@ local MOB_LIST = {
 }
 
 local BOSS_LIST = {
-    { name = "Dino",       hp = "250k",  parts = 267 },
-    { name = "Arachenex",  hp = "450k",  parts = 144 },
-    { name = "Grimroot",   hp = "950k",  parts = 497 },
-    { name = "Minotaur",   hp = "30b",   parts = 263 },
+    { name = "Chief",      hp = "25k",    parts = 321 },
+    { name = "Dino",       hp = "250k",   parts = 267 },
+    { name = "Arachenex",  hp = "450k",   parts = 144 },
+    { name = "Grimroot",   hp = "950k",   parts = 497 },
+    { name = "Leonidas",   hp = "1.25m",  parts = 163 },
+    { name = "Minotaur",   hp = "30b",    parts = 263 },
 }
 
 -- Build fingerprint lookup: parts -> mob name
