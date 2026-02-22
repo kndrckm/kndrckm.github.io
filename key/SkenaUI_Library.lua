@@ -811,6 +811,9 @@ function SkenaUI:CreateWindow(Options)
         function TabData:CreateDropdown(Options)
             local Title = Options.Name or "Dropdown"
             local cb = Options.Callback or function() end
+            local columns = Options.Columns or 1
+            local itemH = 26
+            local gridGap = 4
             
             local Row = Instance.new("Frame", Page)
             Row.Size = UDim2.new(1, 0, 0, 0)
@@ -881,27 +884,43 @@ function SkenaUI:CreateWindow(Options)
             Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
             Scroll.BorderSizePixel = 0
             
-            local SList = Instance.new("UIListLayout", Scroll)
-            SList.Padding = UDim.new(0, 4)
-            SList.SortOrder = Enum.SortOrder.LayoutOrder
+            local itemCount = 0
+            local expandedHeight = 155 -- default
+            
+            if columns > 1 then
+                local SGrid = Instance.new("UIGridLayout", Scroll)
+                SGrid.CellSize = UDim2.new(1 / columns, -(gridGap * 2), 0, itemH)
+                SGrid.CellPadding = UDim2.new(0, gridGap, 0, gridGap)
+                SGrid.SortOrder = Enum.SortOrder.LayoutOrder
+                SGrid.HorizontalAlignment = Enum.HorizontalAlignment.Center
+            else
+                local SList = Instance.new("UIListLayout", Scroll)
+                SList.Padding = UDim.new(0, gridGap)
+                SList.SortOrder = Enum.SortOrder.LayoutOrder
+            end
             
             local isExpanded = false
             ExpandBtn.MouseButton1Click:Connect(function()
                 isExpanded = not isExpanded
-                TweenService:Create(DropFrame, TweenInfo.new(0.25, Enum.EasingStyle.Cubic), {Size = isExpanded and UDim2.new(1, 0, 0, 155) or UDim2.new(1, 0, 0, 0)}):Play()
+                TweenService:Create(DropFrame, TweenInfo.new(0.25, Enum.EasingStyle.Cubic), {Size = isExpanded and UDim2.new(1, 0, 0, expandedHeight) or UDim2.new(1, 0, 0, 0)}):Play()
             end)
 
             local out = {}
             out.Items = {}
             function out:AddItem(itemStr, isDefault)
+                itemCount = itemCount + 1
                 local Itm = Instance.new("TextButton", Scroll)
-                Itm.Size = UDim2.new(1, -8, 0, 26)
+                if columns > 1 then
+                    Itm.Size = UDim2.new(1 / columns, -(gridGap * 2), 0, itemH)
+                else
+                    Itm.Size = UDim2.new(1, -8, 0, itemH)
+                end
                 Itm.BackgroundColor3 = isDefault and Palette.AccentDark or Palette.InputHdr
-                Itm.Text = "  " .. itemStr
-                Itm.TextXAlignment = Enum.TextXAlignment.Left
+                Itm.Text = columns > 1 and itemStr or ("  " .. itemStr)
+                Itm.TextXAlignment = columns > 1 and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left
                 Itm.TextColor3 = isDefault and Color3.new(1,1,1) or Palette.TextSecondary
                 Itm.Font = Enum.Font.GothamMedium
-                Itm.TextSize = 12
+                Itm.TextSize = columns > 1 and 11 or 12
                 Itm.AutoButtonColor = false
                 Instance.new("UICorner", Itm).CornerRadius = UDim.new(0,4)
                 
@@ -927,7 +946,10 @@ function SkenaUI:CreateWindow(Options)
                     pcall(cb, itemStr)
                 end)
                 
-                Scroll.CanvasSize = UDim2.new(0,0,0, SList.AbsoluteContentSize.Y + 10)
+                -- Recalculate expanded height
+                local rows = math.ceil(itemCount / columns)
+                expandedHeight = (rows * (itemH + gridGap)) + gridGap + 4
+                Scroll.CanvasSize = UDim2.new(0, 0, 0, expandedHeight)
             end
             
             return out

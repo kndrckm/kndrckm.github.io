@@ -126,6 +126,7 @@ getgenv().SelectedMob = MOB_LIST[1].name
 -- Dropdown: Target Mob
 local MobDrop = TabMain:CreateDropdown({
     Name = " [ Target Mob ]",
+    Columns = 2,
     Callback = function(val)
         for _, entry in ipairs(MOB_LABELS) do
             if entry.label == val then
