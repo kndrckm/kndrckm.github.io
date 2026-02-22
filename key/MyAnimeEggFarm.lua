@@ -44,6 +44,21 @@ end
 -- ==========================================
 
 -- 1. Auto Interact All ProximityPrompts (fireproximityprompt)
+-- Filter: hanya interact dengan prompt Collect/Sell, skip pet/entity
+local INTERACT_BLACKLIST = {"pet", "entity", "pickup", "equip", "store", "trade", "friend"}
+local function shouldInteract(prompt)
+    local action = (prompt.ActionText or ""):lower()
+    local objText = (prompt.ObjectText or ""):lower()
+    local parentName = prompt.Parent and prompt.Parent.Name:lower() or ""
+    
+    for _, keyword in ipairs(INTERACT_BLACKLIST) do
+        if action:find(keyword) or objText:find(keyword) or parentName:find(keyword) then
+            return false
+        end
+    end
+    return true
+end
+
 RegisterLoop("_SKENA_AUTO_INTERACT")
 TabMain:CreateToggleRow({
     Name = "Auto Interact All (Nearby)",
@@ -56,7 +71,7 @@ TabMain:CreateToggleRow({
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
                     if hrp and fireproximityprompt then
                         for _, obj in ipairs(workspace:GetDescendants()) do
-                            if obj:IsA("ProximityPrompt") and obj.Enabled then
+                            if obj:IsA("ProximityPrompt") and obj.Enabled and shouldInteract(obj) then
                                 local part = obj.Parent
                                 if part and part:IsA("BasePart") then
                                     local dist = (hrp.Position - part.Position).Magnitude
