@@ -171,8 +171,8 @@ local MOB_LIST = {
     { name = "Spartan",         hp = "250k",   parts = {189, 177}, world = "CursedKingdom" },
 
     -- Unknown World yet
-    { name = "Reaper",          hp = "750k",   parts = nil },
-    { name = "Angel",           hp = "1.5m",   parts = nil },
+    { name = "Reaper",          hp = "750k",   parts = {120} },
+    { name = "Angel",           hp = "1.5m",   parts = {133} },
     { name = "Cowboy",          hp = "15m",    parts = nil },
     { name = "Ghost",           hp = "60m",    parts = nil },
     { name = "Totem Sentinel",  hp = "250m",   parts = nil },
@@ -194,7 +194,8 @@ local BOSS_LIST = {
     { name = "Leonidas",   hp = "1.25m",  parts = {163, 164}, world = "CursedKingdom" },
     
     -- Unknown World
-    { name = "Minotaur",   hp = "30b",    parts = {263} },
+    { name = "Minotaur",        hp = "30b",    parts = {263} },
+    { name = "Lightning God",   hp = "25m",    parts = {123} },
 }
 
 -- Build fingerprint lookup: parts -> mob name
