@@ -954,6 +954,17 @@ function SkenaUI:CreateWindow(Options)
                 expandedHeight = (rows * (itemH + gridGap)) + gridGap + 4
                 Scroll.CanvasSize = UDim2.new(0, 0, 0, expandedHeight)
             end
+
+            function out:ClearItems()
+                for _, data in ipairs(out.Items) do
+                    pcall(function() data.Btn:Destroy() end)
+                end
+                out.Items = {}
+                itemCount = 0
+                expandedHeight = 155
+                Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+                DropLabel.Text = "Select v"
+            end
             
             return out
         end
@@ -1144,6 +1155,17 @@ function SkenaUI:CreateWindow(Options)
                 expandedHeight = (rows * (itemH + gridGap)) + gridGap + 4
                 Scroll.CanvasSize = UDim2.new(0, 0, 0, expandedHeight)
             end
+
+            function out:ClearItems()
+                for _, data in ipairs(out.Items) do
+                    pcall(function() data.Btn:Destroy() end)
+                end
+                out.Items = {}
+                itemCount = 0
+                expandedHeight = 155
+                Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+                DropLabel.Text = "Select v"
+            end
             
             return out
         end
@@ -1314,6 +1336,17 @@ function SkenaUI:CreateWindow(Options)
                 local rows = math.ceil(itemCount / columns)
                 expandedHeight = (rows * (itemH + gridGap)) + gridGap + 4
                 Scroll.CanvasSize = UDim2.new(0, 0, 0, expandedHeight)
+            end
+
+            function out:ClearItems()
+                for _, data in ipairs(out.Items) do
+                    pcall(function() data.Btn:Destroy() end)
+                end
+                out.Items = {}
+                itemCount = 0
+                expandedHeight = 155
+                Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+                DropLabel.Text = "Select v"
             end
             
             return out

@@ -432,13 +432,9 @@ IdentifyDrop = TabMain:CreateDropdownButton({
         local npcsF = workspace:FindFirstChild("Npcs")
         if not npcsF then warn("[Scan] Folder Npcs tidak ada!") return end
         
-        -- Default to global if needed
+        -- Clear existing items
         local dropToUse = IdentifyDrop -- Self reference trick
-        
-        for _, data in ipairs(dropToUse.Items) do
-            pcall(function() data.Btn:Destroy() end)
-        end
-        dropToUse.Items = {}
+        dropToUse:ClearItems()
         
         local allMobs = {}
         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
