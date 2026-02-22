@@ -91,71 +91,70 @@ TabMain:CreateTextRow({
 })
 
 -- ==========================================
+-- MOB LIST (dari referensi game)
+-- ==========================================
+local MOB_LIST = {
+    { name = "Pig",             hp = "800" },
+    { name = "Turtle",          hp = "2.5k" },
+    { name = "Caveman",         hp = "4.5k" },
+    { name = "Spider",          hp = "25k" },
+    { name = "Mammoth",         hp = "75k" },
+    { name = "Warlock",         hp = "100k" },
+    { name = "Spartan",         hp = "250k" },
+    { name = "Reaper",          hp = "750k" },
+    { name = "Angel",           hp = "1.5m" },
+    { name = "Cowboy",          hp = "15m" },
+    { name = "Ghost",           hp = "60m" },
+    { name = "Totem Sentinel",  hp = "250m" },
+    { name = "Mummy",           hp = "500m" },
+    { name = "Blightleap",      hp = "2.5b" },
+    { name = "Bonepicker",      hp = "25b" },
+    { name = "Oculon",          hp = "100b" },
+    { name = "Magmaton",        hp = "600b" },
+}
+
+local MOB_LABELS = {}
+for _, m in ipairs(MOB_LIST) do
+    table.insert(MOB_LABELS, { key = m.name, label = m.name .. " [" .. m.hp .. "]" })
+end
+getgenv().SelectedMob = MOB_LIST[1].name
+
+-- ==========================================
 -- TAB MAIN
 -- ==========================================
 
--- 1. Auto Farm (TP ke mob terdekat + auto attack)
-RegisterLoop("_SKENA_AUTO_FARM")
-TabMain:CreateToggleRow({
-    Name = "Auto Farm (TP + Attack)",
-    OnToggle = function(state)
-        getgenv()._SKENA_AUTO_FARM = state
-        if state then
-            task.spawn(function()
-                while getgenv()._SKENA_AUTO_FARM do
-                    local mob, dist = getClosestMob()
-                    if mob then
-                        local mobHRP = mob:FindFirstChild("HumanoidRootPart")
-                        local char = player.Character
-                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                        if mobHRP and hrp then
-                            -- Teleport ke mob jika jauh
-                            if dist > 10 then
-                                hrp.CFrame = mobHRP.CFrame * CFrame.new(0, 0, 3)
-                                task.wait(0.2)
-                            end
-                            -- Attack
-                            simulateAttack()
-                        end
-                    end
-                    task.wait(0.15)
-                end
-            end)
+-- Dropdown: Target Mob
+local MobDrop = TabMain:CreateDropdown({
+    Name = " [ Target Mob ]",
+    Callback = function(val)
+        for _, entry in ipairs(MOB_LABELS) do
+            if entry.label == val then
+                getgenv().SelectedMob = entry.key
+                warn("Target Mob: " .. entry.key)
+                return
+            end
         end
+        getgenv().SelectedMob = val
     end
 })
+for _, entry in ipairs(MOB_LABELS) do
+    MobDrop:AddItem(entry.label, entry.key == MOB_LIST[1].name)
+end
 
--- 2. Auto Attack Only (tanpa TP)
-RegisterLoop("_SKENA_AUTO_ATTACK")
-TabMain:CreateToggleRow({
-    Name = "Auto Attack (No TP)",
-    OnToggle = function(state)
-        getgenv()._SKENA_AUTO_ATTACK = state
-        if state then
-            task.spawn(function()
-                while getgenv()._SKENA_AUTO_ATTACK do
-                    simulateAttack()
-                    task.wait(0.15)
-                end
-            end)
-        end
-    end
-})
-
--- 3. Auto Teleport Only (tanpa attack)
+-- Auto TP to Selected Mob
 RegisterLoop("_SKENA_AUTO_TP_MOB")
 TabMain:CreateToggleRow({
-    Name = "Auto TP to Nearest Mob",
+    Name = "Auto TP to Mob",
     OnToggle = function(state)
         getgenv()._SKENA_AUTO_TP_MOB = state
         if state then
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_TP_MOB do
                     local mob, dist = getClosestMob()
-                    if mob and dist > 10 then
+                    if mob then
                         local mobHRP = mob:FindFirstChild("HumanoidRootPart")
                         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                        if mobHRP and hrp then
+                        if mobHRP and hrp and dist > 10 then
                             hrp.CFrame = mobHRP.CFrame * CFrame.new(0, 0, 3)
                         end
                     end
@@ -166,33 +165,17 @@ TabMain:CreateToggleRow({
     end
 })
 
--- Fast Interact (Default ON)
-getgenv().SkenaNoDelayInteract = true
-task.spawn(function()
-    while getgenv().SkenaNoDelayInteract do
-        for _, v in ipairs(workspace:GetDescendants()) do
-            if v:IsA("ProximityPrompt") and v.HoldDuration > 0 then
-                v.HoldDuration = 0
-            end
-        end
-        task.wait(1)
-    end
-end)
-
+-- Auto Attack
+RegisterLoop("_SKENA_AUTO_ATTACK")
 TabMain:CreateToggleRow({
-    Name = "Fast Interact (No Hold E)",
-    Default = true,
+    Name = "Auto Attack",
     OnToggle = function(state)
-        getgenv().SkenaNoDelayInteract = state
+        getgenv()._SKENA_AUTO_ATTACK = state
         if state then
             task.spawn(function()
-                while getgenv().SkenaNoDelayInteract do
-                    for _, v in ipairs(workspace:GetDescendants()) do
-                        if v:IsA("ProximityPrompt") and v.HoldDuration > 0 then
-                            v.HoldDuration = 0
-                        end
-                    end
-                    task.wait(1)
+                while getgenv()._SKENA_AUTO_ATTACK do
+                    simulateAttack()
+                    task.wait(0.15)
                 end
             end)
         end
