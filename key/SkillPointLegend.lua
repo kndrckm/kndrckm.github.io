@@ -307,6 +307,66 @@ local function doAttack()
 end
 
 -- ==========================================
+-- AUTO STATS
+-- ==========================================
+local STATS_LIST = {
+    { key = "Physical Damage", label = "Physical Dmg" },
+    { key = "Health",          label = "Health" },
+    { key = "Ki/Energy",       label = "Ki/Energy" },
+    { key = "Ki Damage",       label = "Ki Damage" },
+}
+getgenv()._SKENA_AUTO_STAT_TARGET = "Physical Damage"
+
+RegisterLoop("_SKENA_AUTO_STATS")
+local StatDrop = TabMain:CreateDropdownToggle({
+    Name = " [ Auto Add Stats ]",
+    Columns = 2,
+    Callback = function(val)
+        for _, s in ipairs(STATS_LIST) do
+            if s.label == val then
+                getgenv()._SKENA_AUTO_STAT_TARGET = s.key
+                warn("Auto Stat Target: " .. s.key)
+                return
+            end
+        end
+    end,
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_STATS = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_STATS do
+                    pcall(function()
+                        local targetStat = getgenv()._SKENA_AUTO_STAT_TARGET
+                        local statsGui = player.PlayerGui:FindFirstChild("Stats")
+                        if not statsGui then return end
+                        
+                        local statBtn = statsGui.Container.Main.Content.Frame.Frame.ScrollingFrame:FindFirstChild(targetStat)
+                        if statBtn and statBtn:FindFirstChild("Main") and statBtn.Main:FindFirstChild("Right") then
+                            local maxBtn = statBtn.Main.Right.BtnHolderUpgr.Frame:FindFirstChild("Button")
+                            if maxBtn and maxBtn.Visible then
+                                -- Get center of button
+                                local absPos = maxBtn.AbsolutePosition
+                                local absSize = maxBtn.AbsoluteSize
+                                local centerX = absPos.X + (absSize.X / 2)
+                                local centerY = absPos.Y + (absSize.Y / 2)
+                                
+                                VIM:SendMouseButtonEvent(centerX, centerY, 0, true, game, 1)
+                                task.wait(0.05)
+                                VIM:SendMouseButtonEvent(centerX, centerY, 0, false, game, 1)
+                            end
+                        end
+                    end)
+                    task.wait(0.5)
+                end
+            end)
+        end
+    end
+})
+for _, entry in ipairs(STATS_LIST) do
+    StatDrop:AddItem(entry.label, entry.key == "Physical Damage")
+end
+
+-- ==========================================
 -- AUTO ATTACK (multiple methods)
 -- ==========================================
 local ATTACK_METHODS = {
