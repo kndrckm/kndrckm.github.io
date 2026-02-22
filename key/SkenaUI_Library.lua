@@ -888,7 +888,7 @@ function SkenaUI:CreateWindow(Options)
             local isExpanded = false
             ExpandBtn.MouseButton1Click:Connect(function()
                 isExpanded = not isExpanded
-                TweenService:Create(DropFrame, TweenInfo.new(0.25, Enum.EasingStyle.Cubic), {Size = isExpanded and UDim2.new(1, 0, 0, 120) or UDim2.new(1, 0, 0, 0)}):Play()
+                TweenService:Create(DropFrame, TweenInfo.new(0.25, Enum.EasingStyle.Cubic), {Size = isExpanded and UDim2.new(1, 0, 0, 155) or UDim2.new(1, 0, 0, 0)}):Play()
             end)
 
             local out = {}
