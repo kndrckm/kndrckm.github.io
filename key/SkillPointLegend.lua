@@ -41,7 +41,7 @@ end
 -- ==========================================
 -- HELPER: Find closest mob (filter by parts fingerprint)
 -- ==========================================
-local function getClosestMob(targetParts)
+local function getClosestMob(targetParts, minDist)
     local npcsFolder = workspace:FindFirstChild("Npcs")
     if not npcsFolder then return nil end
     
@@ -51,18 +51,18 @@ local function getClosestMob(targetParts)
     
     local closest = nil
     local closestDist = math.huge
+    minDist = minDist or 0
     
     for _, mob in ipairs(npcsFolder:GetChildren()) do
         if mob:IsA("Model") then
             local mobHRP = mob:FindFirstChild("HumanoidRootPart")
             if mobHRP then
-                -- Filter by parts count if specified
                 if targetParts then
                     local parts = #mob:GetDescendants()
                     if parts ~= targetParts then continue end
                 end
                 local dist = (hrp.Position - mobHRP.Position).Magnitude
-                if dist < closestDist then
+                if dist >= minDist and dist < closestDist then
                     closestDist = dist
                     closest = mob
                 end
@@ -203,11 +203,12 @@ TabMain:CreateToggleRow({
         if state then
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_TP_MOB do
-                    local mob, dist = getClosestMob(getgenv().SelectedMobParts)
+                    -- Skip mob yang sudah dekat (< 10 stud), cari yang berikutnya
+                    local mob, dist = getClosestMob(getgenv().SelectedMobParts, 10)
                     if mob then
                         local mobHRP = mob:FindFirstChild("HumanoidRootPart")
                         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                        if mobHRP and hrp and dist > 10 then
+                        if mobHRP and hrp then
                             hrp.CFrame = mobHRP.CFrame * CFrame.new(0, 0, 3)
                         end
                     end
@@ -319,35 +320,32 @@ TabMain:CreateButtonRow({
         end
         IdentifyDrop.Items = {}
         
-        local seen = {}
-        local uniqueMobs = {}
+        -- Show ALL mobs (no dedup), label with known name
+        local allMobs = {}
         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
         
         for _, mob in ipairs(npcsF:GetChildren()) do
             if mob:IsA("Model") and mob:FindFirstChild("HumanoidRootPart") then
                 local parts = #mob:GetDescendants()
-                if not seen[parts] then
-                    seen[parts] = true
-                    local mobHRP = mob.HumanoidRootPart
-                    local dist = hrp and math.floor((hrp.Position - mobHRP.Position).Magnitude) or 0
-                    local knownName = PARTS_TO_NAME[parts] or "???"
-                    table.insert(uniqueMobs, {
-                        id = mob.Name,
-                        parts = parts,
-                        dist = dist,
-                        knownName = knownName
-                    })
-                end
+                local mobHRP = mob.HumanoidRootPart
+                local dist = hrp and math.floor((hrp.Position - mobHRP.Position).Magnitude) or 0
+                local knownName = PARTS_TO_NAME[parts] or "???"
+                table.insert(allMobs, {
+                    id = mob.Name,
+                    parts = parts,
+                    dist = dist,
+                    knownName = knownName
+                })
             end
         end
         
-        table.sort(uniqueMobs, function(a, b) return a.dist < b.dist end)
+        table.sort(allMobs, function(a, b) return a.dist < b.dist end)
         
-        for i, m in ipairs(uniqueMobs) do
-            IdentifyDrop:AddItem(m.knownName .. " | ID:" .. m.id .. " (" .. m.parts .. "p)", i == 1)
+        for i, m in ipairs(allMobs) do
+            IdentifyDrop:AddItem(m.knownName .. " #" .. i .. " | ID:" .. m.id, i == 1)
         end
         
-        warn("[Scan] " .. #uniqueMobs .. " tipe mob unik.")
+        warn("[Scan] " .. #allMobs .. " mob total.")
     end
 })
 
