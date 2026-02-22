@@ -34,6 +34,11 @@ local function RegisterLoop(flagName)
     table.insert(getgenv()._SKENA_EGG_LOOPS, flagName)
 end
 
+-- Helper: buat payload sesuai format game
+local function raw(data)
+    return {["__raw"] = true, ["data"] = data or {}}
+end
+
 -- ==========================================
 -- TAB MAIN
 -- ==========================================
@@ -48,7 +53,7 @@ TabMain:CreateToggleRow({
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_COLLECT_EGG do
                     pcall(function()
-                        instances._collectEarnings:FireServer({})
+                        instances._collectEarnings:FireServer(raw())
                     end)
                     task.wait(0.5)
                 end
@@ -67,9 +72,32 @@ TabMain:CreateToggleRow({
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_SELL_EGG do
                     pcall(function()
-                        instances._sellStack:FireServer({})
+                        instances._sellStack:FireServer(raw())
                     end)
                     task.wait(0.5)
+                end
+            end)
+        end
+    end
+})
+
+-- 3. Auto Request Egg (Spawn + Skip Hatch)
+RegisterLoop("_SKENA_AUTO_REQUEST_EGG")
+TabMain:CreateToggleRow({
+    Name = "Auto Request Egg",
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_REQUEST_EGG = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_REQUEST_EGG do
+                    pcall(function()
+                        instances._requestEgg:FireServer(raw())
+                    end)
+                    task.wait(0.3)
+                    pcall(function()
+                        instances._requestEgg:FireServer(raw({["confirmedSkip"] = true}))
+                    end)
+                    task.wait(0.3)
                 end
             end)
         end
