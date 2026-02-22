@@ -85,19 +85,30 @@ local function steppedTeleport(targetCFrame)
     local endPos = targetCFrame.Position
     local totalDist = (endPos - startPos).Magnitude
     
-    if totalDist <= 100 then
+    -- Short distance: just teleport directly
+    if totalDist <= 50 then
         hrp.CFrame = targetCFrame
+        hrp.Velocity = Vector3.new(0, 0, 0)
         return
     end
     
-    -- Teleport in 100-stud steps
-    local steps = math.ceil(totalDist / 100)
+    -- Long distance: teleport in small steps to avoid rubber-banding
+    local stepSize = 50
+    local steps = math.ceil(totalDist / stepSize)
     for i = 1, steps do
+        if not char or not char.Parent then return end
         local alpha = i / steps
         local pos = startPos:Lerp(endPos, alpha)
-        hrp.CFrame = CFrame.new(pos) * (targetCFrame - targetCFrame.Position)
-        task.wait(0.1)
+        hrp.CFrame = CFrame.new(pos)
+        hrp.Velocity = Vector3.new(0, 0, 0)
+        if hrp:FindFirstChild("BodyVelocity") then
+            hrp.BodyVelocity:Destroy()
+        end
+        task.wait(0.15)
     end
+    -- Final precise position
+    hrp.CFrame = targetCFrame
+    hrp.Velocity = Vector3.new(0, 0, 0)
 end
 
 -- ==========================================
