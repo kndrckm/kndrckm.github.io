@@ -69,20 +69,6 @@ local function getClosestMob()
 end
 
 -- ==========================================
--- HELPER: Simulate attack (non-intrusive)
--- ==========================================
-local function simulateAttack()
-    pcall(function()
-        -- mouse1click is executor-level, does not hijack cursor
-        if mouse1click then
-            mouse1click()
-        elseif click then
-            click()
-        end
-    end)
-end
-
--- ==========================================
 -- STATUS
 -- ==========================================
 local npcsFolder = workspace:FindFirstChild("Npcs")
@@ -93,7 +79,7 @@ TabMain:CreateTextRow({
 })
 
 -- ==========================================
--- MOB LIST (dari referensi game)
+-- MOB LIST (dari referensi game, belum di-mapping)
 -- ==========================================
 local MOB_LIST = {
     { name = "Pig",             hp = "800" },
@@ -125,7 +111,7 @@ getgenv().SelectedMob = MOB_LIST[1].name
 -- TAB MAIN
 -- ==========================================
 
--- Dropdown: Target Mob
+-- Dropdown: Target Mob (untuk auto-farm nanti)
 local MobDrop = TabMain:CreateDropdown({
     Name = " [ Target Mob ]",
     Columns = 2,
@@ -144,7 +130,7 @@ for _, entry in ipairs(MOB_LABELS) do
     MobDrop:AddItem(entry.label, entry.key == MOB_LIST[1].name)
 end
 
--- Auto TP to Selected Mob
+-- Auto TP to Selected Mob (closest)
 RegisterLoop("_SKENA_AUTO_TP_MOB")
 TabMain:CreateToggleRow({
     Name = "Auto TP to Mob",
@@ -168,104 +154,83 @@ TabMain:CreateToggleRow({
     end
 })
 
--- Auto Attack
-RegisterLoop("_SKENA_AUTO_ATTACK")
-TabMain:CreateToggleRow({
-    Name = "Auto Attack",
-    OnToggle = function(state)
-        getgenv()._SKENA_AUTO_ATTACK = state
-        if state then
-            task.spawn(function()
-                while getgenv()._SKENA_AUTO_ATTACK do
-                    simulateAttack()
-                    task.wait(0.15)
-                end
-            end)
-        end
-    end
-})
-
 -- ==========================================
--- IDENTIFY MOBS (Scan & TP satu per satu)
+-- IDENTIFY MOBS (Scan & TP via Dropdown)
 -- ==========================================
-getgenv()._SKENA_MOB_SCAN_LIST = {}
-getgenv()._SKENA_MOB_SCAN_IDX = 0
-
 TabMain:CreateTextRow({
     Text = "── Identifikasi Mob ──"
 })
 
+-- Scan Npcs folder, collect unique mob types by child count (as fingerprint)
+getgenv()._SKENA_SCANNED_MOBS = {}
+
+local IdentifyDrop = TabMain:CreateDropdown({
+    Name = " [ Scan Live Mobs ]",
+    Columns = 2,
+    Callback = function(val)
+        -- Parse ID from label: "ID:57 (136p)"
+        local mobId = string.match(val, "ID:(%d+)")
+        if mobId then
+            local npcsF = workspace:FindFirstChild("Npcs")
+            if npcsF then
+                local mob = npcsF:FindFirstChild(mobId)
+                if mob and mob:FindFirstChild("HumanoidRootPart") then
+                    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        hrp.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                        warn("[TP] Teleported ke Mob ID: " .. mobId)
+                    end
+                else
+                    warn("[TP] Mob " .. mobId .. " tidak ditemukan / hilang")
+                end
+            end
+        end
+    end
+})
+
 TabMain:CreateButtonRow({
-    Name = "Scan Semua Mob",
+    Name = "Refresh Mob List",
     ButtonText = "Scan",
     Callback = function(btn)
         local npcsF = workspace:FindFirstChild("Npcs")
-        if not npcsF then warn("[Scan] Folder Npcs tidak ditemukan!") return end
+        if not npcsF then warn("[Scan] Folder Npcs tidak ada!") return end
         
-        local list = {}
+        -- Clear existing dropdown items
+        for _, data in ipairs(IdentifyDrop.Items) do
+            pcall(function() data.Btn:Destroy() end)
+        end
+        IdentifyDrop.Items = {}
+        
+        -- Collect mobs, de-duplicate by child count (fingerprint)
+        local seen = {}
+        local uniqueMobs = {}
+        
         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
         
         for _, mob in ipairs(npcsF:GetChildren()) do
             if mob:IsA("Model") and mob:FindFirstChild("HumanoidRootPart") then
-                local mobHRP = mob:FindFirstChild("HumanoidRootPart")
-                local dist = hrp and (hrp.Position - mobHRP.Position).Magnitude or 0
-                table.insert(list, {
-                    model = mob,
-                    id = mob.Name,
-                    dist = dist,
-                    pos = string.format("(%.0f, %.0f, %.0f)", mobHRP.Position.X, mobHRP.Position.Y, mobHRP.Position.Z)
-                })
+                local parts = #mob:GetDescendants()
+                if not seen[parts] then
+                    seen[parts] = true
+                    local mobHRP = mob.HumanoidRootPart
+                    local dist = hrp and math.floor((hrp.Position - mobHRP.Position).Magnitude) or 0
+                    table.insert(uniqueMobs, {
+                        id = mob.Name,
+                        parts = parts,
+                        dist = dist
+                    })
+                end
             end
         end
         
         -- Sort by distance
-        table.sort(list, function(a, b) return a.dist < b.dist end)
+        table.sort(uniqueMobs, function(a, b) return a.dist < b.dist end)
         
-        getgenv()._SKENA_MOB_SCAN_LIST = list
-        getgenv()._SKENA_MOB_SCAN_IDX = 0
-        warn("[Scan] Ditemukan " .. #list .. " mob. Klik 'Next >' untuk mulai TP.")
-    end
-})
-
-TabMain:CreateDoubleButtonRow({
-    Name = "TP ke Mob",
-    Button1Text = "< Prev",
-    Button2Text = "Next >",
-    Callback1 = function()
-        local list = getgenv()._SKENA_MOB_SCAN_LIST
-        if not list or #list == 0 then warn("[ID] Scan dulu!") return end
-        local idx = getgenv()._SKENA_MOB_SCAN_IDX - 1
-        if idx < 1 then idx = #list end
-        getgenv()._SKENA_MOB_SCAN_IDX = idx
-        
-        local mob = list[idx]
-        if mob and mob.model and mob.model:FindFirstChild("HumanoidRootPart") then
-            local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                hrp.CFrame = mob.model.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-                warn(string.format("[ID] Mob %d/%d | ID: %s | Pos: %s", idx, #list, mob.id, mob.pos))
-            end
-        else
-            warn("[ID] Mob " .. idx .. " sudah tidak ada, skip.")
+        for i, m in ipairs(uniqueMobs) do
+            IdentifyDrop:AddItem("ID:" .. m.id .. " (" .. m.parts .. "p)", i == 1)
         end
-    end,
-    Callback2 = function()
-        local list = getgenv()._SKENA_MOB_SCAN_LIST
-        if not list or #list == 0 then warn("[ID] Scan dulu!") return end
-        local idx = getgenv()._SKENA_MOB_SCAN_IDX + 1
-        if idx > #list then idx = 1 end
-        getgenv()._SKENA_MOB_SCAN_IDX = idx
         
-        local mob = list[idx]
-        if mob and mob.model and mob.model:FindFirstChild("HumanoidRootPart") then
-            local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                hrp.CFrame = mob.model.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-                warn(string.format("[ID] Mob %d/%d | ID: %s | Pos: %s", idx, #list, mob.id, mob.pos))
-            end
-        else
-            warn("[ID] Mob " .. idx .. " sudah tidak ada, skip.")
-        end
+        warn("[Scan] " .. #uniqueMobs .. " tipe mob unik ditemukan. Pilih di dropdown untuk TP.")
     end
 })
 
