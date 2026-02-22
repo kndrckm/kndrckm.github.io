@@ -307,73 +307,6 @@ local function doAttack()
 end
 
 -- ==========================================
--- AUTO STATS
--- ==========================================
-local STATS_LIST = {
-    { key = "Physical Damage", label = "Physical Dmg" },
-    { key = "Health",          label = "Health" },
-    { key = "Ki/Energy",       label = "Ki/Energy" },
-    { key = "Ki Damage",       label = "Ki Damage" },
-}
-getgenv()._SKENA_AUTO_STAT_TARGET = "Physical Damage"
-
-RegisterLoop("_SKENA_AUTO_STATS")
-local StatDrop = TabMain:CreateDropdownToggle({
-    Name = " [ Auto Add Stats ]",
-    Columns = 2,
-    Callback = function(val)
-        for _, s in ipairs(STATS_LIST) do
-            if s.label == val then
-                getgenv()._SKENA_AUTO_STAT_TARGET = s.key
-                warn("Auto Stat Target: " .. s.key)
-                return
-            end
-        end
-    end,
-    OnToggle = function(state)
-        getgenv()._SKENA_AUTO_STATS = state
-        if state then
-            task.spawn(function()
-                while getgenv()._SKENA_AUTO_STATS do
-                    pcall(function()
-                        local targetStat = getgenv()._SKENA_AUTO_STAT_TARGET
-                        local statsGui = player.PlayerGui:FindFirstChild("Stats")
-                        if not statsGui then return end
-                        
-                        local statBtn = statsGui.Container.Main.Content.Frame.Frame.ScrollingFrame:FindFirstChild(targetStat)
-                        if statBtn and statBtn:FindFirstChild("Main") and statBtn.Main:FindFirstChild("Right") then
-                            local maxBtn = statBtn.Main.Right.BtnHolderUpgr.Frame:FindFirstChild("Button")
-                            if maxBtn then
-                                -- Try to fire the connection directly
-                                local fired = false
-                                if getconnections then
-                                    for _, conn in ipairs(getconnections(maxBtn.MouseButton1Click)) do
-                                        if conn.Function then
-                                            conn.Function()
-                                            fired = true
-                                        end
-                                    end
-                                end
-                                
-                                -- Fallback to fireclickdetector style but for UI if supported (some executors map this to mouse1click)
-                                if not fired and mouse1click then
-                                    -- Very hard to fallback reliably without VIM or connections
-                                    warn("Executor doesn't support getconnections, Auto Stats might not work.")
-                                end
-                            end
-                        end
-                    end)
-                    task.wait(0.5)
-                end
-            end)
-        end
-    end
-})
-for _, entry in ipairs(STATS_LIST) do
-    StatDrop:AddItem(entry.label, entry.key == "Physical Damage")
-end
-
--- ==========================================
 -- AUTO ATTACK (multiple methods)
 -- ==========================================
 local ATTACK_METHODS = {
@@ -597,6 +530,47 @@ end)
 -- ==========================================
 TabSettings:CreateTextRow({
     Text = getgenv()._SKENA_ANTI_AFK and "🟢 Anti-AFK Active" or "🔴 Anti-AFK Failed"
+})
+
+local RunService = game:GetService("RunService")
+local blackScreenGui = nil
+
+local function toggleBlackScreen(state)
+    if state then
+        pcall(function()
+            if not blackScreenGui then
+                blackScreenGui = Instance.new("ScreenGui")
+                blackScreenGui.Name = "SkenaBlackScreen"
+                blackScreenGui.IgnoreGuiInset = true
+                -- Taruh di belakang HUD utama tapi di depan 3D Camera
+                blackScreenGui.DisplayOrder = -100 
+                
+                local bg = Instance.new("Frame", blackScreenGui)
+                bg.Size = UDim2.new(1, 0, 1, 0)
+                bg.BackgroundColor3 = Color3.new(0, 0, 0)
+                bg.BorderSizePixel = 0
+            end
+            
+            -- Matikan 3D rendering jika executor support (sangat menghemat CPU)
+            pcall(function() RunService:Set3dRenderingEnabled(false) end)
+            
+            local targetParent = pcall(function() return game:GetService("CoreGui") end) and game:GetService("CoreGui") or player.PlayerGui
+            blackScreenGui.Parent = targetParent
+        end)
+    else
+        pcall(function()
+            if blackScreenGui then
+                blackScreenGui.Parent = nil
+            end
+            pcall(function() RunService:Set3dRenderingEnabled(true) end)
+        end)
+    end
+end
+
+TabSettings:CreateToggleRow({
+    Name = " [ Black Screen (Low CPU) ]",
+    Callback = toggleBlackScreen,    -- Jika UI parser pakai Callback
+    OnToggle = toggleBlackScreen     -- Jika UI parser pakai OnToggle
 })
 
 TabSettings:CreateInputRow({
