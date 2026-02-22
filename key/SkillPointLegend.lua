@@ -173,10 +173,10 @@ local MOB_LIST = {
     -- Unknown World yet
     { name = "Reaper",          hp = "750k",   parts = {120} },
     { name = "Angel",           hp = "1.5m",   parts = {133} },
-    { name = "Cowboy",          hp = "15m",    parts = nil },
-    { name = "Ghost",           hp = "60m",    parts = nil },
-    { name = "Totem Sentinel",  hp = "250m",   parts = nil },
-    { name = "Mummy",           hp = "500m",   parts = nil },
+    { name = "Cowboy",          hp = "15m",    parts = {171} },
+    { name = "Ghost",           hp = "60m",    parts = {84} },
+    { name = "Totem Sentinel",  hp = "250m",   parts = {222} },
+    { name = "Mummy",           hp = "500m",   parts = {816} },
     { name = "Blightleap",      hp = "2.5b",   parts = nil },
     { name = "Bonepicker",      hp = "25b",    parts = nil },
     { name = "Oculon",          hp = "100b",   parts = nil },
@@ -196,6 +196,8 @@ local BOSS_LIST = {
     -- Unknown World
     { name = "Minotaur",        hp = "30b",    parts = {263} },
     { name = "Lightning God",   hp = "25m",    parts = {123} },
+    { name = "Sand Golem",      hp = "2b",     parts = {614} },
+    { name = "Hydra Worm",      hp = "4b",     parts = {355} },
 }
 
 -- Build fingerprint lookup: parts -> mob name
