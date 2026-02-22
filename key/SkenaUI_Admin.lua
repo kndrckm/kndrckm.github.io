@@ -355,6 +355,52 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
 
+    -- Scanner: Mobs / NPCs (Humanoid di workspace)
+    TabAdmin:CreateButtonRow({
+        Name = "Scan Mobs / NPCs",
+        ButtonText = "Scan",
+        Callback = function(btn)
+            local ok, errMsg = pcall(function()
+                local lp = game.Players.LocalPlayer
+                local playerNames = {}
+                for _, p in ipairs(game.Players:GetPlayers()) do
+                    playerNames[p.Name] = true
+                end
+                
+                local lines = {"=== SKENA MOB/NPC SCAN ==="}
+                local count = 0
+                
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("Humanoid") and obj.Parent and obj.Parent:IsA("Model") then
+                        local model = obj.Parent
+                        if not playerNames[model.Name] and model ~= lp.Character then
+                            count = count + 1
+                            local hrp = model:FindFirstChild("HumanoidRootPart") or model.PrimaryPart
+                            local pos = hrp and string.format("(%.0f, %.0f, %.0f)", hrp.Position.X, hrp.Position.Y, hrp.Position.Z) or "?"
+                            lines[#lines + 1] = string.format("[%d] %s | HP: %s/%s | Pos: %s | Path: %s",
+                                count, model.Name, tostring(math.floor(obj.Health)), tostring(math.floor(obj.MaxHealth)), pos, model:GetFullName())
+                        end
+                    end
+                end
+                
+                lines[#lines + 1] = "\nTotal: " .. count
+                local finalStr = table.concat(lines, "\n")
+                if setclipboard then
+                    setclipboard(finalStr)
+                    warn("[Scan] " .. count .. " mob/NPC dicopy ke clipboard!")
+                    animateBtn(btn, true)
+                else
+                    print(finalStr)
+                    animateBtn(btn, false)
+                end
+            end)
+            if not ok then
+                warn("[Scan Mob ERROR] " .. tostring(errMsg))
+                animateBtn(btn, false)
+            end
+        end
+    })
+
     -- Auto Interact: Toggle + Copy Log (1 baris)
     getgenv()._SKENA_INTERACT_LOGS = getgenv()._SKENA_INTERACT_LOGS or {}
     TabAdmin:CreateToggleButtonRow({
