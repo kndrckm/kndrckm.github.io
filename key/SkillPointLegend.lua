@@ -203,7 +203,6 @@ TabMain:CreateToggleRow({
         if state then
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_TP_MOB do
-                    -- Skip mob yang sudah dekat (< 10 stud), cari yang berikutnya
                     local mob, dist = getClosestMob(getgenv().SelectedMobParts, 10)
                     if mob then
                         local mobHRP = mob:FindFirstChild("HumanoidRootPart")
@@ -220,22 +219,92 @@ TabMain:CreateToggleRow({
 })
 
 -- ==========================================
--- KILL AURA (WIP - belum terpublish method)
+-- AUTO ATTACK (multiple methods)
 -- ==========================================
-getgenv()._SKENA_KILL_RANGE = 55
+local ATTACK_METHODS = {
+    { key = "mouse1click",   label = "mouse1click" },
+    { key = "keypress_f",    label = "Keypress F" },
+    { key = "keypress_e",    label = "Keypress E" },
+    { key = "tool_activate", label = "Tool Activate" },
+    { key = "vim_click",     label = "VIM Click" },
+}
+getgenv()._SKENA_ATTACK_METHOD = "mouse1click"
 
-TabMain:CreateInputRow({
-    Name = "Set Range",
-    Placeholder = "55",
-    Default = "55",
+local AtkDrop = TabMain:CreateDropdown({
+    Name = " [ Attack Method ]",
+    Columns = 2,
+    KeepOpen = true,
     Callback = function(val)
-        getgenv()._SKENA_KILL_RANGE = tonumber(val) or 55
+        for _, m in ipairs(ATTACK_METHODS) do
+            if m.label == val then
+                getgenv()._SKENA_ATTACK_METHOD = m.key
+                warn("Attack Method: " .. m.key)
+                return
+            end
+        end
     end
 })
+for _, m in ipairs(ATTACK_METHODS) do
+    AtkDrop:AddItem(m.label, m.key == "mouse1click")
+end
+
+local VIM = game:GetService("VirtualInputManager")
+
+local function doAttack()
+    local method = getgenv()._SKENA_ATTACK_METHOD
+    pcall(function()
+        if method == "mouse1click" then
+            if mouse1click then mouse1click() end
+        elseif method == "keypress_f" then
+            if keypress then keypress(0x46) task.wait(0.05) keyrelease(0x46) end
+        elseif method == "keypress_e" then
+            if keypress then keypress(0x45) task.wait(0.05) keyrelease(0x45) end
+        elseif method == "tool_activate" then
+            local char = player.Character
+            if char then
+                local tool = char:FindFirstChildWhichIsA("Tool")
+                if tool then tool:Activate() end
+            end
+        elseif method == "vim_click" then
+            VIM:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+            task.wait(0.05)
+            VIM:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+        end
+    end)
+end
+
+RegisterLoop("_SKENA_AUTO_ATTACK")
+TabMain:CreateToggleRow({
+    Name = "Auto Attack",
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_ATTACK = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_ATTACK do
+                    doAttack()
+                    task.wait(0.15)
+                end
+            end)
+        end
+    end
+})
+
+-- ==========================================
+-- KILL AURA (WIP - slider + toggle)
+-- ==========================================
+getgenv()._SKENA_KILL_RANGE = 25
 
 RegisterLoop("_SKENA_KILL_AURA")
 TabMain:CreateToggleRow({
     Name = "Kill Aura",
+    HasInput = true,
+    InputPlaceholder = "25",
+    InputDefault = "25",
+    InputWidth = 35,
+    InputPrefix = "R:",
+    OnInputChange = function(val)
+        getgenv()._SKENA_KILL_RANGE = tonumber(val) or 25
+    end,
     OnToggle = function(state)
         getgenv()._SKENA_KILL_AURA = state
         if state then
@@ -246,7 +315,7 @@ TabMain:CreateToggleRow({
                         local hrp = char and char:FindFirstChild("HumanoidRootPart")
                         if not hrp then return end
                         
-                        local range = getgenv()._SKENA_KILL_RANGE or 55
+                        local range = getgenv()._SKENA_KILL_RANGE or 25
                         local npcsF = workspace:FindFirstChild("Npcs")
                         if not npcsF then return end
                         
@@ -257,9 +326,6 @@ TabMain:CreateToggleRow({
                                 if mobHRP then
                                     local dist = (hrp.Position - mobHRP.Position).Magnitude
                                     if dist <= range then
-                                        -- TODO: Replace with actual attack method
-                                        -- Method belum diketahui, placeholder:
-                                        -- Kemungkinan: ByteNet buffer, atau firetouchinterest, atau remote lain
                                         pcall(function()
                                             if firetouchinterest then
                                                 firetouchinterest(hrp, mobHRP, 0)
@@ -342,7 +408,7 @@ TabMain:CreateButtonRow({
         table.sort(allMobs, function(a, b) return a.dist < b.dist end)
         
         for i, m in ipairs(allMobs) do
-            IdentifyDrop:AddItem(m.knownName .. " #" .. i .. " | ID:" .. m.id, i == 1)
+            IdentifyDrop:AddItem(m.knownName .. " #" .. i .. " | ID:" .. m.id .. (m.knownName == "???" and (" (" .. m.parts .. "p)") or ""), i == 1)
         end
         
         warn("[Scan] " .. #allMobs .. " mob total.")
