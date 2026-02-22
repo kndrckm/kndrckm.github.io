@@ -97,6 +97,13 @@ function SkenaAdmin.Attach(Window, DebugData)
         end)
     end
 
+    -- Force re-hook jika versi berubah
+    local SPY_VERSION = 3
+    if getgenv()._SKENA_SPY_VERSION ~= SPY_VERSION then
+        getgenv()._SKENA_SPY_HOOKED = false
+        getgenv()._SKENA_SPY_VERSION = SPY_VERSION
+    end
+
     if not getgenv()._SKENA_SPY_HOOKED then
         local success, err = pcall(function()
             -- 1. Hook via Namecall (Metode Umum)
