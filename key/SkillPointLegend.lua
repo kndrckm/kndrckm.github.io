@@ -149,28 +149,29 @@ local function steppedTeleport(targetCFrame)
 end
 
 -- ==========================================
--- STATUS
+-- WORLDS & MOB LIST (fingerprinted by parts count)
 -- ==========================================
-local npcsFolder = workspace:FindFirstChild("Npcs")
-TabMain:CreateTextRow({
-    Text = npcsFolder 
-        and ("✅ Npcs ditemukan (" .. #npcsFolder:GetChildren() .. " mob)")
-        or "❌ Folder Npcs tidak ditemukan!"
-})
+local WORLDS = {
+    Grassland = Vector3.new(149.254, 12.000, 518.938),
+    CursedKingdom = Vector3.new(2543.238, 84.500, -669.682)
+}
 
--- ==========================================
--- MOB LIST (fingerprinted by parts count)
--- ==========================================
 local MOB_LIST = {
-    { name = "Pig",             hp = "800",    parts = {109} },
-    { name = "Turtle",          hp = "2.5k",   parts = {157} },
-    { name = "Caveman",         hp = "4.5k",   parts = {311} },
-    { name = "Spider",          hp = "12.5k",  parts = {107} },
-    { name = "Mammoth",         hp = "75k",    parts = {141} },
-    { name = "Warlock",         hp = "100k",   parts = {162} },
-    { name = "Viperbloom",      hp = "125k",   parts = {255} },
-    { name = "Spartan",         hp = "250k",   parts = {189, 177} },
-    { name = "Reaper",          hp = "750k",   parts = nil }, -- belum diketahui
+    -- Grassland
+    { name = "Snail",           hp = "10",     parts = {116}, world = "Grassland" },
+    { name = "Pig",             hp = "800",    parts = {109}, world = "Grassland" },
+    { name = "Turtle",          hp = "2.5k",   parts = {157}, world = "Grassland" },
+    { name = "Caveman",         hp = "4.5k",   parts = {311}, world = "Grassland" },
+    { name = "Spider",          hp = "12.5k",  parts = {107}, world = "Grassland" },
+    { name = "Mammoth",         hp = "75k",    parts = {141}, world = "Grassland" },
+    
+    -- Cursed Kingdom
+    { name = "Viperbloom",      hp = "125k",   parts = {255}, world = "CursedKingdom" },
+    { name = "Warlock",         hp = "100k",   parts = {162}, world = "CursedKingdom" },
+    { name = "Spartan",         hp = "250k",   parts = {189, 177}, world = "CursedKingdom" },
+
+    -- Unknown World yet
+    { name = "Reaper",          hp = "750k",   parts = nil },
     { name = "Angel",           hp = "1.5m",   parts = nil },
     { name = "Cowboy",          hp = "15m",    parts = nil },
     { name = "Ghost",           hp = "60m",    parts = nil },
@@ -183,11 +184,16 @@ local MOB_LIST = {
 }
 
 local BOSS_LIST = {
-    { name = "Chief",      hp = "25k",    parts = {321} },
-    { name = "Dino",       hp = "250k",   parts = {267} },
-    { name = "Arachenex",  hp = "450k",   parts = {144} },
-    { name = "Grimroot",   hp = "950k",   parts = {497} },
-    { name = "Leonidas",   hp = "1.25m",  parts = {163, 164} },
+    -- Grassland Bosses
+    { name = "Chief",      hp = "25k",    parts = {321}, world = "Grassland" },
+    { name = "Dino",       hp = "250k",   parts = {267}, world = "Grassland" },
+    { name = "Arachenex",  hp = "450k",   parts = {144, 143}, world = "Grassland" }, -- Added 143p
+    
+    -- Cursed Kingdom Bosses
+    { name = "Grimroot",   hp = "950k",   parts = {497, 498}, world = "CursedKingdom" }, -- Added 498p
+    { name = "Leonidas",   hp = "1.25m",  parts = {163, 164}, world = "CursedKingdom" },
+    
+    -- Unknown World
     { name = "Minotaur",   hp = "30b",    parts = {263} },
 }
 
@@ -208,11 +214,12 @@ end
 local MOB_LABELS = {}
 for _, m in ipairs(MOB_LIST) do
     if m.parts then
-        table.insert(MOB_LABELS, { key = m.name, parts = m.parts, label = m.name .. " [" .. m.hp .. "]" })
+        table.insert(MOB_LABELS, { key = m.name, parts = m.parts, world = m.world, label = m.name .. " [" .. m.hp .. "]" })
     end
 end
 getgenv().SelectedMob = MOB_LABELS[1] and MOB_LABELS[1].key or "Pig"
 getgenv().SelectedMobParts = MOB_LABELS[1] and MOB_LABELS[1].parts or nil
+getgenv().SelectedMobWorld = MOB_LABELS[1] and MOB_LABELS[1].world or nil
 
 -- ==========================================
 -- TAB MAIN
@@ -227,7 +234,8 @@ local MobDrop = TabMain:CreateDropdown({
             if entry.label == val then
                 getgenv().SelectedMob = entry.key
                 getgenv().SelectedMobParts = entry.parts
-                warn("Target: " .. entry.key .. " (" .. entry.parts .. "p)")
+                getgenv().SelectedMobWorld = entry.world
+                warn("Target: " .. entry.key .. " (" .. entry.world .. ")")
                 return
             end
         end
@@ -246,13 +254,34 @@ TabMain:CreateToggleRow({
         if state then
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_TP_MOB do
+                    local char = player.Character
+                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                    if not hrp then task.wait(0.5) continue end
+                    
+                    -- Check if we are in the correct world first
+                    local targetWorld = getgenv().SelectedMobWorld
+                    if targetWorld and WORLDS[targetWorld] then
+                        local worldBasePos = WORLDS[targetWorld]
+                        local distToWorld = (hrp.Position - worldBasePos).Magnitude
+                        -- If we are too far from the world base (e.g., > 1000 studs), teleport there first
+                        if distToWorld > 1000 then
+                            warn("[AutoTP] Teleporting to world base: " .. targetWorld)
+                            steppedTeleport(CFrame.new(worldBasePos))
+                            task.wait(0.5)
+                            continue -- Restart loop to find mob now that we are in the world
+                        end
+                    end
+                    
+                    -- Skip mob yang sudah dekat (< 10 stud), cari yang berikutnya di world ini
                     local mob, dist = getClosestMob(getgenv().SelectedMobParts, 10)
                     if mob then
                         local mobHRP = mob:FindFirstChild("HumanoidRootPart")
-                        local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                        if mobHRP and hrp then
+                        if mobHRP then
                             hrp.CFrame = mobHRP.CFrame * CFrame.new(0, 0, 3)
                         end
+                    else
+                        -- No mob of this type in range, might be dead or despawned.
+                        -- Default behavior is to wait.
                     end
                     task.wait(0.5)
                 end
