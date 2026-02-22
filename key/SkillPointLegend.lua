@@ -99,7 +99,7 @@ local MOB_LIST = {
     { name = "Pig",             hp = "800" },
     { name = "Turtle",          hp = "2.5k" },
     { name = "Caveman",         hp = "4.5k" },
-    { name = "Spider",          hp = "25k" },
+    { name = "Spider",          hp = "12.5k" },
     { name = "Mammoth",         hp = "75k" },
     { name = "Warlock",         hp = "100k" },
     { name = "Spartan",         hp = "250k" },
