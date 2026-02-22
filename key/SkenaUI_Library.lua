@@ -1317,6 +1317,7 @@ function SkenaUI:CreateWindow(Options)
             end
             
             return out
+        end
 
         function TabData:CreateMultiSelectDropdown(Options)
             local Title = Options.Name or "Dropdown"
