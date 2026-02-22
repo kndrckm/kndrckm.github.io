@@ -155,6 +155,66 @@ TabMain:CreateToggleRow({
 })
 
 -- ==========================================
+-- KILL AURA (WIP - belum terpublish method)
+-- ==========================================
+getgenv()._SKENA_KILL_RANGE = 55
+
+TabMain:CreateInputRow({
+    Name = "Set Range",
+    Placeholder = "55",
+    Default = "55",
+    Callback = function(val)
+        getgenv()._SKENA_KILL_RANGE = tonumber(val) or 55
+    end
+})
+
+RegisterLoop("_SKENA_KILL_AURA")
+TabMain:CreateToggleRow({
+    Name = "Kill Aura",
+    OnToggle = function(state)
+        getgenv()._SKENA_KILL_AURA = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_KILL_AURA do
+                    pcall(function()
+                        local char = player.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        if not hrp then return end
+                        
+                        local range = getgenv()._SKENA_KILL_RANGE or 55
+                        local npcsF = workspace:FindFirstChild("Npcs")
+                        if not npcsF then return end
+                        
+                        for _, mob in ipairs(npcsF:GetChildren()) do
+                            if not getgenv()._SKENA_KILL_AURA then return end
+                            if mob:IsA("Model") then
+                                local mobHRP = mob:FindFirstChild("HumanoidRootPart")
+                                if mobHRP then
+                                    local dist = (hrp.Position - mobHRP.Position).Magnitude
+                                    if dist <= range then
+                                        -- TODO: Replace with actual attack method
+                                        -- Method belum diketahui, placeholder:
+                                        -- Kemungkinan: ByteNet buffer, atau firetouchinterest, atau remote lain
+                                        pcall(function()
+                                            if firetouchinterest then
+                                                firetouchinterest(hrp, mobHRP, 0)
+                                                task.wait()
+                                                firetouchinterest(hrp, mobHRP, 1)
+                                            end
+                                        end)
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                    task.wait(0.2)
+                end
+            end)
+        end
+    end
+})
+
+-- ==========================================
 -- IDENTIFY MOBS (Scan & TP via Dropdown)
 -- ==========================================
 TabMain:CreateTextRow({
