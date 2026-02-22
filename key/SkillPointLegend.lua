@@ -13,7 +13,6 @@ local cacheBuster = "?t=" .. tostring(os.time())
 local SkenaUI = loadstring(game:HttpGet(SkenaUI_LibURL .. cacheBuster, true))()
 
 local Players = game:GetService("Players")
-local VIM = game:GetService("VirtualInputManager")
 local player = Players.LocalPlayer
 
 -- ==========================================
@@ -70,13 +69,16 @@ local function getClosestMob()
 end
 
 -- ==========================================
--- HELPER: Simulate attack click
+-- HELPER: Simulate attack (non-intrusive)
 -- ==========================================
 local function simulateAttack()
     pcall(function()
-        VIM:SendMouseButtonEvent(0, 0, 0, true, game, 1)
-        task.wait(0.05)
-        VIM:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+        -- mouse1click is executor-level, does not hijack cursor
+        if mouse1click then
+            mouse1click()
+        elseif click then
+            click()
+        end
     end)
 end
 
