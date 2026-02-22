@@ -408,7 +408,8 @@ TabMain:CreateTextRow({
     Text = "── Identifikasi Mob ──"
 })
 
-local IdentifyDrop = TabMain:CreateDropdownButton({
+local IdentifyDrop
+IdentifyDrop = TabMain:CreateDropdownButton({
     Name = " [ Scan Live Mobs ]",
     ButtonText = "Scan",
     Columns = 2,
