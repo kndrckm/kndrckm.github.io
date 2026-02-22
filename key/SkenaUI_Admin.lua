@@ -51,6 +51,30 @@ function SkenaAdmin.Attach(Window, DebugData)
     
     if not getgenv()._SKENA_SPY_HOOKED then
         local success, err = pcall(function()
+            local function serializeValue(v, depth)
+                depth = depth or 0
+                if depth > 3 then return "..." end
+                local t = typeof(v)
+                if t == "string" then return '"' .. v .. '"'
+                elseif t == "number" or t == "boolean" then return tostring(v)
+                elseif t == "nil" then return "nil"
+                elseif t == "table" then
+                    local parts = {}
+                    local indent = string.rep("  ", depth + 1)
+                    for k, val in pairs(v) do
+                        parts[#parts + 1] = indent .. "[" .. serializeValue(k) .. "] = " .. serializeValue(val, depth + 1)
+                    end
+                    if #parts == 0 then return "{}" end
+                    return "{\n" .. table.concat(parts, ",\n") .. "\n" .. string.rep("  ", depth) .. "}"
+                elseif t == "Instance" then return v:GetFullName()
+                elseif t == "Vector3" then return string.format("Vector3.new(%.2f, %.2f, %.2f)", v.X, v.Y, v.Z)
+                elseif t == "CFrame" then return string.format("CFrame.new(%.2f, %.2f, %.2f)", v.X, v.Y, v.Z)
+                elseif t == "Color3" then return string.format("Color3.new(%.2f, %.2f, %.2f)", v.R, v.G, v.B)
+                elseif t == "EnumItem" then return tostring(v)
+                else return tostring(v) .. " (" .. t .. ")"
+                end
+            end
+
             local function LogRemote(self, method, args)
                 local timeSec = os.clock()
                 local gap = 0
@@ -64,10 +88,7 @@ function SkenaAdmin.Attach(Window, DebugData)
                         local pName = tostring(self.Parent)
                         local logLine = string.format("\n[+%.3fs GAP] [Remote] %s.%s (%s)", gap, pName, tostring(self), method)
                         for i, v in ipairs(args) do
-                            local tStr = typeof(v)
-                            local vStr = tostring(v)
-                            if tStr == "string" then vStr = '"' .. vStr .. '"' end
-                            logLine = logLine .. string.format("\n  [%d] = %s  (%s)", i, vStr, tStr)
+                            logLine = logLine .. string.format("\n  [%d] = %s", i, serializeValue(v, 1))
                         end
                         table.insert(getgenv()._SKENA_SPY_LOGS, logLine)
                     end)
