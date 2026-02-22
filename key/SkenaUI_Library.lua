@@ -675,6 +675,85 @@ function SkenaUI:CreateWindow(Options)
             return { Row = Row, Button = ExecBtn }
         end
 
+        function TabData:CreateToggleButtonRow(Options)
+            local Title = Options.Name or "Toggle"
+            local BtnText = Options.ButtonText or "Copy"
+            local cbToggle = Options.OnToggle or function() end
+            local cbButton = Options.OnButton or function() end
+
+            local Row = AddRowContainer()
+
+            local Txt = Instance.new("TextLabel", Row)
+            Txt.Size = UDim2.new(0.35, 0, 1, 0)
+            Txt.Position = UDim2.new(0, 12, 0, 0)
+            Txt.BackgroundTransparency = 1
+            Txt.Text = Title
+            Txt.Font = Enum.Font.GothamMedium
+            Txt.TextSize = 13
+            Txt.TextColor3 = Palette.TextPrimary
+            Txt.TextXAlignment = Enum.TextXAlignment.Left
+
+            -- Toggle (center-left)
+            local ToggleBg = Instance.new("TextButton", Row)
+            ToggleBg.Size = UDim2.new(0, 36, 0, 18)
+            ToggleBg.Position = UDim2.new(0.35, 12, 0.5, -9)
+            ToggleBg.BackgroundColor3 = Palette.InputHdr
+            ToggleBg.Text = ""
+            ToggleBg.AutoButtonColor = false
+            Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(1, 0)
+
+            local Knob = Instance.new("Frame", ToggleBg)
+            Knob.Size = UDim2.new(0, 14, 0, 14)
+            Knob.Position = UDim2.new(0, 4, 0.5, -7)
+            Knob.BackgroundColor3 = Palette.TextSecondary
+            Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
+
+            local state = Options.Default or false
+
+            local function UpdateToggleRender(noAnim)
+                local targetColor = state and Palette.Accent or Palette.InputHdr
+                local knobColor = state and Color3.fromRGB(0,0,0) or Palette.TextSecondary
+                local knobPos = state and UDim2.new(1, -18, 0.5, -7) or UDim2.new(0, 4, 0.5, -7)
+                if noAnim then
+                    ToggleBg.BackgroundColor3 = targetColor
+                    Knob.BackgroundColor3 = knobColor
+                    Knob.Position = knobPos
+                else
+                    TweenService:Create(ToggleBg, TweenInfo.new(0.2), {BackgroundColor3 = targetColor}):Play()
+                    TweenService:Create(Knob, TweenInfo.new(0.2), {BackgroundColor3 = knobColor, Position = knobPos}):Play()
+                end
+            end
+
+            if state then UpdateToggleRender(true) end
+
+            ToggleBg.MouseButton1Click:Connect(function()
+                state = not state
+                UpdateToggleRender(false)
+                pcall(cbToggle, state)
+            end)
+
+            -- Button (right)
+            local ExecBtn = Instance.new("TextButton", Row)
+            ExecBtn.Size = UDim2.new(0, 64, 0, 24)
+            ExecBtn.Position = UDim2.new(1, -76, 0.5, -12)
+            ExecBtn.BackgroundColor3 = Palette.InputHdr
+            ExecBtn.Text = BtnText
+            ExecBtn.TextColor3 = Palette.TextPrimary
+            ExecBtn.Font = Enum.Font.GothamMedium
+            ExecBtn.TextSize = 12
+            ExecBtn.AutoButtonColor = false
+            Instance.new("UICorner", ExecBtn).CornerRadius = UDim.new(0, 4)
+            local BStroke = Instance.new("UIStroke", ExecBtn)
+            BStroke.Color = Palette.Border
+            BStroke.Thickness = 1
+
+            ExecBtn.MouseEnter:Connect(function() TweenService:Create(ExecBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.RowHover}):Play() end)
+            ExecBtn.MouseLeave:Connect(function() TweenService:Create(ExecBtn, TweenInfo.new(0.2), {BackgroundColor3 = Palette.InputHdr}):Play() end)
+            ExecBtn.MouseButton1Click:Connect(function() pcall(cbButton, ExecBtn) end)
+
+            return { Row = Row, Button = ExecBtn, ToggleState = function(s) state=s; UpdateToggleRender(true) end }
+        end
+
         function TabData:CreateDoubleButtonRow(Options)
             local Title = Options.Name or "Double Action"
             local Btn1Text = Options.Button1Text or "Btn1"

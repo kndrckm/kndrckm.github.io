@@ -142,51 +142,15 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     end
 
-    TabAdmin:CreateToggleRow({
-        Name = "Record Game Actions (Spy)",
-        OnToggle = function(state)
-            getgenv()._SKENA_IS_SPYING = state
-            if state then
-                getgenv()._SKENA_SPY_LOGS = {} -- Reset ketika record di start ulang
-                warn("Merekam semua aksi ke Server dalam mode Spy...")
-            end
-        end
-    })
-
+    -- Scanner: TouchInterests
     TabAdmin:CreateButtonRow({
-        Name = "Copy Recorded Actions",
-        ButtonText = "Copy",
-        Callback = function(btn)
-            local logs = getgenv()._SKENA_SPY_LOGS
-            if not logs or #logs == 0 then
-                warn("Belum ada tindakan rahasia yang direkam/tertangkap.")
-                animateBtn(btn, false)
-                return
-            end
-            local finalStr = "=== SKENA REMOTE SPY DUMP ===" .. table.concat(logs, "\n-------------------")
-            if setclipboard then
-                setclipboard(finalStr)
-                warn("Data Spy dicopy ke clipboard PC Anda!")
-                animateBtn(btn, true)
-            else
-                print(finalStr)
-                warn("Cek F9 Console untuk melihat rekaman Spy.")
-                animateBtn(btn, false)
-            end
-        end
-    })
-    
-    -- Modul Ekstra: Scan & Record Semua Tombol Fisik (TouchInterest + Script)
-    TabAdmin:CreateButtonRow({
-        Name = "Scan & Copy TouchInterests",
+        Name = "Scan TouchInterests",
         ButtonText = "Scan",
         Callback = function(btn)
             local ok, errMsg = pcall(function()
                 local lines = {"=== SKENA TOUCHINTEREST SCAN ==="}
                 local seen = {}
                 local count = 0
-                
-                -- Scan 1: TouchInterest langsung
                 for _, obj in ipairs(workspace:GetDescendants()) do
                     if (obj.ClassName == "TouchInterest" or (pcall(function() return obj:IsA("TouchInterest") end) and obj:IsA("TouchInterest"))) and obj.Parent then
                         local part = obj.Parent
@@ -198,8 +162,6 @@ function SkenaAdmin.Attach(Window, DebugData)
                         end
                     end
                 end
-                
-                -- Scan 2: BasePart yang punya child Script (biasanya tombol tycoon)
                 for _, obj in ipairs(workspace:GetDescendants()) do
                     if obj:IsA("BasePart") then
                         for _, child in ipairs(obj:GetChildren()) do
@@ -215,25 +177,21 @@ function SkenaAdmin.Attach(Window, DebugData)
                         end
                     end
                 end
-
                 if count == 0 then
-                    warn("[Scan] Tidak ada TouchInterest atau tombol script yang ditemukan.")
+                    warn("[Scan] Tidak ada TouchInterest ditemukan.")
                     animateBtn(btn, false)
                     return
                 end
-                
                 local finalStr = table.concat(lines, "\n")
                 if setclipboard then
                     setclipboard(finalStr)
-                    warn("[Scan] Berhasil copy " .. count .. " objek ke clipboard!")
+                    warn("[Scan] " .. count .. " objek dicopy ke clipboard!")
                     animateBtn(btn, true)
                 else
                     print(finalStr)
-                    warn("[Scan] Cetak ke F9 Console. (setclipboard tidak didukung)")
                     animateBtn(btn, false)
                 end
             end)
-            
             if not ok then
                 warn("[Scan ERROR] " .. tostring(errMsg))
                 animateBtn(btn, false)
@@ -241,7 +199,7 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
 
-    -- Modul Ekstra: Scan Semua Remote di ReplicatedStorage
+    -- Scanner: All Remotes (ReplicatedStorage)
     TabAdmin:CreateButtonRow({
         Name = "Scan All Remotes (RS)",
         ButtonText = "Scan",
@@ -250,33 +208,27 @@ function SkenaAdmin.Attach(Window, DebugData)
                 local rs = game:GetService("ReplicatedStorage")
                 local lines = {"=== SKENA REMOTE SCANNER ===", "Location: ReplicatedStorage", ""}
                 local count = 0
-                
                 for _, obj in ipairs(rs:GetDescendants()) do
                     if obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction") or obj:IsA("BindableEvent") or obj:IsA("BindableFunction") then
                         count = count + 1
-                        local tag = obj.ClassName
-                        lines[#lines + 1] = "[" .. count .. "] (" .. tag .. ") " .. obj.Name .. " | " .. obj:GetFullName()
+                        lines[#lines + 1] = "[" .. count .. "] (" .. obj.ClassName .. ") " .. obj.Name .. " | " .. obj:GetFullName()
                     end
                 end
-                
                 if count == 0 then
-                    warn("[Scan] Tidak ada Remote ditemukan di ReplicatedStorage.")
+                    warn("[Scan] Tidak ada Remote ditemukan.")
                     animateBtn(btn, false)
                     return
                 end
-                
                 local finalStr = table.concat(lines, "\n")
                 if setclipboard then
                     setclipboard(finalStr)
-                    warn("[Scan] Berhasil copy " .. count .. " Remote ke clipboard!")
+                    warn("[Scan] " .. count .. " Remote dicopy ke clipboard!")
                     animateBtn(btn, true)
                 else
                     print(finalStr)
-                    warn("[Scan] Cetak ke F9 Console.")
                     animateBtn(btn, false)
                 end
             end)
-            
             if not ok then
                 warn("[Scan Remote ERROR] " .. tostring(errMsg))
                 animateBtn(btn, false)
@@ -284,42 +236,40 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     })
 
-    -- Modul Ekstra: Auto-Touch (Brute-force Tycoon/Simulator)
-    TabAdmin:CreateToggleRow({
-        Name = "Auto-Touch All (Brute-force)",
+    -- Spy: Toggle Record + Copy Button (1 baris)
+    TabAdmin:CreateToggleButtonRow({
+        Name = "Spy (Record Actions)",
+        ButtonText = "Copy",
         OnToggle = function(state)
-            getgenv()._SKENA_AUTO_TOUCH = state
+            getgenv()._SKENA_IS_SPYING = state
             if state then
-                task.spawn(function()
-                    local player = game.Players.LocalPlayer
-                    while getgenv()._SKENA_AUTO_TOUCH do
-                        local char = player.Character
-                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                        if hrp and firetouchinterest then
-                            for _, obj in ipairs(workspace:GetDescendants()) do
-                                if obj:IsA("TouchInterest") and obj.Parent then
-                                    pcall(function()
-                                        firetouchinterest(hrp, obj.Parent, 0)
-                                        task.wait(0.01)
-                                        firetouchinterest(hrp, obj.Parent, 1)
-                                    end)
-                                end
-                            end
-                        elseif not firetouchinterest then
-                            warn("Executor Anda tidak mendukung firetouchinterest!")
-                            getgenv()._SKENA_AUTO_TOUCH = false
-                            break
-                        end
-                        task.wait(1)
-                    end
-                end)
+                getgenv()._SKENA_SPY_LOGS = {}
+                warn("[Spy] Merekam semua aksi ke Server...")
+            end
+        end,
+        OnButton = function(btn)
+            local logs = getgenv()._SKENA_SPY_LOGS
+            if not logs or #logs == 0 then
+                warn("Belum ada tindakan yang direkam.")
+                animateBtn(btn, false)
+                return
+            end
+            local finalStr = "=== SKENA REMOTE SPY DUMP ===" .. table.concat(logs, "\n-------------------")
+            if setclipboard then
+                setclipboard(finalStr)
+                warn("[Spy] " .. #logs .. " log dicopy ke clipboard!")
+                animateBtn(btn, true)
+            else
+                print(finalStr)
+                animateBtn(btn, false)
             end
         end
     })
-
-    -- Modul Ekstra: ESP ProximityPrompt
-    TabAdmin:CreateToggleRow({
+    
+    -- ESP: Toggle + Copy Data (1 baris)
+    TabAdmin:CreateToggleButtonRow({
         Name = "ESP ProximityPrompt",
+        ButtonText = "Copy",
         OnToggle = function(state)
             getgenv()._SKENA_ESP_PP = state
             if state then
@@ -351,7 +301,6 @@ function SkenaAdmin.Attach(Window, DebugData)
                                         local objText = obj.ObjectText ~= "" and obj.ObjectText or part.Name
                                         lbl.Text = "[" .. action .. "] " .. objText
                                         
-                                        -- Highlight part
                                         if not part:FindFirstChild("_SkenaHighlight") then
                                             local hl = Instance.new("Highlight")
                                             hl.Name = "_SkenaHighlight"
@@ -367,7 +316,7 @@ function SkenaAdmin.Attach(Window, DebugData)
                         end
                         task.wait(2)
                     end
-                    -- Cleanup saat dimatikan
+                    -- Cleanup
                     for _, obj in ipairs(workspace:GetDescendants()) do
                         if obj.Name == "_SkenaESP" or obj.Name == "_SkenaHighlight" then
                             pcall(function() obj:Destroy() end)
@@ -375,13 +324,42 @@ function SkenaAdmin.Attach(Window, DebugData)
                     end
                 end)
             end
+        end,
+        OnButton = function(btn)
+            -- Scan & Copy semua ProximityPrompt
+            local lines = {"=== SKENA PROXIMITY PROMPT SCAN ==="}
+            local count = 0
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("ProximityPrompt") then
+                    count = count + 1
+                    local part = obj.Parent
+                    local action = obj.ActionText ~= "" and obj.ActionText or "E"
+                    local objText = obj.ObjectText ~= "" and obj.ObjectText or ""
+                    lines[#lines + 1] = string.format("[%d] Action: %s | Object: %s | Part: %s | Path: %s",
+                        count, action, objText, part and part.Name or "?", part and part:GetFullName() or "?")
+                end
+            end
+            if count == 0 then
+                warn("[ESP] Tidak ada ProximityPrompt ditemukan.")
+                animateBtn(btn, false)
+                return
+            end
+            if setclipboard then
+                setclipboard(table.concat(lines, "\n"))
+                warn("[ESP] " .. count .. " prompt dicopy ke clipboard!")
+                animateBtn(btn, true)
+            else
+                print(table.concat(lines, "\n"))
+                animateBtn(btn, false)
+            end
         end
     })
 
-    -- Modul Ekstra: Auto Interact All + Log
+    -- Auto Interact: Toggle + Copy Log (1 baris)
     getgenv()._SKENA_INTERACT_LOGS = getgenv()._SKENA_INTERACT_LOGS or {}
-    TabAdmin:CreateToggleRow({
-        Name = "Auto Interact All (Log)",
+    TabAdmin:CreateToggleButtonRow({
+        Name = "Auto Interact (Log)",
+        ButtonText = "Copy",
         OnToggle = function(state)
             getgenv()._SKENA_AUTO_INTERACT_ADMIN = state
             if state then
@@ -420,13 +398,8 @@ function SkenaAdmin.Attach(Window, DebugData)
                     end
                 end)
             end
-        end
-    })
-
-    TabAdmin:CreateButtonRow({
-        Name = "Copy Interact Logs",
-        ButtonText = "Copy",
-        Callback = function(btn)
+        end,
+        OnButton = function(btn)
             local logs = getgenv()._SKENA_INTERACT_LOGS
             if not logs or #logs == 0 then
                 warn("[Interact] Belum ada interaksi yang dicatat.")
@@ -440,39 +413,6 @@ function SkenaAdmin.Attach(Window, DebugData)
                 animateBtn(btn, true)
             else
                 print(finalStr)
-                animateBtn(btn, false)
-            end
-        end
-    })
-
-    -- Modul 1: Dump ESP Data (Tampil Universal)
-    TabAdmin:CreateButtonRow({
-        Name = "Copy Captured ESP Data",
-        ButtonText = "Copy to Clipboard",
-        Callback = function(btn)
-            local paths = (DebugData and DebugData.CapturedPaths) or {}
-            
-            -- Count elements
-            local count = 0
-            for _ in pairs(paths) do count = count + 1 end
-            
-            if count == 0 then
-                warn("Game ini tidak mendaftarkan ESP Data / Belum ada data ditangkap di layar.")
-                animateBtn(btn, false)
-                return
-            end
-
-            local lines = {"=== ESP RAW DATA DUMP ==="}
-            for path, cN in pairs(paths) do
-                table.insert(lines, "[" .. tostring(cN) .. "]  =>  " .. tostring(path))
-            end
-            local finalStr = table.concat(lines, "\n")
-            if setclipboard then
-                setclipboard(finalStr)
-                animateBtn(btn, true)
-            else
-                print(finalStr)
-                warn("Executor tidak mendukung setclipboard. Cek menu console (F9)!")
                 animateBtn(btn, false)
             end
         end
