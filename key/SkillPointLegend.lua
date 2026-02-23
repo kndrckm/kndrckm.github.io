@@ -542,17 +542,20 @@ local function toggleBlackScreen(state)
                 blackScreenGui = Instance.new("ScreenGui")
                 blackScreenGui.Name = "SkenaBlackScreen"
                 blackScreenGui.IgnoreGuiInset = true
-                -- Taruh di belakang HUD utama
-                blackScreenGui.DisplayOrder = -100 
+                -- Default to CoreGui, if not possible use PlayerGui but with strictly low DisplayOrder
+                blackScreenGui.DisplayOrder = -999999 
                 
                 local bg = Instance.new("Frame", blackScreenGui)
                 bg.Size = UDim2.new(1, 0, 1, 0)
                 bg.BackgroundColor3 = Color3.new(0, 0, 0)
                 bg.BorderSizePixel = 0
+                bg.Active = false
+                bg.Interactable = false
             end
             
-            -- Some executors put CoreGui very high. We'll use PlayerGui to be safe and ensure our UI (DisplayOrder 0) stays above it
-            blackScreenGui.Parent = player.PlayerGui
+            -- Prioritize CoreGui so UI libraries (usually in CoreGui) render above it
+            local targetParent = pcall(function() return game:GetService("CoreGui") end) and game:GetService("CoreGui") or player.PlayerGui
+            blackScreenGui.Parent = targetParent
         end)
     else
         pcall(function()
