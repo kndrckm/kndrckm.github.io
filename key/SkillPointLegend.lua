@@ -36,7 +36,10 @@ getgenv()._SKENA_SPL_LOOPS = {}
 local function RegisterLoop(flagName)
     getgenv()[flagName] = false
     table.insert(getgenv()._SKENA_SPL_LOOPS, flagName)
-end
+-- ==========================================
+-- HELPER: Cached Mob Part Counter
+-- ==========================================
+local MOB_PART_CACHE = {}
 
 -- ==========================================
 -- HELPER: Get Sorted Mob List (Scan Logic)
@@ -51,12 +54,25 @@ local function getMobList(targetParts)
     
     local list = {}
     
+    -- Clean dead mobs from cache
+    for mobInstance, _ in pairs(MOB_PART_CACHE) do
+        if not mobInstance:IsDescendantOf(workspace) then
+            MOB_PART_CACHE[mobInstance] = nil
+        end
+    end
+    
     for _, mob in ipairs(npcsFolder:GetChildren()) do
         if mob:IsA("Model") then
             local mobHRP = mob:FindFirstChild("HumanoidRootPart")
             if mobHRP and (not mobHRP.Anchored) and mobHRP.Transparency < 0.9 then
                 if targetParts then
-                    local parts = #mob:GetDescendants()
+                    -- Use cached parts or calculate once if not cached
+                    local parts = MOB_PART_CACHE[mob]
+                    if not parts then
+                        parts = #mob:GetDescendants()
+                        MOB_PART_CACHE[mob] = parts
+                    end
+                    
                     local match = false
                     if type(targetParts) == "table" then
                         for _, p in ipairs(targetParts) do
@@ -241,7 +257,7 @@ local MobDrop = TabMain:CreateDropdownToggle({
                         end
                     end
                     
-                    -- Refresh cache if empty or sequence ends
+                    -- Refresh cache if sequence ends
                     if currentIndex > #cachedList or #cachedList == 0 then
                         cachedList = getMobList(getgenv().SelectedMobParts)
                         currentIndex = 1
@@ -249,12 +265,17 @@ local MobDrop = TabMain:CreateDropdownToggle({
                     
                     if #cachedList > 0 then
                         local entry = cachedList[currentIndex]
-                        -- Check if the sequenced mob is still valid
-                        if entry.mob and entry.mob.Parent and entry.hrp and entry.hrp.Parent then
+                        -- Check if the sequenced mob is still valid within the cache
+                        if entry and entry.mob and entry.mob.Parent and entry.hrp and entry.hrp.Parent then
                             hrp.CFrame = entry.hrp.CFrame * CFrame.new(0, 0, 3)
                             
                             -- Move to next mob in sequence for next tick
                             currentIndex = currentIndex + 1
+                            -- Loop back to 1 if we've reached the end
+                            if currentIndex > #cachedList then
+                                currentIndex = 1
+                                cachedList = getMobList(getgenv().SelectedMobParts)
+                            end
                         else
                             -- Target missing, force recache
                             cachedList = getMobList(getgenv().SelectedMobParts)
