@@ -198,6 +198,7 @@ local BOSS_LIST = {
     { name = "Lightning God",   hp = "25m",    parts = {123} },
     { name = "Sand Golem",      hp = "2b",     parts = {614} },
     { name = "Hydra Worm",      hp = "4b",     parts = {355} },
+    { name = "Dragon",          hp = "8b",     parts = {151} },
 }
 
 -- Build fingerprint lookup: parts -> mob name
@@ -229,6 +230,7 @@ getgenv().SelectedMobWorld = MOB_LABELS[1] and MOB_LABELS[1].world or nil
 -- ==========================================
 
 -- Dropdown + Toggle: Target Mob & Auto TP
+RegisterLoop("_SKENA_AUTO_TP_MOB")
 local MobDrop = TabMain:CreateDropdownToggle({
     Name = " [ Target Mob ]",
     Columns = 2,
@@ -318,6 +320,7 @@ local ATTACK_METHODS = {
 }
 getgenv()._SKENA_ATTACK_METHOD = "mouse1click"
 
+RegisterLoop("_SKENA_AUTO_ATTACK")
 local AtkDrop = TabMain:CreateDropdownToggle({
     Name = " [ Attack Method ]",
     Columns = 2,
