@@ -39,55 +39,24 @@ local function RegisterLoop(flagName)
 end
 
 -- ==========================================
--- HELPER: Check if mob is alive
+-- HELPER: Get Sorted Mob List (Scan Logic)
 -- ==========================================
-local function isMobAlive(mob)
-    local ok, alive = pcall(function()
-        local hrp = mob:FindFirstChild("HumanoidRootPart")
-        if not hrp then return false end
-        if hrp.Anchored then return false end
-        if hrp.Transparency >= 0.9 then return false end
-        
-        -- deadAnim check (wrapped safely)
-        local animCtrl = mob:FindFirstChildWhichIsA("AnimationController")
-        if animCtrl then
-            local animator = animCtrl:FindFirstChildWhichIsA("Animator")
-            if animator then
-                for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
-                    if track.Animation and string.find(track.Animation.Name, "dead") then
-                        return false
-                    end
-                end
-            end
-        end
-        
-        return true
-    end)
-    return ok and alive
-end
-
--- ==========================================
--- HELPER: Find closest mob (filter by parts fingerprint)
--- ==========================================
-local function getClosestMob(targetParts, minDist)
+local function getMobList(targetParts)
     local npcsFolder = workspace:FindFirstChild("Npcs")
-    if not npcsFolder then return nil end
+    if not npcsFolder then return {} end
     
     local char = player.Character
     local hrp = char and char:FindFirstChild("HumanoidRootPart")
-    if not hrp then return nil end
+    if not hrp then return {} end
     
-    local closest = nil
-    local closestDist = math.huge
-    minDist = minDist or 0
+    local list = {}
     
     for _, mob in ipairs(npcsFolder:GetChildren()) do
         if mob:IsA("Model") then
             local mobHRP = mob:FindFirstChild("HumanoidRootPart")
-            if mobHRP and isMobAlive(mob) then
+            if mobHRP and (not mobHRP.Anchored) and mobHRP.Transparency < 0.9 then
                 if targetParts then
                     local parts = #mob:GetDescendants()
-                    -- targetParts can be a table of valid values
                     local match = false
                     if type(targetParts) == "table" then
                         for _, p in ipairs(targetParts) do
@@ -98,16 +67,16 @@ local function getClosestMob(targetParts, minDist)
                     end
                     if not match then continue end
                 end
+                
                 local dist = (hrp.Position - mobHRP.Position).Magnitude
-                if dist >= minDist and dist < closestDist then
-                    closestDist = dist
-                    closest = mob
-                end
+                table.insert(list, {mob = mob, hrp = mobHRP, dist = dist})
             end
         end
     end
     
-    return closest, closestDist
+    table.sort(list, function(a, b) return a.dist < b.dist end)
+    
+    return list
 end
 
 -- ==========================================
@@ -249,6 +218,9 @@ local MobDrop = TabMain:CreateDropdownToggle({
         getgenv()._SKENA_AUTO_TP_MOB = state
         if state then
             task.spawn(function()
+                local currentIndex = 1
+                local cachedList = {}
+                
                 while getgenv()._SKENA_AUTO_TP_MOB do
                     local char = player.Character
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -259,20 +231,37 @@ local MobDrop = TabMain:CreateDropdownToggle({
                         local worldBasePos = WORLDS[targetWorld]
                         local distToWorld = (hrp.Position - worldBasePos).Magnitude
                         if distToWorld > 1000 then
+                            -- Reset sequence after world jump
                             warn("[AutoTP] Teleporting to world base: " .. targetWorld)
                             steppedTeleport(CFrame.new(worldBasePos))
                             task.wait(0.5)
+                            currentIndex = 1
+                            cachedList = {}
                             continue
                         end
                     end
                     
-                    local mob, dist = getClosestMob(getgenv().SelectedMobParts, 10)
-                    if mob then
-                        local mobHRP = mob:FindFirstChild("HumanoidRootPart")
-                        if mobHRP then
-                            hrp.CFrame = mobHRP.CFrame * CFrame.new(0, 0, 3)
+                    -- Refresh cache if empty or sequence ends
+                    if currentIndex > #cachedList or #cachedList == 0 then
+                        cachedList = getMobList(getgenv().SelectedMobParts)
+                        currentIndex = 1
+                    end
+                    
+                    if #cachedList > 0 then
+                        local entry = cachedList[currentIndex]
+                        -- Check if the sequenced mob is still valid
+                        if entry.mob and entry.mob.Parent and entry.hrp and entry.hrp.Parent then
+                            hrp.CFrame = entry.hrp.CFrame * CFrame.new(0, 0, 3)
+                            
+                            -- Move to next mob in sequence for next tick
+                            currentIndex = currentIndex + 1
+                        else
+                            -- Target missing, force recache
+                            cachedList = getMobList(getgenv().SelectedMobParts)
+                            currentIndex = 1
                         end
                     end
+                    
                     task.wait(0.5)
                 end
             end)
