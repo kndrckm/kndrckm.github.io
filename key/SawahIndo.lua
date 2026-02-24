@@ -484,8 +484,46 @@ TabAutoFarm2:CreateToggleRow({
     end
 })
 
+TabAutoFarm2:CreateToggleRow({
+    Name = "Auto Interact (Admin Source)",
+    Default = false,
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_INTERACT_FARM_2 = state
+        if state then
+            task.spawn(function()
+                local lp = game.Players.LocalPlayer
+                while getgenv()._SKENA_AUTO_INTERACT_FARM_2 do
+                    local char = lp.Character
+                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                    if hrp and fireproximityprompt then
+                        for _, obj in ipairs(workspace:GetDescendants()) do
+                            if obj:IsA("ProximityPrompt") and obj.Enabled then
+                                local part = obj.Parent
+                                if part and part:IsA("BasePart") then
+                                    local dist = (hrp.Position - part.Position).Magnitude
+                                    if dist < 30 then
+                                        pcall(function()
+                                            fireproximityprompt(obj)
+                                        end)
+                                        task.wait(0.15)
+                                    end
+                                end
+                            end
+                        end
+                    elseif not fireproximityprompt then
+                        warn("[Skena] fireproximityprompt tidak didukung!")
+                        getgenv()._SKENA_AUTO_INTERACT_FARM_2 = false
+                        break
+                    end
+                    task.wait(0.5)
+                end
+            end)
+        end
+    end
+})
+
 TabAutoFarm2:CreateTextRow({
-    Text = "Draft Auto Farm 2: Menyelesaikan auto farm tanaman di background secara terus menerus, sambil mengecek Padi >= 5 untuk memberi makan ayam dan memanen telur dengan jeda siklus 15 menit."
+    Text = "Draft Auto Farm 2: Menyelesaikan auto farm tanaman di background secara terus menerus, sambil mengecek Padi >= 5 untuk memberi makan ayam dan memanen telur dengan jeda siklus 15 menit. Nyalakan Auto Interact untuk panen."
 })
 
 -- ==========================================
