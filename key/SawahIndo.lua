@@ -347,11 +347,15 @@ TabAutoFarm1:CreateToggleRow({
                             if not getgenv().SkenaAutoFarm_Crop then return end
                             local hrpPos = char.HumanoidRootPart.Position
                             local interacted = false
-                            for _, v in ipairs(workspace:GetDescendants()) do
-                                if v:IsA("ProximityPrompt") and v.Parent and v.Parent:IsA("BasePart") then
-                                    local dist = (v.Parent.Position - hrpPos).Magnitude
+                            for _, obj in ipairs(workspace:GetDescendants()) do
+                                if obj:IsA("ProximityPrompt") and obj.Enabled and obj.Parent and obj.Parent:IsA("BasePart") then
+                                    local dist = (obj.Parent.Position - hrpPos).Magnitude
                                     if dist <= 3.0 then -- 3 stud radius
-                                        if fireproximityprompt then fireproximityprompt(v) else v:InputHoldBegin() task.wait(0.1) v:InputHoldEnd() end
+                                        if fireproximityprompt then 
+                                            pcall(function() fireproximityprompt(obj) end)
+                                        else 
+                                            obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
+                                        end
                                         interacted = true
                                         break
                                     end
@@ -422,10 +426,14 @@ TabAutoFarm2:CreateToggleRow({
                         for i = 1, plotSize do
                             if not getgenv().SkenaAutoFarm_Egg then return end
                             local hrpPos = char.HumanoidRootPart.Position
-                            for _, v in ipairs(workspace:GetDescendants()) do
-                                if v:IsA("ProximityPrompt") and v.Parent and v.Parent:IsA("BasePart") then
-                                    if (v.Parent.Position - hrpPos).Magnitude <= 3.0 then
-                                        if fireproximityprompt then fireproximityprompt(v) else v:InputHoldBegin() task.wait(0.1) v:InputHoldEnd() end
+                            for _, obj in ipairs(workspace:GetDescendants()) do
+                                if obj:IsA("ProximityPrompt") and obj.Enabled and obj.Parent and obj.Parent:IsA("BasePart") then
+                                    if (obj.Parent.Position - hrpPos).Magnitude <= 3.0 then
+                                        if fireproximityprompt then 
+                                            pcall(function() fireproximityprompt(obj) end)
+                                        else 
+                                            obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
+                                        end
                                         break
                                     end
                                 end
