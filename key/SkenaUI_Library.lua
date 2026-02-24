@@ -166,7 +166,7 @@ function SkenaUI:CreateWindow(Options)
     local ScaleBtn = Instance.new("TextButton", ControlContainer)
     ScaleBtn.Size = UDim2.new(0, 26, 0, 26)
     ScaleBtn.Position = UDim2.new(0, 0, 0.5, -13)
-    ScaleBtn.Text = "☐" -- Logo Square
+    ScaleBtn.Text = "" -- Replaced by Icon
     ScaleBtn.BackgroundColor3 = Palette.Background
     ScaleBtn.BackgroundTransparency = 1
     ScaleBtn.TextColor3 = Palette.TextPrimary
@@ -174,6 +174,13 @@ function SkenaUI:CreateWindow(Options)
     ScaleBtn.TextSize = 14
     ScaleBtn.BorderSizePixel = 0
     Instance.new("UICorner", ScaleBtn).CornerRadius = UDim.new(0, 6)
+
+    local ScaleIcon = Instance.new("ImageLabel", ScaleBtn)
+    ScaleIcon.Size = UDim2.new(0, 14, 0, 14)
+    ScaleIcon.Position = UDim2.new(0.5, -7, 0.5, -7)
+    ScaleIcon.BackgroundTransparency = 1
+    ScaleIcon.Image = "rbxassetid://10734886735" -- lucide-maximize
+    ScaleIcon.ImageColor3 = Palette.TextPrimary
 
     local Minibtn = Instance.new("TextButton", ControlContainer)
     Minibtn.Size = UDim2.new(0, 26, 0, 26)
@@ -282,7 +289,7 @@ function SkenaUI:CreateWindow(Options)
     ScrollPadding.PaddingTop = UDim.new(0, 8)
     ScrollPadding.PaddingBottom = UDim.new(0, 8)
     ScrollPadding.PaddingLeft = UDim.new(0, 8)
-    ScrollPadding.PaddingRight = UDim.new(0, 8)
+    ScrollPadding.PaddingRight = UDim.new(0, 16)
 
     local TabContainer = Instance.new("Folder", CardScroll)
     TabContainer.Name = "Tabs"
@@ -326,15 +333,33 @@ function SkenaUI:CreateWindow(Options)
         Indicator.Visible = false
         Instance.new("UICorner", Indicator).CornerRadius = UDim.new(1, 0)
 
+        local Tooltip = Instance.new("TextLabel", TabBtn)
+        Tooltip.Size = UDim2.new(0, 0, 0, 24)
+        Tooltip.Position = UDim2.new(1, 10, 0.5, -12)
+        Tooltip.AutomaticSize = Enum.AutomaticSize.X
+        Tooltip.BackgroundColor3 = Palette.Card
+        Tooltip.TextColor3 = Palette.TextPrimary
+        Tooltip.Text = " " .. TabName .. " "
+        Tooltip.Font = Enum.Font.GothamMedium
+        Tooltip.TextSize = 11
+        Tooltip.Visible = false
+        Tooltip.ZIndex = 50
+        Instance.new("UICorner", Tooltip).CornerRadius = UDim.new(0, 4)
+        local TTStroke = Instance.new("UIStroke", Tooltip)
+        TTStroke.Color = Palette.Border
+        TTStroke.Thickness = 1
+
         TabBtn.MouseEnter:Connect(function()
             if WindowObj.CurrentTab ~= TabName then
                 TweenService:Create(TabBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
             end
+            Tooltip.Visible = true
         end)
         TabBtn.MouseLeave:Connect(function()
             if WindowObj.CurrentTab ~= TabName then
                 TweenService:Create(TabBtn, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
             end
+            Tooltip.Visible = false
         end)
 
         return TabBtn, TabIcon, Indicator

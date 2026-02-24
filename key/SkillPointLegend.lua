@@ -10,7 +10,10 @@
 
 local SkenaUI_LibURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SkenaUI_Library.lua"
 local cacheBuster = "?t=" .. tostring(os.time())
-local SkenaUI = loadstring(game:HttpGet(SkenaUI_LibURL .. cacheBuster, true))()
+local libBody = game:HttpGet(SkenaUI_LibURL .. cacheBuster, true)
+local libFunc, libErr = loadstring(libBody)
+if not libFunc then error("SkenaUI Library Syntax Error: " .. tostring(libErr)) end
+local SkenaUI = libFunc()
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
@@ -36,6 +39,7 @@ getgenv()._SKENA_SPL_LOOPS = {}
 local function RegisterLoop(flagName)
     getgenv()[flagName] = false
     table.insert(getgenv()._SKENA_SPL_LOOPS, flagName)
+end
 -- ==========================================
 -- HELPER: Cached Mob Part Counter
 -- ==========================================
