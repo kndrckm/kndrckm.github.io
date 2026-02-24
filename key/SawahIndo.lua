@@ -338,14 +338,14 @@ TabAutoFarm1:CreateToggleRow({
                             for _, v in ipairs(workspace:GetDescendants()) do
                                 if v:IsA("ProximityPrompt") and v.Parent and v.Parent:IsA("BasePart") then
                                     local dist = (v.Parent.Position - hrpPos).Magnitude
-                                    if dist <= 3.5 then -- Fuzzy 2 stud
+                                    if dist <= 3.0 then -- 3 stud radius
                                         if fireproximityprompt then fireproximityprompt(v) else v:InputHoldBegin() task.wait(0.1) v:InputHoldEnd() end
                                         interacted = true
                                         break
                                     end
                                 end
                             end
-                            if interacted then task.wait(0.6) else task.wait(0.5) end
+                            if interacted then task.wait(1) else task.wait(1) end
                         end
                     end
                     task.wait(1.5)
@@ -412,13 +412,13 @@ TabAutoFarm2:CreateToggleRow({
                             local hrpPos = char.HumanoidRootPart.Position
                             for _, v in ipairs(workspace:GetDescendants()) do
                                 if v:IsA("ProximityPrompt") and v.Parent and v.Parent:IsA("BasePart") then
-                                    if (v.Parent.Position - hrpPos).Magnitude <= 3.5 then
+                                    if (v.Parent.Position - hrpPos).Magnitude <= 3.0 then
                                         if fireproximityprompt then fireproximityprompt(v) else v:InputHoldBegin() task.wait(0.1) v:InputHoldEnd() end
                                         break
                                     end
                                 end
                             end
-                            task.wait(0.6)
+                            task.wait(1)
                         end
                     end
                     task.wait(1.5)
