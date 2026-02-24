@@ -339,6 +339,38 @@ TabAutoFarm1:CreateToggleRow({
                     end
                     task.wait(1.5)
                     
+                    -- 3. Interact selama 30 Detik untuk Harvest (Hanya di ActiveCrops)
+                    TUpdate("Memanen (Interact)", "Jual Target", "30 Detik...")
+                    local interactEnd = os.clock() + 30
+                    while os.clock() < interactEnd and getgenv().SkenaAutoFarm_Crop do
+                        local char = player.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            local actCrops = workspace:FindFirstChild("ActiveCrops")
+                            local pool = actCrops and actCrops:GetDescendants() or workspace:GetDescendants()
+                            for _, obj in ipairs(pool) do
+                                if not getgenv().SkenaAutoFarm_Crop then break end
+                                if obj:IsA("ProximityPrompt") and obj.Enabled then
+                                    local part = obj.Parent
+                                    if part and part:IsA("BasePart") then
+                                        local dist = (hrp.Position - part.Position).Magnitude
+                                        if dist < 30 then
+                                            pcall(function()
+                                                if fireproximityprompt then 
+                                                    fireproximityprompt(obj)
+                                                else 
+                                                    obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
+                                                end
+                                            end)
+                                            task.wait(0.15)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        task.wait(0.5)
+                    end
+                    task.wait(1.5)
                     -- 3. Jual Pintar (Hanya target tanaman)
                     TUpdate("Menjual Target Tanaman", "Restart Loop", "Proses...")
                     local totalSold = SellTargetCrop(getgenv().SelectedCrop_AF1)
@@ -366,46 +398,8 @@ TabAutoFarm1:CreateInputRow({
     Callback = function(val) getgenv().AFK_HarvestDelay = tonumber(val) or 60 end
 })
 
-TabAutoFarm1:CreateToggleRow({
-    Name = "Auto Interact (Admin Source)",
-    Default = false,
-    OnToggle = function(state)
-        getgenv()._SKENA_AUTO_INTERACT_FARM = state
-        if state then
-            task.spawn(function()
-                local lp = game.Players.LocalPlayer
-                while getgenv()._SKENA_AUTO_INTERACT_FARM do
-                    local char = lp.Character
-                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    if hrp and fireproximityprompt then
-                        for _, obj in ipairs(workspace:GetDescendants()) do
-                            if obj:IsA("ProximityPrompt") and obj.Enabled then
-                                local part = obj.Parent
-                                if part and part:IsA("BasePart") then
-                                    local dist = (hrp.Position - part.Position).Magnitude
-                                    if dist < 30 then
-                                        pcall(function()
-                                            fireproximityprompt(obj)
-                                        end)
-                                        task.wait(0.15)
-                                    end
-                                end
-                            end
-                        end
-                    elseif not fireproximityprompt then
-                        warn("[Skena] fireproximityprompt tidak didukung!")
-                        getgenv()._SKENA_AUTO_INTERACT_FARM = false
-                        break
-                    end
-                    task.wait(0.5)
-                end
-            end)
-        end
-    end
-})
-
 TabAutoFarm1:CreateTextRow({
-    Text = "Step: Atur Target Tanaman, lalu nyalakan Auto Farm 1. Loop menanam target dan menunggu. Aktifkan Auto Interact untuk panen otomatis, dan hasil akan dijual saat waktu tunggu habis.\nEstimasi Waktu Farm:\n- Padi: 90 detik\n- Sawit: 270 detik"
+    Text = "Step: Atur Target Tanaman, lalu nyalakan Auto Farm 1. Loop menanam target, otomatis harvest target, dan menjual target.\nEstimasi Waktu Farm:\n- Padi: 90 detik\n- Sawit: 270 detik"
 })
 
 -- ==========================================
@@ -432,6 +426,35 @@ TabAutoFarm2:CreateToggleRow({
                     end
                     task.wait(1.5)
                     
+                    local interactEnd = os.clock() + 30
+                    while os.clock() < interactEnd and getgenv().SkenaAutoFarm_Egg do
+                        local char = player.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            local actCrops = workspace:FindFirstChild("ActiveCrops")
+                            local pool = actCrops and actCrops:GetDescendants() or workspace:GetDescendants()
+                            for _, obj in ipairs(pool) do
+                                if not getgenv().SkenaAutoFarm_Egg then break end
+                                if obj:IsA("ProximityPrompt") and obj.Enabled then
+                                    local part = obj.Parent
+                                    if part and part:IsA("BasePart") then
+                                        local dist = (hrp.Position - part.Position).Magnitude
+                                        if dist < 30 then
+                                            pcall(function()
+                                                if fireproximityprompt then 
+                                                    fireproximityprompt(obj)
+                                                else 
+                                                    obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
+                                                end
+                                            end)
+                                            task.wait(0.15)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        task.wait(0.5)
+                    end
                     task.wait(1.5)
                     SellTargetCrop(getgenv().SelectedCrop_AF1)
                     task.wait(1.5)
@@ -484,46 +507,8 @@ TabAutoFarm2:CreateToggleRow({
     end
 })
 
-TabAutoFarm2:CreateToggleRow({
-    Name = "Auto Interact (Admin Source)",
-    Default = false,
-    OnToggle = function(state)
-        getgenv()._SKENA_AUTO_INTERACT_FARM_2 = state
-        if state then
-            task.spawn(function()
-                local lp = game.Players.LocalPlayer
-                while getgenv()._SKENA_AUTO_INTERACT_FARM_2 do
-                    local char = lp.Character
-                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    if hrp and fireproximityprompt then
-                        for _, obj in ipairs(workspace:GetDescendants()) do
-                            if obj:IsA("ProximityPrompt") and obj.Enabled then
-                                local part = obj.Parent
-                                if part and part:IsA("BasePart") then
-                                    local dist = (hrp.Position - part.Position).Magnitude
-                                    if dist < 30 then
-                                        pcall(function()
-                                            fireproximityprompt(obj)
-                                        end)
-                                        task.wait(0.15)
-                                    end
-                                end
-                            end
-                        end
-                    elseif not fireproximityprompt then
-                        warn("[Skena] fireproximityprompt tidak didukung!")
-                        getgenv()._SKENA_AUTO_INTERACT_FARM_2 = false
-                        break
-                    end
-                    task.wait(0.5)
-                end
-            end)
-        end
-    end
-})
-
 TabAutoFarm2:CreateTextRow({
-    Text = "Draft Auto Farm 2: Menyelesaikan auto farm tanaman di background secara terus menerus, sambil mengecek Padi >= 5 untuk memberi makan ayam dan memanen telur dengan jeda siklus 15 menit. Nyalakan Auto Interact untuk panen."
+    Text = "Draft Auto Farm 2: Menyelesaikan auto farm tanaman di background secara terus menerus, sambil mengecek Padi >= 5 untuk memberi makan ayam dan memanen telur dengan jeda siklus 15 menit."
 })
 
 -- ==========================================
