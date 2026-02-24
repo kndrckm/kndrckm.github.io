@@ -377,14 +377,14 @@ TabAutoFarm1:CreateToggleRow({
 })
 
 TabAutoFarm1:CreateInputRow({
-    Name = " Jumlah Tanam per Loop",
+    Name = " Maksimal Simpan Bibit di Tas",
     Placeholder = "15",
     Default = "15",
     Callback = function(val) getgenv().AFK_PlantAmount = tonumber(val) or 15 end
 })
 
 TabAutoFarm1:CreateInputRow({
-    Name = " Waktu Tunggu / Panen (Detik)",
+    Name = " Jeda Waktu Auto Sell (Detik)",
     Placeholder = "60",
     Default = "60",
     Callback = function(val) getgenv().AFK_HarvestDelay = tonumber(val) or 60 end
