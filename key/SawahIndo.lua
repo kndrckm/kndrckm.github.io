@@ -378,7 +378,7 @@ TabAutoFarm1:CreateInputRow({
 })
 
 TabAutoFarm1:CreateTextRow({
-    Text = "Step: Atur Target Tanaman, lalu nyalakan Auto Farm 1. Loop menanam target, interaksi 15x untuk harvest, dan menjual target otomatis saja."
+    Text = "Step: Atur Target Tanaman, lalu nyalakan Auto Farm 1. Loop menanam target, interaksi 15x untuk harvest, dan menjual target otomatis.\nEstimasi Waktu Farm:\n- Padi: 90 detik\n- Sawit: 270 detik"
 })
 
 -- ==========================================
