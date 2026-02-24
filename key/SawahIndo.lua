@@ -294,6 +294,12 @@ end
 getgenv().SkenaAutoFarm_Crop = false
 getgenv().AutoBuySeed = true
 
+local CropDropAF1 = TabAutoFarm1:CreateDropdown({
+    Name = " Target Tanaman",
+    Callback = function(val) UpdateSelectedCrop(val) end
+})
+for _, entry in ipairs(CROP_ORDER) do CropDropAF1:AddItem(entry.label, entry.key == "Padi") end
+
 TabAutoFarm1:CreateToggleRow({
     Name = "Auto Farm 1",
     HasSubToggle = true,
@@ -356,12 +362,6 @@ TabAutoFarm1:CreateToggleRow({
         end
     end
 })
-
-local CropDropAF1 = TabAutoFarm1:CreateDropdown({
-    Name = " Target Tanaman",
-    Callback = function(val) UpdateSelectedCrop(val) end
-})
-for _, entry in ipairs(CROP_ORDER) do CropDropAF1:AddItem(entry.label, entry.key == "Padi") end
 
 TabAutoFarm1:CreateInputRow({
     Name = " Jumlah Tanam per Loop",
@@ -480,6 +480,12 @@ TabAutoFarm2:CreateTextRow({
 -- ==========================================
 -- MANUAL FARMING TAB
 -- ==========================================
+local CropDropManual = TabFarming:CreateDropdown({
+    Name = " Target Tanaman",
+    Callback = function(val) UpdateSelectedCrop(val) end
+})
+for _, entry in ipairs(CROP_ORDER) do CropDropManual:AddItem(entry.label, entry.key == "Padi") end
+
 TabFarming:CreateInputButtonRow({
     Name = "Beli Bibit",
     Placeholder = "Jml",
@@ -494,12 +500,6 @@ TabFarming:CreateInputButtonRow({
         end)
     end
 })
-
-local CropDropManual = TabFarming:CreateDropdown({
-    Name = " Target Tanaman",
-    Callback = function(val) UpdateSelectedCrop(val) end
-})
-for _, entry in ipairs(CROP_ORDER) do CropDropManual:AddItem(entry.label, entry.key == "Padi") end
 
 TabFarming:CreateButtonRow({
     Name = "Sell all target tanaman",
