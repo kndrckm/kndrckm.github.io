@@ -51,7 +51,8 @@ local TabSettings = Window:CreateTab("Settings", "settings", true)
 -- ==========================================
 getgenv().AFK_PlantAmount = 15
 getgenv().AFK_HarvestDelay = 60
-getgenv().SelectedCrop = "Padi"
+getgenv().SelectedCrop_AF1 = "Padi"
+getgenv().SelectedCrop_Manual = "Padi"
 
 local CROP_DATA = {
     ["Padi"]       = { SeedName = "Bibit Padi",       EnglishName = "Rice" },
@@ -69,15 +70,26 @@ local CROP_ORDER = {
     { key = "Strawberry", label = "Strawberry [lv. 80]" },
 }
 
-local function UpdateSelectedCrop(val)
+local function UpdateSelectedCrop_AF1(val)
     for _, entry in ipairs(CROP_ORDER) do
         if entry.label == val or entry.key == val then
-            getgenv().SelectedCrop = entry.key
-            warn("Terpilih Tanaman target: " .. entry.key)
+            getgenv().SelectedCrop_AF1 = entry.key
+            warn("Target AFK Tanaman: " .. entry.key)
             return
         end
     end
-    getgenv().SelectedCrop = val
+    getgenv().SelectedCrop_AF1 = val
+end
+
+local function UpdateSelectedCrop_Manual(val)
+    for _, entry in ipairs(CROP_ORDER) do
+        if entry.label == val or entry.key == val then
+            getgenv().SelectedCrop_Manual = entry.key
+            warn("Target Manual Tanaman: " .. entry.key)
+            return
+        end
+    end
+    getgenv().SelectedCrop_Manual = val
 end
 
 local function GetCropInventoryCount(itemName)
@@ -207,7 +219,7 @@ local function TUpdate(a,b,c) if getgenv().SkenaTracker then getgenv().SkenaTrac
 -- Helper loop robust tanam untuk auto farm 1 dan 2
 local function DoPlantCrops(isEggLoop)
     local rs = game:GetService("ReplicatedStorage")
-    local cData = CROP_DATA[getgenv().SelectedCrop]
+    local cData = CROP_DATA[getgenv().SelectedCrop_AF1]
     local plotSize = getgenv().AFK_PlantAmount or 15
     local currentSeeds = 0
 
@@ -296,7 +308,7 @@ getgenv().AutoBuySeed = true
 
 local CropDropAF1 = TabAutoFarm1:CreateDropdown({
     Name = " Target Tanaman",
-    Callback = function(val) UpdateSelectedCrop(val) end
+    Callback = function(val) UpdateSelectedCrop_AF1(val) end
 })
 for _, entry in ipairs(CROP_ORDER) do CropDropAF1:AddItem(entry.label, entry.key == "Padi") end
 
@@ -352,7 +364,7 @@ TabAutoFarm1:CreateToggleRow({
 
                     -- 4. Jual Pintar (Hanya target tanaman)
                     TUpdate("Menjual Target Tanaman", "Restart Loop", "Proses...")
-                    local totalSold = SellTargetCrop(getgenv().SelectedCrop)
+                    local totalSold = SellTargetCrop(getgenv().SelectedCrop_AF1)
                     if totalSold > 0 then
                         warn("[Sell Target] Berhasil jual " .. totalSold .. " item")
                     end
@@ -422,7 +434,7 @@ TabAutoFarm2:CreateToggleRow({
                         end
                     end
                     task.wait(1.5)
-                    SellTargetCrop(getgenv().SelectedCrop)
+                    SellTargetCrop(getgenv().SelectedCrop_AF1)
                     task.wait(1.5)
                 end
             end)
@@ -482,7 +494,7 @@ TabAutoFarm2:CreateTextRow({
 -- ==========================================
 local CropDropManual = TabFarming:CreateDropdown({
     Name = " Target Tanaman",
-    Callback = function(val) UpdateSelectedCrop(val) end
+    Callback = function(val) UpdateSelectedCrop_Manual(val) end
 })
 for _, entry in ipairs(CROP_ORDER) do CropDropManual:AddItem(entry.label, entry.key == "Padi") end
 
@@ -492,7 +504,7 @@ TabFarming:CreateInputButtonRow({
     Default = "15",
     ButtonText = "Beli",
     Callback = function(inputValue)
-        local cData = CROP_DATA[getgenv().SelectedCrop]
+        local cData = CROP_DATA[getgenv().SelectedCrop_Manual]
         local amount = tonumber(inputValue) or 15
         pcall(function()
             local rs = game:GetService("ReplicatedStorage")
@@ -506,11 +518,11 @@ TabFarming:CreateButtonRow({
     ButtonText = "Jual",
     Callback = function()
         task.spawn(function()
-            local totalSold = SellTargetCrop(getgenv().SelectedCrop)
+            local totalSold = SellTargetCrop(getgenv().SelectedCrop_Manual)
             if totalSold > 0 then
                 warn("[Sell Target] Berhasil jual " .. totalSold .. " item")
             else
-                warn("[Sell Target] Inventaris target crop (" .. getgenv().SelectedCrop .. ") kosong.")
+                warn("[Sell Target] Inventaris target crop (" .. getgenv().SelectedCrop_Manual .. ") kosong.")
             end
         end)
     end
