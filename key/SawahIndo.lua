@@ -345,31 +345,31 @@ TabAutoFarm1:CreateToggleRow({
                     if char and char:FindFirstChild("HumanoidRootPart") then
                         local hrpPos = char.HumanoidRootPart.Position
                         local interactCount = 0
-                        local maxAttempts = plotSize * 2
+                        local maxAttempts = 3
                         for attempt = 1, maxAttempts do
                             if not getgenv().SkenaAutoFarm_Crop then break end
                             if interactCount >= plotSize then break end
                             
-                            local foundPrompt = false
                             for _, obj in ipairs(workspace:GetDescendants()) do
+                                if not getgenv().SkenaAutoFarm_Crop then break end
+                                if interactCount >= plotSize then break end
+                                
                                 if obj:IsA("ProximityPrompt") and obj.Enabled and obj.Parent and obj.Parent:IsA("BasePart") then
-                                    local dist = (obj.Parent.Position - hrpPos).Magnitude
-                                    if dist <= 10.0 then -- Pakai radius 10 stud untuk amannya
-                                        if fireproximityprompt then 
-                                            pcall(function() fireproximityprompt(obj) end)
-                                        else 
-                                            obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
-                                        end
-                                        foundPrompt = true
+                                    local dist = (hrpPos - obj.Parent.Position).Magnitude
+                                    if dist < 30 then
+                                        pcall(function()
+                                            if fireproximityprompt then 
+                                                fireproximityprompt(obj)
+                                            else 
+                                                obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
+                                            end
+                                        end)
                                         interactCount = interactCount + 1
                                         task.wait(1)
-                                        break -- Hentikan scan lama, mulai fresh scan lagi
                                     end
                                 end
                             end
-                            
-                            -- Jika tidak ada prompt di radius, tunggu sebentar lalu coba scan lagi
-                            if not foundPrompt then task.wait(0.5) end
+                            task.wait(0.5)
                         end
                     end
                     task.wait(1.5)
@@ -433,29 +433,31 @@ TabAutoFarm2:CreateToggleRow({
                     if char and char:FindFirstChild("HumanoidRootPart") then
                         local hrpPos = char.HumanoidRootPart.Position
                         local interactCount = 0
-                        local maxAttempts = plotSize * 2
+                        local maxAttempts = 3
                         for attempt = 1, maxAttempts do
                             if not getgenv().SkenaAutoFarm_Egg then break end
                             if interactCount >= plotSize then break end
                             
-                            local foundPrompt = false
                             for _, obj in ipairs(workspace:GetDescendants()) do
+                                if not getgenv().SkenaAutoFarm_Egg then break end
+                                if interactCount >= plotSize then break end
+                                
                                 if obj:IsA("ProximityPrompt") and obj.Enabled and obj.Parent and obj.Parent:IsA("BasePart") then
-                                    local dist = (obj.Parent.Position - hrpPos).Magnitude
-                                    if dist <= 10.0 then
-                                        if fireproximityprompt then 
-                                            pcall(function() fireproximityprompt(obj) end)
-                                        else 
-                                            obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
-                                        end
-                                        foundPrompt = true
+                                    local dist = (hrpPos - obj.Parent.Position).Magnitude
+                                    if dist < 30 then
+                                        pcall(function()
+                                            if fireproximityprompt then 
+                                                fireproximityprompt(obj)
+                                            else 
+                                                obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
+                                            end
+                                        end)
                                         interactCount = interactCount + 1
                                         task.wait(1)
-                                        break
                                     end
                                 end
                             end
-                            if not foundPrompt then task.wait(0.5) end
+                            task.wait(0.5)
                         end
                     end
                     task.wait(1.5)
