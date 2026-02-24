@@ -343,25 +343,24 @@ TabAutoFarm1:CreateToggleRow({
                     TUpdate("Memanen (Interact) " .. plotSize .. "x", "Jual Target", "Proses...")
                     local char = player.Character
                     if char and char:FindFirstChild("HumanoidRootPart") then
-                        for i = 1, plotSize do
-                            if not getgenv().SkenaAutoFarm_Crop then return end
-                            local hrpPos = char.HumanoidRootPart.Position
-                            local interacted = false
-                            for _, obj in ipairs(workspace:GetDescendants()) do
-                                if obj:IsA("ProximityPrompt") and obj.Enabled and obj.Parent and obj.Parent:IsA("BasePart") then
-                                    local dist = (obj.Parent.Position - hrpPos).Magnitude
-                                    if dist <= 3.0 then -- 3 stud radius
-                                        if fireproximityprompt then 
-                                            pcall(function() fireproximityprompt(obj) end)
-                                        else 
-                                            obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
-                                        end
-                                        interacted = true
-                                        break
+                        local hrpPos = char.HumanoidRootPart.Position
+                        local interactCount = 0
+                        for _, obj in ipairs(workspace:GetDescendants()) do
+                            if not getgenv().SkenaAutoFarm_Crop then break end
+                            if interactCount >= plotSize then break end
+                            
+                            if obj:IsA("ProximityPrompt") and obj.Enabled and obj.Parent and obj.Parent:IsA("BasePart") then
+                                local dist = (obj.Parent.Position - hrpPos).Magnitude
+                                if dist <= 10.0 then -- Pakai radius 10 stud untuk amannya
+                                    if fireproximityprompt then 
+                                        pcall(function() fireproximityprompt(obj) end)
+                                    else 
+                                        obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
                                     end
+                                    interactCount = interactCount + 1
+                                    task.wait(1)
                                 end
                             end
-                            if interacted then task.wait(1) else task.wait(1) end
                         end
                     end
                     task.wait(1.5)
@@ -423,22 +422,24 @@ TabAutoFarm2:CreateToggleRow({
                     
                     local char = player.Character
                     if char and char:FindFirstChild("HumanoidRootPart") then
-                        for i = 1, plotSize do
-                            if not getgenv().SkenaAutoFarm_Egg then return end
-                            local hrpPos = char.HumanoidRootPart.Position
-                            for _, obj in ipairs(workspace:GetDescendants()) do
-                                if obj:IsA("ProximityPrompt") and obj.Enabled and obj.Parent and obj.Parent:IsA("BasePart") then
-                                    if (obj.Parent.Position - hrpPos).Magnitude <= 3.0 then
-                                        if fireproximityprompt then 
-                                            pcall(function() fireproximityprompt(obj) end)
-                                        else 
-                                            obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
-                                        end
-                                        break
+                        local hrpPos = char.HumanoidRootPart.Position
+                        local interactCount = 0
+                        for _, obj in ipairs(workspace:GetDescendants()) do
+                            if not getgenv().SkenaAutoFarm_Egg then break end
+                            if interactCount >= plotSize then break end
+                            
+                            if obj:IsA("ProximityPrompt") and obj.Enabled and obj.Parent and obj.Parent:IsA("BasePart") then
+                                local dist = (obj.Parent.Position - hrpPos).Magnitude
+                                if dist <= 10.0 then
+                                    if fireproximityprompt then 
+                                        pcall(function() fireproximityprompt(obj) end)
+                                    else 
+                                        obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
                                     end
+                                    interactCount = interactCount + 1
+                                    task.wait(1)
                                 end
                             end
-                            task.wait(1)
                         end
                     end
                     task.wait(1.5)
