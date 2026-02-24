@@ -220,7 +220,7 @@ local function TUpdate(a,b,c) if getgenv().SkenaTracker then getgenv().SkenaTrac
 local function DoPlantCrops(isEggLoop)
     local rs = game:GetService("ReplicatedStorage")
     local cData = CROP_DATA[getgenv().SelectedCrop_AF1]
-    local plotSize = getgenv().AFK_PlantAmount or 15
+    local maxSeeds = getgenv().AFK_PlantAmount or 15
     local currentSeeds = 0
 
     local function getCount(parent)
@@ -243,13 +243,12 @@ local function DoPlantCrops(isEggLoop)
     if char then getCount(char) end
     getCount(player.Backpack)
     
-    if getgenv().AutoBuySeed and currentSeeds < 15 then
-        if not isEggLoop then TUpdate("Membeli Bibit ("..cData.SeedName..")", "Equip & Tanam", "1s") end
-        pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", cData.SeedName, plotSize) end)
+    if getgenv().AutoBuySeed and currentSeeds < maxSeeds then
+        local toBuy = maxSeeds - currentSeeds
+        pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", cData.SeedName, toBuy) end)
         task.wait(1)
     end
     
-    if not isEggLoop then TUpdate("Equip & Tanam ("..plotSize.."x)", "Menunggu Panen", "Proses...") end
     if char and char:FindFirstChild("HumanoidRootPart") then
         local hum = char:FindFirstChildOfClass("Humanoid")
         local function getTool(parent)
@@ -263,39 +262,33 @@ local function DoPlantCrops(isEggLoop)
             local heldCrop = getTool(char)
             if not heldCrop then
                 hum:UnequipTools()
-                task.wait(0.2)
+                task.wait(0.1)
                 local inBp = getTool(player.Backpack)
-                if inBp then hum:EquipTool(inBp) task.wait(0.4) end
+                if inBp then hum:EquipTool(inBp) task.wait(0.2) end
             end
             if not getTool(char) then
                 local recheckBp = getTool(player.Backpack)
                 if recheckBp then
                     hum:UnequipTools()
-                    task.wait(0.2)
+                    task.wait(0.1)
                     hum:EquipTool(recheckBp)
-                    task.wait(0.4)
+                    task.wait(0.2)
                 end
             end
         end
         
-        if not getTool(char) then
-            warn("Batal tanam putaran ini karena bibit target (" .. cData.SeedName .. ") gagal dipegang!")
-            task.wait(2)
-        else
+        if getTool(char) then
             local startPos = char.HumanoidRootPart.Position
-            for i = 1, plotSize do
-                if isEggLoop and not getgenv().SkenaAutoFarm_Egg then return end
-                if not isEggLoop and not getgenv().SkenaAutoFarm_Crop then return end
-                local angle = math.rad(math.random(0, 360))
-                local dist = 0.5 + math.random() * 1.5
-                local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
-                local pos = startPos + offset
-                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
-                task.wait(0.6)
-            end
+            local angle = math.rad(math.random(0, 360))
+            local dist = 0.5 + math.random() * 1.5
+            local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
+            local pos = startPos + offset
+            pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
+            task.wait(0.6)
+        else
+            task.wait(1)
         end
     else
-        warn("Karakter tidak ditemukan! Tanam ditunda.")
         task.wait(2)
     end
 end
@@ -356,30 +349,27 @@ TabAutoFarm1:CreateToggleRow({
                 end
             end)
 
-            -- Thread Tanam & Jual
+            -- Thread Beli & Tanam Loop (Plant State)
             task.spawn(function()
                 while getgenv().SkenaAutoFarm_Crop do
-                    local plotSize = getgenv().AFK_PlantAmount or 15
-
-                    -- 1. Beli, Equip, Tanam
                     DoPlantCrops(false)
+                    task.wait(0.1)
+                end
+            end)
+
+            -- Thread Menjual Target Loop (Sell State)
+            task.spawn(function()
+                while getgenv().SkenaAutoFarm_Crop do
+                    TUpdate("Menjual Target Tanaman", "Sleep Sell", "Menunggu...")
+                    local totalSold = SellTargetCrop(getgenv().SelectedCrop_AF1)
+                    if totalSold > 0 then warn("[Sell Target] Berhasil jual " .. totalSold .. " item") end
                     
-                    -- 2. Menunggu (Waktu Tanaman Tumbuh & Auto-Harvest Game)
-                    local hDelay = getgenv().AFK_HarvestDelay or 60
-                    for hw = hDelay, 1, -1 do
+                    local sDelay = getgenv().AFK_HarvestDelay or 60
+                    for sw = sDelay, 1, -1 do
                         if not getgenv().SkenaAutoFarm_Crop then return end
-                        TUpdate("Menunggu Tumbuh", "Interact & Jual", hw .. "s")
+                        TUpdate("Sleep Sell", "Menjual Target", sw .. "s")
                         task.wait(1)
                     end
-                    task.wait(1.5)
-                    
-                    -- 3. Jual Pintar (Hanya target tanaman)
-                    TUpdate("Menjual Target Tanaman", "Restart Loop", "Proses...")
-                    local totalSold = SellTargetCrop(getgenv().SelectedCrop_AF1)
-                    if totalSold > 0 then
-                        warn("[Sell Target] Berhasil jual " .. totalSold .. " item")
-                    end
-                    task.wait(1.5)
                 end
             end)
         end
@@ -401,7 +391,7 @@ TabAutoFarm1:CreateInputRow({
 })
 
 TabAutoFarm1:CreateTextRow({
-    Text = "Step: Atur Target Tanaman, lalu nyalakan Auto Farm 1. Loop menanam target, otomatis harvest target, dan menjual target.\nEstimasi Waktu Farm:\n- Padi: 90 detik\n- Sawit: 270 detik"
+    Text = "Step: Atur Target Tanaman, lalu nyalakan Auto Farm 1. Loop menanam otomatis isi inventory 15x tanpa henti, harvesting bekerja paralel terus menerus, target dijual tiap X detik delay yang di set bawah ini.\nEstimasi Waktu Jual Terbaik:\n- Padi: 60 - 90 detik\n- Sawit: 60 - 270 detik"
 })
 
 -- ==========================================
@@ -448,21 +438,23 @@ TabAutoFarm2:CreateToggleRow({
                 end
             end)
 
-            -- Loop Tanaman (Jalan Paralel agar tidak terblokir jeda telur)
+            -- Thread Beli & Tanam Loop (Plant State)
             task.spawn(function()
                 while getgenv().SkenaAutoFarm_Egg do
-                    local plotSize = getgenv().AFK_PlantAmount or 15
                     DoPlantCrops(true)
-                    
-                    local hDelay = getgenv().AFK_HarvestDelay or 60
-                    for hw = hDelay, 1, -1 do
+                    task.wait(0.1)
+                end
+            end)
+            
+            -- Thread Sell Loop (Sell State)
+            task.spawn(function()
+                while getgenv().SkenaAutoFarm_Egg do
+                    SellTargetCrop(getgenv().SelectedCrop_AF1)
+                    local sDelay = getgenv().AFK_HarvestDelay or 60
+                    for hw = sDelay, 1, -1 do
                         if not getgenv().SkenaAutoFarm_Egg then return end
                         task.wait(1)
                     end
-                    task.wait(1.5)
-                    
-                    SellTargetCrop(getgenv().SelectedCrop_AF1)
-                    task.wait(1.5)
                 end
             end)
 
