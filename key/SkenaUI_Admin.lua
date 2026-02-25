@@ -60,49 +60,8 @@ function SkenaAdmin.Attach(Window, DebugData)
                 pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CloneRef.lua", true))() end)
                 pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/DexBypasses.lua", true))() end)
                 
-                -- 2. Memanipulasi Environment sebelum Dex di-load
-                local charset = {}
-                for i = 48,  57 do table.insert(charset, string.char(i)) end
-                for i = 65,  90 do table.insert(charset, string.char(i)) end
-                for i = 97, 122 do table.insert(charset, string.char(i)) end
-                local function RandomCharacters(length)
-                    if length > 0 then
-                        return RandomCharacters(length - 1) .. charset[math.random(1, #charset)]
-                    else
-                        return ""
-                    end
-                end
-
-                -- Kita buat environment palsu (Sandbox) agar Dex memakai gethui()
-                local fakeEnv = getfenv(0)
-                local hiddenParent
-                if gethui then
-                    hiddenParent = gethui()
-                elseif syn and syn.protect_gui then
-                    hiddenParent = cloneref(game:GetService("CoreGui"))
-                else
-                    hiddenParent = cloneref(game:GetService("CoreGui"))
-                end
-
-                -- Memaksa Dex untuk menaruh UI-nya di Hidden Parent dengan nama acak
-                local OriginalInstanceNew = Instance.new
-                fakeEnv.Instance = {
-                    new = function(className, parent)
-                        local inst = OriginalInstanceNew(className)
-                        if className == "ScreenGui" then
-                            inst.Name = RandomCharacters(math.random(10, 20))
-                            if syn and syn.protect_gui then syn.protect_gui(inst) end
-                            inst.Parent = hiddenParent
-                        elseif parent then
-                            inst.Parent = parent
-                        end
-                        return inst
-                    end
-                }
-                setmetatable(fakeEnv.Instance, {__index = Instance})
-
                 warn("[Admin] Mengunduh Source Code Dark Dex...")
-                -- 3. Load Dark Dex dari repository mu!
+                -- 2. Load Dark Dex Asli dari repository mu
                 local dexSource = game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CustomDex.lua")
                 
                 local dexFunc, loadErr = loadstring(dexSource)
@@ -110,8 +69,7 @@ function SkenaAdmin.Attach(Window, DebugData)
                     error("Gagal mengkompilasi Dex: " .. tostring(loadErr))
                 end
 
-                -- Menjalankan Dex dengan Environment terlindungi
-                setfenv(dexFunc, fakeEnv)
+                -- 3. Menjalankan Dex langsung (Tanpa Sandbox yang merusak UI)
                 task.spawn(dexFunc)
             end)
 
