@@ -53,6 +53,22 @@ getgenv().AFK_PlantAmount = 15
 getgenv().AFK_HarvestDelay = 60
 getgenv().SelectedCrop_AF1 = "Padi"
 getgenv().SelectedCrop_Manual = "Padi"
+getgenv().SkenaPlantPauseTime = 0
+
+if not getgenv().SkenaNamecallHooked and hookmetamethod then
+    getgenv().SkenaNamecallHooked = true
+    local oldNamecall
+    oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        local args = {...}
+        if method == "FireServer" and tostring(self.Name) == "Notification" then
+            if type(args[1]) == "string" and string.find(args[1], "Maximum 15 crops!") then
+                getgenv().SkenaPlantPauseTime = os.clock() + 30
+            end
+        end
+        return oldNamecall(self, ...)
+    end))
+end
 
 getgenv().SkenaSession = {
     StartTime = os.clock(),
@@ -255,6 +271,10 @@ end)
 
 -- Helper loop robust tanam untuk auto farm 1 dan 2
 local function DoPlantCrops(isEggLoop)
+    if os.clock() < (getgenv().SkenaPlantPauseTime or 0) then
+        return
+    end
+
     local rs = game:GetService("ReplicatedStorage")
     local cData = CROP_DATA[getgenv().SelectedCrop_AF1]
     local maxSeeds = getgenv().AFK_PlantAmount or 15
