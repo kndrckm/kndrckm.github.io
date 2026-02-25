@@ -48,6 +48,24 @@ function SkenaAdmin.Attach(Window, DebugData)
             end
         end
     })
+
+    TabAdmin:CreateButtonRow({
+        Name = "Custom Dex (Explorer)",
+        ButtonText = "Load Dex",
+        Callback = function(btn)
+            local success, err = pcall(function()
+                -- Menggunakan loadstring dari repository github langsung
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CustomDex.lua"))()
+            end)
+            if success then
+                warn("[Admin] Custom Dex berhasil di-load!")
+                animateBtn(btn, true)
+            else
+                warn("[Admin] Gagal me-load Custom Dex: " .. tostring(err))
+                animateBtn(btn, false)
+            end
+        end
+    })
     
     -- Selalu update fungsi LogRemote (agar re-exec mendapat versi terbaru)
     getgenv()._SKENA_SPY_SERIALIZE = function(v, depth)
