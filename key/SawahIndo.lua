@@ -246,7 +246,7 @@ local function DoPlantCrops(isEggLoop)
     if getgenv().AutoBuySeed and currentSeeds < maxSeeds then
         local toBuy = maxSeeds - currentSeeds
         pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", cData.SeedName, toBuy) end)
-        task.wait(1)
+        task.wait(0.5) -- Beri waktu sebentar agar bibit masuk ke tas
     end
     
     if char and char:FindFirstChild("HumanoidRootPart") then
@@ -279,12 +279,34 @@ local function DoPlantCrops(isEggLoop)
         
         if getTool(char) then
             local startPos = char.HumanoidRootPart.Position
-            local angle = math.rad(math.random(0, 360))
-            local dist = 0.5 + math.random() * 1.5
-            local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
-            local pos = startPos + offset
-            pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
-            task.wait(0.6)
+            local actCrops = workspace:FindFirstChild("ActiveCrops")
+
+            -- Optimasi Jarak: Hanya lempar bibit jika karakter tidak terlalu jauh dari titik farm (misal radius 100 stud)
+            -- Asumsi ActiveCrops selalu ada jika sudah pernah ditanam, jika tidak ada, skip pengecekan jarak
+            local isNear = true
+            if actCrops then
+                -- Cari part tanah/tanaman terdekat sebagai referensi (Opsional, tapi meminimalisir salah lempar)
+                local closestDist = math.huge
+                for _, crop in ipairs(actCrops:GetChildren()) do
+                    if crop:IsA("Model") and crop.PrimaryPart then
+                        local d = (startPos - crop.PrimaryPart.Position).Magnitude
+                        if d < closestDist then closestDist = d end
+                    end
+                end
+                if closestDist > 150 then isNear = false end
+            end
+
+            if isNear then
+                local angle = math.rad(math.random(0, 360))
+                local dist = 0.5 + math.random() * 1.5
+                local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
+                local pos = startPos + offset
+                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
+                task.wait(0.6)
+            else
+                warn("[Skena] Karakter terlalu jauh dari ladang, menunda Auto Tanam.")
+                task.wait(1)
+            end
         else
             task.wait(1)
         end
@@ -318,13 +340,15 @@ TabAutoFarm1:CreateToggleRow({
         if state then
             -- Thread Panen (Auto Interact)
             task.spawn(function()
-                local lp = game.Players.LocalPlayer
+                local actCrops = workspace:WaitForChild("ActiveCrops", 5) -- Cache folder ActiveCrops di memori thread
                 while getgenv().SkenaAutoFarm_Crop do
-                    local char = lp.Character
+                    if not actCrops then actCrops = workspace:FindFirstChild("ActiveCrops") end
+                    
+                    local char = player.Character
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local actCrops = workspace:FindFirstChild("ActiveCrops")
-                        local pool = actCrops and actCrops:GetDescendants() or workspace:GetDescendants()
+                    
+                    if hrp and actCrops then
+                        local pool = actCrops:GetDescendants()
                         for _, obj in ipairs(pool) do
                             if not getgenv().SkenaAutoFarm_Crop then break end
                             if obj:IsA("ProximityPrompt") and obj.Enabled then
@@ -339,13 +363,13 @@ TabAutoFarm1:CreateToggleRow({
                                                 obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
                                             end
                                         end)
-                                        task.wait(0.15)
+                                        task.wait(0.1) -- Sedikit delay aman antar objek
                                     end
                                 end
                             end
                         end
                     end
-                    task.wait(0.5)
+                    task.wait(0.3) -- Jeda antar sapuan (Sweep) agar CPU tidak menangis men-scan ratusan part tiap milli-detik
                 end
             end)
 
@@ -407,13 +431,15 @@ TabAutoFarm2:CreateToggleRow({
         if state then
             -- Thread Panen (Auto Interact)
             task.spawn(function()
-                local lp = game.Players.LocalPlayer
+                local actCrops = workspace:WaitForChild("ActiveCrops", 5)
                 while getgenv().SkenaAutoFarm_Egg do
-                    local char = lp.Character
+                    if not actCrops then actCrops = workspace:FindFirstChild("ActiveCrops") end
+                    
+                    local char = player.Character
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local actCrops = workspace:FindFirstChild("ActiveCrops")
-                        local pool = actCrops and actCrops:GetDescendants() or workspace:GetDescendants()
+                    
+                    if hrp and actCrops then
+                        local pool = actCrops:GetDescendants()
                         for _, obj in ipairs(pool) do
                             if not getgenv().SkenaAutoFarm_Egg then break end
                             if obj:IsA("ProximityPrompt") and obj.Enabled then
@@ -428,13 +454,13 @@ TabAutoFarm2:CreateToggleRow({
                                                 obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
                                             end
                                         end)
-                                        task.wait(0.15)
+                                        task.wait(0.1)
                                     end
                                 end
                             end
                         end
                     end
-                    task.wait(0.5)
+                    task.wait(0.3)
                 end
             end)
 
