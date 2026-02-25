@@ -340,9 +340,8 @@ TabAutoFarm1:CreateToggleRow({
         if state then
             -- Thread Panen (Auto Interact)
             task.spawn(function()
-                local actCrops = workspace:WaitForChild("ActiveCrops", 5) -- Cache folder ActiveCrops di memori thread
                 while getgenv().SkenaAutoFarm_Crop do
-                    if not actCrops then actCrops = workspace:FindFirstChild("ActiveCrops") end
+                    local actCrops = workspace:FindFirstChild("ActiveCrops")
                     
                     local char = player.Character
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -369,7 +368,7 @@ TabAutoFarm1:CreateToggleRow({
                             end
                         end
                     end
-                    task.wait(0.3) -- Jeda antar sapuan (Sweep) agar CPU tidak menangis men-scan ratusan part tiap milli-detik
+                    task.wait(0.5) -- Kembalikan ke 0.5s stabil (SkenaAdmin standar)
                 end
             end)
 
@@ -431,9 +430,8 @@ TabAutoFarm2:CreateToggleRow({
         if state then
             -- Thread Panen (Auto Interact)
             task.spawn(function()
-                local actCrops = workspace:WaitForChild("ActiveCrops", 5)
                 while getgenv().SkenaAutoFarm_Egg do
-                    if not actCrops then actCrops = workspace:FindFirstChild("ActiveCrops") end
+                    local actCrops = workspace:FindFirstChild("ActiveCrops")
                     
                     local char = player.Character
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
@@ -460,7 +458,7 @@ TabAutoFarm2:CreateToggleRow({
                             end
                         end
                     end
-                    task.wait(0.3)
+                    task.wait(0.5) -- Kembalikan ke 0.5s stabil
                 end
             end)
 
