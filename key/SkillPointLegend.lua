@@ -338,17 +338,24 @@ TabMain:CreateToggleRow({
 -- ==========================================
 getgenv()._SKENA_KILL_RANGE = 25
 
+-- ==========================================
+-- KILL AURA (Slider + Toggle)
+-- ==========================================
+getgenv()._SKENA_KILL_RANGE = 25
+
+TabMain:CreateSliderRow({
+    Name = "Kill Aura Range",
+    Min = 5,
+    Max = 100,
+    Default = 25,
+    Callback = function(val)
+        getgenv()._SKENA_KILL_RANGE = tonumber(val) or 25
+    end
+})
+
 RegisterLoop("_SKENA_KILL_AURA")
 TabMain:CreateToggleRow({
-    Name = "Kill Aura",
-    HasInput = true,
-    InputPlaceholder = "25",
-    InputDefault = "25",
-    InputWidth = 35,
-    InputPrefix = "R:",
-    OnInputChange = function(val)
-        getgenv()._SKENA_KILL_RANGE = tonumber(val) or 25
-    end,
+    Name = " [ Enable Kill Aura ]",
     OnToggle = function(state)
         getgenv()._SKENA_KILL_AURA = state
         if state then
