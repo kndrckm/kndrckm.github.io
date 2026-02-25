@@ -283,7 +283,7 @@ local function DoPlantCrops(isEggLoop)
     if getgenv().AutoBuySeed and currentSeeds < maxSeeds then
         local toBuy = maxSeeds - currentSeeds
         pcall(function() rs.Remotes.TutorialRemotes.RequestShop:InvokeServer("BUY", cData.SeedName, toBuy) end)
-        task.wait(0.5) -- Beri waktu sebentar agar bibit masuk ke tas
+        task.wait(1)
     end
     
     if char and char:FindFirstChild("HumanoidRootPart") then
@@ -355,14 +355,13 @@ TabAutoFarm1:CreateToggleRow({
         if state then
             -- Thread Panen (Auto Interact)
             task.spawn(function()
+                local lp = game.Players.LocalPlayer
                 while getgenv().SkenaAutoFarm_Crop do
-                    local actCrops = workspace:FindFirstChild("ActiveCrops")
-                    
-                    local char = player.Character
+                    local char = lp.Character
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    
-                    if hrp and actCrops then
-                        local pool = actCrops:GetDescendants()
+                    if hrp then
+                        local actCrops = workspace:FindFirstChild("ActiveCrops")
+                        local pool = actCrops and actCrops:GetDescendants() or workspace:GetDescendants()
                         for _, obj in ipairs(pool) do
                             if not getgenv().SkenaAutoFarm_Crop then break end
                             if obj:IsA("ProximityPrompt") and obj.Enabled then
@@ -377,13 +376,13 @@ TabAutoFarm1:CreateToggleRow({
                                                 obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
                                             end
                                         end)
-                                        task.wait(0.1) -- Sedikit delay aman antar objek
+                                        task.wait(0.15)
                                     end
                                 end
                             end
                         end
                     end
-                    task.wait(0.5) -- Kembalikan ke 0.5s stabil (SkenaAdmin standar)
+                    task.wait(0.5)
                 end
             end)
 
@@ -443,14 +442,13 @@ TabAutoFarm2:CreateToggleRow({
         if state then
             -- Thread Panen (Auto Interact)
             task.spawn(function()
+                local lp = game.Players.LocalPlayer
                 while getgenv().SkenaAutoFarm_Egg do
-                    local actCrops = workspace:FindFirstChild("ActiveCrops")
-                    
-                    local char = player.Character
+                    local char = lp.Character
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    
-                    if hrp and actCrops then
-                        local pool = actCrops:GetDescendants()
+                    if hrp then
+                        local actCrops = workspace:FindFirstChild("ActiveCrops")
+                        local pool = actCrops and actCrops:GetDescendants() or workspace:GetDescendants()
                         for _, obj in ipairs(pool) do
                             if not getgenv().SkenaAutoFarm_Egg then break end
                             if obj:IsA("ProximityPrompt") and obj.Enabled then
@@ -465,13 +463,13 @@ TabAutoFarm2:CreateToggleRow({
                                                 obj:InputHoldBegin() task.wait(0.1) obj:InputHoldEnd() 
                                             end
                                         end)
-                                        task.wait(0.1)
+                                        task.wait(0.15)
                                     end
                                 end
                             end
                         end
                     end
-                    task.wait(0.5) -- Kembalikan ke 0.5s stabil
+                    task.wait(0.5)
                 end
             end)
 
