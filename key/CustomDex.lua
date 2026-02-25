@@ -403,52 +403,57 @@ local connections = {}
 
 local function showContextMenu(position, targetInstance)
     print("Attempting to show context menu at:", position.X, position.Y, "Instance:", targetInstance and targetInstance.Name or "nil") -- Debug
+    
+    -- IMPORTANT FIX: Ensure it shows up exactly where the mouse is
     contextMenuFrame.Position = UDim2.new(0, math.clamp(position.X, 0, screenGui.AbsoluteSize.X - 150), 0, math.clamp(position.Y, 0, screenGui.AbsoluteSize.Y - 60))
     contextMenuFrame.Visible = true
-    print("Context menu frame position:", contextMenuFrame.Position.X.Offset, contextMenuFrame.Position.Y.Offset, "Visible:", contextMenuFrame.Visible) -- Debug
+    
+    -- Bring to front
+    contextMenuGui.DisplayOrder = 9999
+    
     selectedInstance = targetInstance
 
+    -- Clean up old connections
+    for _, conn in pairs(connections) do
+        conn:Disconnect()
+    end
+    connections = {}
+
     local deleteConnection = deleteButton.MouseButton1Click:Connect(function()
-        print("Delete button clicked, instance:", selectedInstance and selectedInstance.Name or "nil") -- Debug
         if selectedInstance then
             selectedInstance:Destroy()
             contextMenuFrame.Visible = false
             updateProperties()
         end
-        for _, conn in pairs(connections) do
-            conn:Disconnect()
-        end
+        for _, conn in pairs(connections) do conn:Disconnect() end
         connections = {}
     end)
     table.insert(connections, deleteConnection)
 
-    -- MODIFIED: Added action for Copy Path
     local copyConnection = copyPathButton.MouseButton1Click:Connect(function()
-        print("Copy Path clicked, instance:", selectedInstance and selectedInstance.Name or "nil") -- Debug
         if selectedInstance then
             if setclipboard then
                 setclipboard(selectedInstance:GetFullName())
-                print("Copied to clipboard: " .. selectedInstance:GetFullName())
-            else
-                warn("setclipboard function is not supported by your executor")
             end
             contextMenuFrame.Visible = false
         end
-        for _, conn in pairs(connections) do
-            conn:Disconnect()
-        end
+        for _, conn in pairs(connections) do conn:Disconnect() end
         connections = {}
     end)
     table.insert(connections, copyConnection)
 
     local closeConnection = UserInputService.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 and not contextMenuFrame:FindFirstChildWhichIsA("TextButton"):IsDescendantOf(input.UserInputService:GetFocused()) then
-            print("Closing context menu") -- Debug
-            contextMenuFrame.Visible = false
-            for _, conn in pairs(connections) do
-                conn:Disconnect()
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            -- Check if we clicked outside the context menu
+            local mousePos = input.Position
+            local framePos = contextMenuFrame.AbsolutePosition
+            local frameSize = contextMenuFrame.AbsoluteSize
+            
+            if mousePos.X < framePos.X or mousePos.X > framePos.X + frameSize.X or mousePos.Y < framePos.Y or mousePos.Y > framePos.Y + frameSize.Y then
+                contextMenuFrame.Visible = false
+                for _, conn in pairs(connections) do conn:Disconnect() end
+                connections = {}
             end
-            connections = {}
         end
     end)
     table.insert(connections, closeConnection)
@@ -649,19 +654,33 @@ local function createNode(instance, parentContainer, depth, parentUpdate)
         updateProperties()
     end)
 
-    contentFrame.MouseButton2Click:Connect(function(x)
-        print("Right-click detected on:", instance.Name, "at:", x.Position.X, x.Position.Y) -- Debug
-        if selectedNode then
-            local prevHighlight = selectedNode:FindFirstChild("Highlight")
-            if prevHighlight then
-                prevHighlight.BackgroundTransparency = 1
+    local isHovering = false
+    
+    contentFrame.MouseEnter:Connect(function()
+        isHovering = true
+    end)
+    
+    contentFrame.MouseLeave:Connect(function()
+        isHovering = false
+    end)
+
+    -- Detect Right Click while hovering using UserInputService (Bypass MouseButton2Click issues)
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if isHovering and input.UserInputType == Enum.UserInputType.MouseButton2 then
+            if selectedNode then
+                local prevHighlight = selectedNode:FindFirstChild("Highlight")
+                if prevHighlight then
+                    prevHighlight.BackgroundTransparency = 1
+                end
             end
+            highlight.BackgroundTransparency = 0.5
+            selectedNode = nodeFrame
+            selectedInstance = instance
+            updateProperties()
+            
+            -- Show context menu exactly at mouse click position
+            showContextMenu(input.Position, selectedInstance)
         end
-        highlight.BackgroundTransparency = 0.5
-        selectedNode = nodeFrame
-        selectedInstance = instance
-        updateProperties()
-        showContextMenu(x.Position, selectedInstance)
     end)
 
     expandButton.MouseButton1Click:Connect(function()
