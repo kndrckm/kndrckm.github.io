@@ -174,20 +174,24 @@ local MOB_LIST = {
 
 local BOSS_LIST = {
     -- Grassland Bosses
-    { name = "Chief",      hp = "25k",    parts = {321}, world = "Grassland" },
-    { name = "Dino",       hp = "250k",   parts = {267}, world = "Grassland" },
-    { name = "Arachenex",  hp = "450k",   parts = {144, 143}, world = "Grassland" }, -- Added 143p
+    { name = "Chief",           hp = "25k",    parts = {321}, world = "Grassland", bscheckpoint = Vector3.new(149.58, 4, -689.58) },
+    { name = "Dino",            hp = "250k",   parts = {267}, world = "Grassland", bscheckpoint = Vector3.new(1289.93, 725, 637.99) },
+    { name = "Arachenex",       hp = "450k",   parts = {144, 143}, world = "Grassland", bscheckpoint = Vector3.new(1332.46, 7, -59.47) },
     
     -- Cursed Kingdom Bosses
-    { name = "Grimroot",   hp = "950k",   parts = {497, 498}, world = "CursedKingdom" }, -- Added 498p
-    { name = "Leonidas",   hp = "1.25m",  parts = {163, 164}, world = "CursedKingdom" },
+    { name = "Grimroot",        hp = "950k",   parts = {497, 498}, world = "CursedKingdom", bscheckpoint = Vector3.new(1233.23, 19, -590.66) },
+    { name = "Leonidas",        hp = "1.25m",  parts = {163, 164}, world = "CursedKingdom", bscheckpoint = Vector3.new(2696.89, 84, -649.57) },
     
     -- Unknown World
-    { name = "Minotaur",        hp = "30b",    parts = {263} },
-    { name = "Lightning God",   hp = "25m",    parts = {123} },
-    { name = "Sand Golem",      hp = "2b",     parts = {614} },
-    { name = "Hydra Worm",      hp = "4b",     parts = {355} },
-    { name = "Dragon",          hp = "8b",     parts = {151} },
+    { name = "Minotaur",        hp = "30b",    parts = {263}, bscheckpoint = Vector3.new(307.29, -90.4, -542.14) },
+    { name = "Lightning God",   hp = "25m",    parts = {123}, bscheckpoint = Vector3.new(673.74, 407, -2146.04) },
+    { name = "Sand Golem",      hp = "2b",     parts = {614}, bscheckpoint = Vector3.new(577.86, 40.8, -3905.71) },
+    { name = "Hydra Worm",      hp = "4b",     parts = {355}, bscheckpoint = Vector3.new(627.96, 40.8, -3512.46) },
+    { name = "Dragon",          hp = "8b",     parts = {151}, bscheckpoint = Vector3.new(693.95, 321.92, -3557.43) },
+    { name = "Nevermore",       hp = "75b",    parts = nil, bscheckpoint = Vector3.new(1232.99, -489.2, -3897.2) },
+    { name = "Simba",           hp = "750b",   parts = nil, bscheckpoint = Vector3.new(1205.18, -488.6, -3131.8) },
+    { name = "Anibis",          hp = "1.5t",   parts = nil, bscheckpoint = Vector3.new(1264.43, -489.3, -3588.42) },
+    { name = "Ashgor",          hp = "1.6t",   parts = nil, bscheckpoint = Vector3.new(597.25, 4, -33.63) },
 }
 
 -- Build fingerprint lookup: parts -> mob name
@@ -302,7 +306,11 @@ local VIM = game:GetService("VirtualInputManager")
 local function doAttack()
     local method = getgenv()._SKENA_ATTACK_METHOD
     pcall(function()
-        if method == "mouse1click" then
+        if method == "module_punch" then
+            local rs = game:GetService("ReplicatedStorage")
+            local punch = rs:FindFirstChild("Source") and rs.Source:FindFirstChild("Weapons") and rs.Source.Weapons:FindFirstChild("Punch")
+            if punch then require(punch).onActivated(true) end
+        elseif method == "mouse1click" then
             if mouse1click then mouse1click() end
         elseif method == "keypress_f" then
             if keypress then keypress(0x46) task.wait(0.05) keyrelease(0x46) end
@@ -326,13 +334,14 @@ end
 -- AUTO ATTACK (multiple methods)
 -- ==========================================
 local ATTACK_METHODS = {
+    { key = "module_punch",  label = "Module Punch (Fastest)" },
     { key = "mouse1click",   label = "mouse1click" },
     { key = "keypress_f",    label = "Keypress F" },
     { key = "keypress_e",    label = "Keypress E" },
     { key = "tool_activate", label = "Tool Activate" },
     { key = "vim_click",     label = "VIM Click" },
 }
-getgenv()._SKENA_ATTACK_METHOD = "mouse1click"
+getgenv()._SKENA_ATTACK_METHOD = "module_punch"
 
 RegisterLoop("_SKENA_AUTO_ATTACK")
 local AtkDrop = TabMain:CreateDropdownToggle({
@@ -542,6 +551,27 @@ pcall(function()
     end
 end)
 
+TabBoss:CreateTextRow({
+    Text = "─── Teleport Langsung (Bypass Gate) ───"
+})
+
+for _, boss in ipairs(BOSS_LIST) do
+    if boss.bscheckpoint then
+        TabBoss:CreateButtonRow({
+            Name = boss.name .. " (" .. boss.hp .. ")",
+            ButtonText = "Direct TP",
+            Callback = function()
+                local char = player.Character
+                local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    steppedTeleport(CFrame.new(boss.bscheckpoint))
+                    warn("[Direct TP] Teleported to " .. boss.name)
+                end
+            end
+        })
+    end
+end
+
 -- ==========================================
 -- TAB SETTINGS
 -- ==========================================
@@ -595,6 +625,65 @@ TabSettings:CreateInputRow({
     Default = "Z",
     Callback = function(keyStr)
         Window:SetToggleKey(keyStr)
+    end
+})
+
+-- ==========================================
+-- FLY MENU (W/A/S/D)
+-- ==========================================
+getgenv()._SKENA_FLY_SPEED = 100
+getgenv()._SKENA_FLY = false
+RegisterLoop("_SKENA_FLY")
+
+TabSettings:CreateToggleRow({
+    Name = " [ Fly Mode (W/A/S/D/Space/LCtrl) ]",
+    Callback = function(state)
+        getgenv()._SKENA_FLY = state
+        local char = player.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        if state and hrp and hum then
+            task.spawn(function()
+                local UIS = game:GetService("UserInputService")
+                local RS = game:GetService("RunService")
+                while getgenv()._SKENA_FLY and hrp and hrp.Parent and hum.Health > 0 do
+                    local dt = RS.Heartbeat:Wait()
+                    local cam = workspace.CurrentCamera
+                    local moveVec = Vector3.new(0, 0, 0)
+                    local speed = getgenv()._SKENA_FLY_SPEED
+                    
+                    if UIS:IsKeyDown(Enum.KeyCode.W) then moveVec = moveVec + cam.CFrame.LookVector end
+                    if UIS:IsKeyDown(Enum.KeyCode.S) then moveVec = moveVec - cam.CFrame.LookVector end
+                    if UIS:IsKeyDown(Enum.KeyCode.A) then moveVec = moveVec - cam.CFrame.RightVector end
+                    if UIS:IsKeyDown(Enum.KeyCode.D) then moveVec = moveVec + cam.CFrame.RightVector end
+                    if UIS:IsKeyDown(Enum.KeyCode.Space) then moveVec = moveVec + Vector3.new(0, 1, 0) end
+                    if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then moveVec = moveVec - Vector3.new(0, 1, 0) end
+                    
+                    if moveVec.Magnitude > 0 then
+                        local targetPos = hrp.CFrame + (moveVec.Unit * speed * dt)
+                        hrp.CFrame = hrp.CFrame:Lerp(targetPos, 0.8)
+                        local randOffset = math.random(-50, 50) / 100
+                        hrp.AssemblyLinearVelocity = moveVec.Unit * (speed + randOffset)
+                    else
+                        hrp.AssemblyLinearVelocity = hrp.AssemblyLinearVelocity * 0.9
+                    end
+                    
+                    if tick() % 2 > 1.9 then
+                        hrp.AssemblyLinearVelocity = Vector3.new(0, -0.1, 0)
+                    end
+                end
+            end)
+        end
+    end,
+    OnToggle = function(state) end
+})
+
+TabSettings:CreateInputRow({
+    Name = "Fly Speed",
+    Placeholder = "100",
+    Default = "100",
+    Callback = function(val)
+        getgenv()._SKENA_FLY_SPEED = tonumber(val) or 100
     end
 })
 
