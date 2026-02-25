@@ -284,53 +284,91 @@ local isMinimized = false
 local defaultIcon = "rbxasset://textures/StudioIcon.png"
 
 local function getClassIcon(className)
-    local iconMap = {
-        ["Part"] = "rbxasset://textures/ClassImages.png",
-        ["Camera"] = "rbxasset://textures/ClassImages.png",
-        ["Terrain"] = "rbxasset://textures/ClassImages.png",
-        ["Model"] = "rbxasset://textures/ClassImages.png",
-        ["Workspace"] = "rbxasset://textures/ClassImages.png",
-        ["StarterGui"] = "rbxasset://textures/ClassImages.png",
-        ["ReplicatedStorage"] = "rbxasset://textures/ClassImages.png",
-        ["CoreGui"] = "rbxasset://textures/ClassImages.png",
-        ["Lighting"] = "rbxasset://textures/ClassImages.png",
-        ["LocalScript"] = "rbxasset://textures/ClassImages.png",
-        ["Script"] = "rbxasset://textures/ClassImages.png",
-        ["Humanoid"] = "rbxasset://textures/ClassImages.png",
-        ["Accessory"] = "rbxasset://textures/ClassImages.png",
-        ["BodyColors"] = "rbxasset://textures/ClassImages.png",
-        ["Pants"] = "rbxasset://textures/ClassImages.png",
-        ["Shirt"] = "rbxasset://textures/ClassImages.png",
-        ["ScreenGui"] = "rbxasset://textures/ClassImages.png",
-        ["Folder"] = "rbxasset://textures/ClassImages.png",
-        ["Players"] = "rbxasset://textures/ClassImages.png",
+    -- Map of common classes to their index in the ClassImages spritesheet
+    local classIndexes = {
+        ["Workspace"] = 19,
+        ["Part"] = 1,
+        ["Model"] = 2,
+        ["Camera"] = 5,
+        ["Folder"] = 20,
+        ["Frame"] = 48,
+        ["TextLabel"] = 49,
+        ["TextButton"] = 51,
+        ["ImageButton"] = 52,
+        ["ImageLabel"] = 46,
+        ["TextBox"] = 50,
+        ["ScrollingFrame"] = 48, -- Fallback to frame
+        ["ScreenGui"] = 47,
+        ["BillboardGui"] = 64,
+        ["SurfaceGui"] = 64,
+        ["LocalScript"] = 18,
+        ["Script"] = 6,
+        ["ModuleScript"] = 71,
+        ["Humanoid"] = 9,
+        ["Players"] = 21,
+        ["Player"] = 12,
+        ["Lighting"] = 13,
+        ["ReplicatedStorage"] = 69,
+        ["ServerStorage"] = 73,
+        ["StarterGui"] = 47,
+        ["StarterPack"] = 20,
+        ["CoreGui"] = 47,
+        ["CorePackages"] = 20,
+        ["BindableEvent"] = 67,
+        ["BindableFunction"] = 66,
+        ["RemoteEvent"] = 80,
+        ["RemoteFunction"] = 79,
+        ["StringValue"] = 4,
+        ["NumberValue"] = 4,
+        ["IntValue"] = 4,
+        ["BoolValue"] = 4,
+        ["ObjectValue"] = 4,
+        ["Color3Value"] = 4,
+        ["Vector3Value"] = 4,
+        ["CFrameValue"] = 4,
+        ["RayValue"] = 4,
+        ["BrickColorValue"] = 4,
+        ["Accessory"] = 32,
+        ["Shirt"] = 43,
+        ["Pants"] = 44,
+        ["Tool"] = 17,
+        ["Sound"] = 11,
+        ["ParticleEmitter"] = 68,
+        ["Fire"] = 61,
+        ["Smoke"] = 59,
+        ["Sparkles"] = 42,
+        ["PointLight"] = 13,
+        ["SurfaceLight"] = 13,
+        ["SpotLight"] = 13,
+        ["Decal"] = 7,
+        ["Texture"] = 7,
+        ["SpecialMesh"] = 8,
+        ["BlockMesh"] = 8,
+        ["CylinderMesh"] = 8,
+        ["Weld"] = 34,
+        ["Motor6D"] = 34,
+        ["Configuration"] = 58,
+        ["Terrain"] = 65,
+        ["Attachment"] = 82,
+        ["MaterialService"] = 10,
+        ["NetworkClient"] = 9,
+        ["ReplicatedFirst"] = 72,
+        ["Teams"] = 23,
+        ["SoundService"] = 11,
+        ["TextChatService"] = 33,
+        ["VoiceChatService"] = 84,
+        ["LocalizationService"] = 85,
+        ["TestService"] = 66,
+        ["VRService"] = 101,
     }
-    return iconMap[className] or defaultIcon
+    
+    local idx = classIndexes[className] or 0 
+    return "rbxasset://textures/ClassImages.png", idx
 end
 
 local function getClassIconOffset(className)
-    local offsets = {
-        ["Part"] = Vector2.new(16, 0),
-        ["Camera"] = Vector2.new(80, 0),
-        ["Terrain"] = Vector2.new(176, 0),
-        ["Model"] = Vector2.new(48, 0),
-        ["Workspace"] = Vector2.new(64, 0),
-        ["StarterGui"] = Vector2.new(128, 0),
-        ["ReplicatedStorage"] = Vector2.new(144, 0),
-        ["CoreGui"] = Vector2.new(144, 0),
-        ["Lighting"] = Vector2.new(112, 0),
-        ["LocalScript"] = Vector2.new(96, 0),
-        ["Script"] = Vector2.new(80, 0),
-        ["Humanoid"] = Vector2.new(240, 0),
-        ["Accessory"] = Vector2.new(320, 0),
-        ["BodyColors"] = Vector2.new(288, 0),
-        ["Pants"] = Vector2.new(208, 0),
-        ["Shirt"] = Vector2.new(192, 0),
-        ["ScreenGui"] = Vector2.new(0, 16),
-        ["Folder"] = Vector2.new(0, 32),
-        ["Players"] = Vector2.new(160, 0),
-    }
-    return offsets[className] or Vector2.new(0, 0)
+    -- Deprecated, handled by getClassIcon now
+    return Vector2.new(0, 0)
 end
 
 -- Context Menu System
@@ -552,7 +590,7 @@ local function createNode(instance, parentContainer, depth, parentUpdate)
 
     local nodeFrame = Instance.new("Frame")
     nodeFrame.Parent = parentContainer
-    nodeFrame.Size = UDim2.new(1, 0, 0, 25)
+    nodeFrame.Size = UDim2.new(1, 0, 0, 18) -- REDUCED from 25
     nodeFrame.BackgroundTransparency = 1
     nodeFrame.BorderSizePixel = 0
 
@@ -560,17 +598,18 @@ local function createNode(instance, parentContainer, depth, parentUpdate)
     highlight.Name = "Highlight"
     highlight.Parent = nodeFrame
     highlight.Size = UDim2.new(1, 0, 1, 0)
-    highlight.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+    highlight.BackgroundColor3 = Color3.fromRGB(55, 120, 200) -- Studio Blue Selection
     highlight.BackgroundTransparency = 1
+    highlight.BorderSizePixel = 0
     highlight.ZIndex = 0
 
     local padding = Instance.new("UIPadding")
-    padding.PaddingLeft = UDim.new(0, depth * 15 + 5)
+    padding.PaddingLeft = UDim.new(0, depth * 14 + 2) -- Tighter indentation
     padding.Parent = nodeFrame
 
     local contentFrame = Instance.new("TextButton")
     contentFrame.Parent = nodeFrame
-    contentFrame.Size = UDim2.new(1, 0, 0, 25)
+    contentFrame.Size = UDim2.new(1, 0, 0, 18) -- REDUCED from 25
     contentFrame.BackgroundTransparency = 1
     contentFrame.Text = ""
     contentFrame.ZIndex = 1
@@ -580,44 +619,62 @@ local function createNode(instance, parentContainer, depth, parentUpdate)
     uiLayout.Parent = contentFrame
     uiLayout.FillDirection = Enum.FillDirection.Horizontal
     uiLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-    uiLayout.Padding = UDim.new(0, 2)
+    uiLayout.Padding = UDim.new(0, 4) -- Small gap
     uiLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
     local expandButton = Instance.new("TextButton")
     expandButton.Parent = contentFrame
-    expandButton.Size = UDim2.new(0, 15, 0, 15)
+    expandButton.Size = UDim2.new(0, 12, 0, 12)
     expandButton.BackgroundTransparency = 1
-    expandButton.TextColor3 = Color3.fromRGB(200, 200, 210)
+    expandButton.TextColor3 = Color3.fromRGB(180, 180, 190)
     expandButton.Text = "▶"
     expandButton.Font = Enum.Font.SourceSansBold
-    expandButton.TextSize = 12
+    expandButton.TextSize = 10 -- Smaller arrow
     expandButton.BorderSizePixel = 0
 
     local iconLabel = Instance.new("ImageLabel")
     iconLabel.Parent = contentFrame
-    iconLabel.Size = UDim2.new(0, 16, 0, 16)
+    iconLabel.Size = UDim2.new(0, 14, 0, 14) -- 14x14 icon
     iconLabel.BackgroundTransparency = 1
-    local iconAsset = getClassIcon(instance.ClassName)
+    local iconAsset, iconIdx = getClassIcon(instance.ClassName)
     iconLabel.Image = iconAsset
+    
+    -- Calculate spritesheet offset
     if iconAsset == "rbxasset://textures/ClassImages.png" then
         iconLabel.ImageRectSize = Vector2.new(16, 16)
-        iconLabel.ImageRectOffset = getClassIconOffset(instance.ClassName)
+        local row = math.floor(iconIdx / 16)
+        local col = iconIdx % 16
+        iconLabel.ImageRectOffset = Vector2.new(col * 16, row * 16)
     end
 
     local nameLabel = Instance.new("TextLabel")
     nameLabel.Parent = contentFrame
     nameLabel.Size = UDim2.new(1, -33, 1, 0)
     nameLabel.BackgroundTransparency = 1
-    nameLabel.Text = instance.Name
-    nameLabel.TextColor3 = Color3.fromRGB(200, 200, 210)
-    nameLabel.TextSize = 14
+    
+    local extraTxt = ""
+    pcall(function()
+        if instance:IsA("TextLabel") or instance:IsA("TextButton") or instance:IsA("TextBox") then
+            if instance.Text and instance.Text ~= "" then
+                local txt = instance.Text
+                -- Clean newlines
+                txt = string.gsub(txt, "\n", " ")
+                if #txt > 20 then txt = string.sub(txt, 1, 18) .. ".." end
+                extraTxt = ' ["' .. txt .. '"]'
+            end
+        end
+    end)
+    
+    nameLabel.Text = instance.Name .. extraTxt
+    nameLabel.TextColor3 = Color3.fromRGB(220, 220, 230)
+    nameLabel.TextSize = 13 -- SMALLER FONT
     nameLabel.Font = Enum.Font.SourceSans
     nameLabel.TextXAlignment = Enum.TextXAlignment.Left
     nameLabel.TextTruncate = Enum.TextTruncate.SplitWord
 
     local childrenContainer = Instance.new("Frame")
     childrenContainer.Parent = nodeFrame
-    childrenContainer.Position = UDim2.new(0, 0, 0, 25)
+    childrenContainer.Position = UDim2.new(0, 0, 0, 18) -- Matches row height
     childrenContainer.Size = UDim2.new(1, 0, 0, 0)
     childrenContainer.BackgroundTransparency = 1
     childrenContainer.Visible = false
@@ -625,13 +682,13 @@ local function createNode(instance, parentContainer, depth, parentUpdate)
     local childrenLayout = Instance.new("UIListLayout")
     childrenLayout.Parent = childrenContainer
     childrenLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    childrenLayout.Padding = UDim.new(0, 2)
+    childrenLayout.Padding = UDim.new(0, 0) -- NO PADDING between rows for compact look
 
     local expanded = false
     local loaded = false
 
     local function updateNodeSize()
-        local height = 25
+        local height = 18 -- Base height
         if expanded then
             height = height + childrenLayout.AbsoluteContentSize.Y
         end
