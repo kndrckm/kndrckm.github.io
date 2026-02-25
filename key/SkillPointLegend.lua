@@ -225,7 +225,7 @@ getgenv().SelectedMobWorld = MOB_LABELS[1] and MOB_LABELS[1].world or nil
 -- Dropdown + Toggle: Target Mob & Auto TP
 RegisterLoop("_SKENA_AUTO_TP_MOB")
 local MobDrop = TabMain:CreateDropdownToggle({
-    Name = " [ Target Mob ]",
+    Name = " [ TP to Mob ]",
     Columns = 2,
     Callback = function(val)
         for _, entry in ipairs(MOB_LABELS) do
@@ -304,59 +304,22 @@ end
 local VIM = game:GetService("VirtualInputManager")
 
 local function doAttack()
-    local method = getgenv()._SKENA_ATTACK_METHOD
     pcall(function()
-        if method == "module_punch" then
-            local rs = game:GetService("ReplicatedStorage")
-            local punch = rs:FindFirstChild("Source") and rs.Source:FindFirstChild("Weapons") and rs.Source.Weapons:FindFirstChild("Punch")
-            if punch then require(punch).onActivated(true) end
-        elseif method == "mouse1click" then
-            if mouse1click then mouse1click() end
-        elseif method == "keypress_f" then
-            if keypress then keypress(0x46) task.wait(0.05) keyrelease(0x46) end
-        elseif method == "keypress_e" then
-            if keypress then keypress(0x45) task.wait(0.05) keyrelease(0x45) end
-        elseif method == "tool_activate" then
-            local char = player.Character
-            if char then
-                local tool = char:FindFirstChildWhichIsA("Tool")
-                if tool then tool:Activate() end
-            end
-        elseif method == "vim_click" then
-            VIM:SendMouseButtonEvent(0, 0, 0, true, game, 1)
-            task.wait(0.05)
-            VIM:SendMouseButtonEvent(0, 0, 0, false, game, 1)
-        end
+        local rs = game:GetService("ReplicatedStorage")
+        local punch = rs:FindFirstChild("Source") and rs.Source:FindFirstChild("Weapons") and rs.Source.Weapons:FindFirstChild("Punch")
+        if punch then require(punch).onActivated(true) end
     end)
 end
 
 -- ==========================================
--- AUTO ATTACK (multiple methods)
+-- AUTO ATTACK
 -- ==========================================
-local ATTACK_METHODS = {
-    { key = "module_punch",  label = "Module Punch (Fastest)" },
-    { key = "mouse1click",   label = "mouse1click" },
-    { key = "keypress_f",    label = "Keypress F" },
-    { key = "keypress_e",    label = "Keypress E" },
-    { key = "tool_activate", label = "Tool Activate" },
-    { key = "vim_click",     label = "VIM Click" },
-}
-getgenv()._SKENA_ATTACK_METHOD = "module_punch"
+getgenv()._SKENA_AUTO_ATTACK = false
 
 RegisterLoop("_SKENA_AUTO_ATTACK")
-local AtkDrop = TabMain:CreateDropdownToggle({
-    Name = " [ Attack Method ]",
-    Columns = 2,
-    KeepOpen = true,
-    Callback = function(val)
-        for _, m in ipairs(ATTACK_METHODS) do
-            if m.label == val then
-                getgenv()._SKENA_ATTACK_METHOD = m.key
-                warn("Attack Method: " .. m.key)
-                return
-            end
-        end
-    end,
+TabMain:CreateToggleRow({
+    Name = " [ Auto Attack ]",
+    Callback = function(state) end,
     OnToggle = function(state)
         getgenv()._SKENA_AUTO_ATTACK = state
         if state then
@@ -369,9 +332,6 @@ local AtkDrop = TabMain:CreateDropdownToggle({
         end
     end
 })
-for _, m in ipairs(ATTACK_METHODS) do
-    AtkDrop:AddItem(m.label, m.key == "mouse1click")
-end
 
 -- ==========================================
 -- KILL AURA (WIP - slider + toggle)
