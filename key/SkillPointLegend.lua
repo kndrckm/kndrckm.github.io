@@ -146,7 +146,8 @@ local WORLDS = {
 }
 
 local MOB_LIST = {
-    -- Grassland
+    -- FILTERED OUT (Archived per user request, using Dynamic Scan instead)
+    --[[
     { name = "Snail",           hp = "10",     parts = {116}, world = "Grassland" },
     { name = "Pig",             hp = "800",    parts = {109}, world = "Grassland" },
     { name = "Turtle",          hp = "2.5k",   parts = {157}, world = "Grassland" },
@@ -154,12 +155,10 @@ local MOB_LIST = {
     { name = "Spider",          hp = "12.5k",  parts = {107}, world = "Grassland" },
     { name = "Mammoth",         hp = "75k",    parts = {141}, world = "Grassland" },
     
-    -- Cursed Kingdom
     { name = "Viperbloom",      hp = "125k",   parts = {255}, world = "CursedKingdom" },
     { name = "Warlock",         hp = "100k",   parts = {162}, world = "CursedKingdom" },
     { name = "Spartan",         hp = "250k",   parts = {189, 177}, world = "CursedKingdom" },
-
-    -- Unknown World yet
+    
     { name = "Reaper",          hp = "750k",   parts = {120} },
     { name = "Angel",           hp = "1.5m",   parts = {133} },
     { name = "Cowboy",          hp = "15m",    parts = {171} },
@@ -170,6 +169,7 @@ local MOB_LIST = {
     { name = "Bonepicker",      hp = "25b",    parts = nil },
     { name = "Oculon",          hp = "100b",   parts = nil },
     { name = "Magmaton",        hp = "600b",   parts = nil },
+    ]]
 }
 
 local BOSS_LIST = {
@@ -223,83 +223,94 @@ getgenv().SelectedMobWorld = MOB_LABELS[1] and MOB_LABELS[1].world or nil
 -- ==========================================
 
 -- Dropdown + Toggle: Target Mob & Auto TP
+-- Dropdown + Toggle: Target Mob & Auto TP (SCAN MODE)
+-- Replicates "Script 1" logic by grouping mobs by Size (HumanoidRootPart.Size.Y)
 RegisterLoop("_SKENA_AUTO_TP_MOB")
-local MobDrop = TabMain:CreateDropdownToggle({
+local MobDrop
+MobDrop = TabMain:CreateDropdownButton({
     Name = " [ TP to Mob ]",
+    ButtonText = "Scan",
     Columns = 2,
     Callback = function(val)
-        for _, entry in ipairs(MOB_LABELS) do
-            if entry.label == val then
-                getgenv().SelectedMob = entry.key
-                getgenv().SelectedMobParts = entry.parts
-                getgenv().SelectedMobWorld = entry.world
-                warn("Target: " .. entry.key .. " (" .. entry.world .. ")")
-                return
+        -- Format: "Size: 5.5 | Count: 3"
+        local sizeStr = string.match(val, "Size: ([%d%.]+)")
+        if sizeStr then
+            getgenv().SelectedMobSize = tonumber(sizeStr)
+            warn("Target Size: " .. sizeStr)
+        end
+    end,
+    OnButton = function()
+        -- Dynamic Scan Logic
+        local npcsF = workspace:FindFirstChild("Npcs")
+        if not npcsF then return end
+        
+        local sizeGroups = {}
+        for _, mob in ipairs(npcsF:GetChildren()) do
+            if mob:IsA("Model") then
+                local hrp = mob:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local sz = math.floor(hrp.Size.Y * 10) / 10 -- Round to 1 decimal
+                    if not sizeGroups[sz] then sizeGroups[sz] = 0 end
+                    sizeGroups[sz] = sizeGroups[sz] + 1
+                end
             end
+        end
+        
+        local sorted = {}
+        for sz, count in pairs(sizeGroups) do
+            table.insert(sorted, {sz = sz, count = count})
+        end
+        table.sort(sorted, function(a,b) return a.sz < b.sz end)
+        
+        MobDrop:ClearItems()
+        for _, data in ipairs(sorted) do
+            MobDrop:AddItem("Size: " .. data.sz .. " | Count: " .. data.count, false)
         end
     end,
     OnToggle = function(state)
         getgenv()._SKENA_AUTO_TP_MOB = state
         if state then
             task.spawn(function()
-                local currentIndex = 1
-                local cachedList = {}
-                
                 while getgenv()._SKENA_AUTO_TP_MOB do
                     local char = player.Character
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
                     if not hrp then task.wait(0.5) continue end
                     
-                    local targetWorld = getgenv().SelectedMobWorld
-                    if targetWorld and WORLDS[targetWorld] then
-                        local worldBasePos = WORLDS[targetWorld]
-                        local distToWorld = (hrp.Position - worldBasePos).Magnitude
-                        if distToWorld > 1000 then
-                            -- Reset sequence after world jump
-                            warn("[AutoTP] Teleporting to world base: " .. targetWorld)
-                            steppedTeleport(CFrame.new(worldBasePos))
-                            task.wait(0.5)
-                            currentIndex = 1
-                            cachedList = {}
-                            continue
-                        end
-                    end
+                    local targetSize = getgenv().SelectedMobSize
+                    if not targetSize then task.wait(0.5) continue end
                     
-                    -- Refresh cache if sequence ends
-                    if currentIndex > #cachedList or #cachedList == 0 then
-                        cachedList = getMobList(getgenv().SelectedMobParts)
-                        currentIndex = 1
-                    end
+                    local bestMob = nil
+                    local minDist = 9e9
                     
-                    if #cachedList > 0 then
-                        local entry = cachedList[currentIndex]
-                        -- Check if the sequenced mob is still valid within the cache
-                        if entry and entry.mob and entry.mob.Parent and entry.hrp and entry.hrp.Parent then
-                            hrp.CFrame = entry.hrp.CFrame * CFrame.new(0, 0, 3)
-                            
-                            -- Move to next mob in sequence for next tick
-                            currentIndex = currentIndex + 1
-                            -- Loop back to 1 if we've reached the end
-                            if currentIndex > #cachedList then
-                                currentIndex = 1
-                                cachedList = getMobList(getgenv().SelectedMobParts)
+                    local npcsF = workspace:FindFirstChild("Npcs")
+                    if npcsF then
+                        for _, mob in ipairs(npcsF:GetChildren()) do
+                            if mob:IsA("Model") then
+                                local mHrp = mob:FindFirstChild("HumanoidRootPart")
+                                if mHrp and mHrp.Transparency < 0.9 and (not mHrp.Anchored) then
+                                    local sz = math.floor(mHrp.Size.Y * 10) / 10
+                                    if sz == targetSize then
+                                        local dist = (hrp.Position - mHrp.Position).Magnitude
+                                        if dist < minDist then
+                                            minDist = dist
+                                            bestMob = mHrp
+                                        end
+                                    end
+                                end
                             end
-                        else
-                            -- Target missing, force recache
-                            cachedList = getMobList(getgenv().SelectedMobParts)
-                            currentIndex = 1
                         end
                     end
                     
-                    task.wait(0.5)
+                    if bestMob then
+                        local behindPos = bestMob.CFrame * CFrame.new(0, 0, 3) 
+                        steppedTeleport(behindPos)
+                    end
+                    task.wait(0.1)
                 end
             end)
         end
     end
 })
-for _, entry in ipairs(MOB_LABELS) do
-    MobDrop:AddItem(entry.label, entry.key == MOB_LABELS[1].key)
-end
 
 local VIM = game:GetService("VirtualInputManager")
 
@@ -348,6 +359,7 @@ TabMain:CreateSliderRow({
     Min = 5,
     Max = 100,
     Default = 25,
+    Suffix = "", -- Force no suffix
     Callback = function(val)
         getgenv()._SKENA_KILL_RANGE = tonumber(val) or 25
     end
