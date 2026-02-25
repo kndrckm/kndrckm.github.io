@@ -390,11 +390,8 @@ TabMain:CreateToggleRow({
                                     local dist = (hrp.Position - mobHRP.Position).Magnitude
                                     if dist <= range then
                                         pcall(function()
-                                            if firetouchinterest then
-                                                firetouchinterest(hrp, mobHRP, 0)
-                                                task.wait()
-                                                firetouchinterest(hrp, mobHRP, 1)
-                                            end
+                                            -- Use the powerful Module Punch from Script 1
+                                            doAttack()
                                         end)
                                     end
                                 end
