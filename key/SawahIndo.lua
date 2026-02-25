@@ -316,34 +316,12 @@ local function DoPlantCrops(isEggLoop)
         
         if getTool(char) then
             local startPos = char.HumanoidRootPart.Position
-            local actCrops = workspace:FindFirstChild("ActiveCrops")
-
-            -- Optimasi Jarak: Hanya lempar bibit jika karakter tidak terlalu jauh dari titik farm (misal radius 100 stud)
-            -- Asumsi ActiveCrops selalu ada jika sudah pernah ditanam, jika tidak ada, skip pengecekan jarak
-            local isNear = true
-            if actCrops then
-                -- Cari part tanah/tanaman terdekat sebagai referensi (Opsional, tapi meminimalisir salah lempar)
-                local closestDist = math.huge
-                for _, crop in ipairs(actCrops:GetChildren()) do
-                    if crop:IsA("Model") and crop.PrimaryPart then
-                        local d = (startPos - crop.PrimaryPart.Position).Magnitude
-                        if d < closestDist then closestDist = d end
-                    end
-                end
-                if closestDist > 150 then isNear = false end
-            end
-
-            if isNear then
-                local angle = math.rad(math.random(0, 360))
-                local dist = 0.5 + math.random() * 1.5
-                local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
-                local pos = startPos + offset
-                pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
-                task.wait(0.6)
-            else
-                warn("[Skena] Karakter terlalu jauh dari ladang, menunda Auto Tanam.")
-                task.wait(1)
-            end
+            local angle = math.rad(math.random(0, 360))
+            local dist = 0.5 + math.random() * 1.5
+            local offset = Vector3.new(math.cos(angle) * dist, 0, math.sin(angle) * dist)
+            local pos = startPos + offset
+            pcall(function() rs.Remotes.TutorialRemotes.PlantCrop:FireServer(pos) end)
+            task.wait(0.6)
         else
             task.wait(1)
         end
