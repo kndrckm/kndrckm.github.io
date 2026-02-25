@@ -60,12 +60,22 @@ getgenv().SkenaSession = {
     TotalEarned = 0
 }
 
+local function FormatNumber(n)
+    local formatted = tostring(math.floor(tonumber(n) or 0))
+    local k
+    while true do
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", "%1,%2")
+        if k == 0 then break end
+    end
+    return formatted
+end
+
 local CROP_DATA = {
-    ["Padi"]       = { SeedName = "Bibit Padi",       EnglishName = "Rice",       Price = 12 },
-    ["Jagung"]     = { SeedName = "Bibit Jagung",     EnglishName = "Corn",       Price = 25 },
-    ["Tomat"]      = { SeedName = "Bibit Tomat",      EnglishName = "Tomato",     Price = 45 },
-    ["Terong"]     = { SeedName = "Bibit Terong",     EnglishName = "Eggplant",   Price = 80 },
-    ["Strawberry"] = { SeedName = "Bibit Strawberry", EnglishName = "Strawberry", Price = 125 }
+    ["Padi"]       = { SeedName = "Bibit Padi",       EnglishName = "Rice",       Price = 10 },
+    ["Jagung"]     = { SeedName = "Bibit Jagung",     EnglishName = "Corn",       Price = 20 },
+    ["Tomat"]      = { SeedName = "Bibit Tomat",      EnglishName = "Tomato",     Price = 30 },
+    ["Terong"]     = { SeedName = "Bibit Terong",     EnglishName = "Eggplant",   Price = 50 },
+    ["Strawberry"] = { SeedName = "Bibit Strawberry", EnglishName = "Strawberry", Price = 75 }
 }
 
 local CROP_ORDER = {
@@ -226,8 +236,8 @@ local function CreateTracker()
             local s = math.floor(elapsed % 60)
             
             lblStat.Text = string.format("Uptime: %02d:%02d:%02d", h, m, s)
-            lblNext.Text = "Sold: " .. tostring(getgenv().SkenaSession.TotalSold) .. " Items"
-            lblTime.Text = "Earned: Rp " .. tostring(getgenv().SkenaSession.TotalEarned)
+            lblNext.Text = "Sold: " .. FormatNumber(getgenv().SkenaSession.TotalSold) .. " Items"
+            lblTime.Text = "Earned: Rp " .. FormatNumber(getgenv().SkenaSession.TotalEarned)
         end,
         Hide = function() frm.Visible = false end
     }
