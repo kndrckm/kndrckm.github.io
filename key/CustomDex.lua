@@ -284,91 +284,69 @@ local isMinimized = false
 local defaultIcon = "rbxasset://textures/StudioIcon.png"
 
 local function getClassIcon(className)
-    -- Map of common classes to their index in the ClassImages spritesheet
-    local classIndexes = {
-        ["Workspace"] = 19,
-        ["Part"] = 1,
-        ["Model"] = 2,
-        ["Camera"] = 5,
-        ["Folder"] = 20,
-        ["Frame"] = 48,
-        ["TextLabel"] = 49,
-        ["TextButton"] = 51,
-        ["ImageButton"] = 52,
-        ["ImageLabel"] = 46,
-        ["TextBox"] = 50,
-        ["ScrollingFrame"] = 48, -- Fallback to frame
-        ["ScreenGui"] = 47,
-        ["BillboardGui"] = 64,
-        ["SurfaceGui"] = 64,
-        ["LocalScript"] = 18,
-        ["Script"] = 6,
-        ["ModuleScript"] = 71,
-        ["Humanoid"] = 9,
-        ["Players"] = 21,
-        ["Player"] = 12,
-        ["Lighting"] = 13,
-        ["ReplicatedStorage"] = 69,
-        ["ServerStorage"] = 73,
-        ["StarterGui"] = 47,
-        ["StarterPack"] = 20,
-        ["CoreGui"] = 47,
-        ["CorePackages"] = 20,
-        ["BindableEvent"] = 67,
-        ["BindableFunction"] = 66,
-        ["RemoteEvent"] = 80,
-        ["RemoteFunction"] = 79,
-        ["StringValue"] = 4,
-        ["NumberValue"] = 4,
-        ["IntValue"] = 4,
-        ["BoolValue"] = 4,
-        ["ObjectValue"] = 4,
-        ["Color3Value"] = 4,
-        ["Vector3Value"] = 4,
-        ["CFrameValue"] = 4,
-        ["RayValue"] = 4,
-        ["BrickColorValue"] = 4,
-        ["Accessory"] = 32,
-        ["Shirt"] = 43,
-        ["Pants"] = 44,
-        ["Tool"] = 17,
-        ["Sound"] = 11,
-        ["ParticleEmitter"] = 68,
-        ["Fire"] = 61,
-        ["Smoke"] = 59,
-        ["Sparkles"] = 42,
-        ["PointLight"] = 13,
-        ["SurfaceLight"] = 13,
-        ["SpotLight"] = 13,
-        ["Decal"] = 7,
-        ["Texture"] = 7,
-        ["SpecialMesh"] = 8,
-        ["BlockMesh"] = 8,
-        ["CylinderMesh"] = 8,
-        ["Weld"] = 34,
-        ["Motor6D"] = 34,
-        ["Configuration"] = 58,
-        ["Terrain"] = 65,
-        ["Attachment"] = 82,
-        ["MaterialService"] = 10,
-        ["NetworkClient"] = 9,
-        ["ReplicatedFirst"] = 72,
-        ["Teams"] = 23,
-        ["SoundService"] = 11,
-        ["TextChatService"] = 33,
-        ["VoiceChatService"] = 84,
-        ["LocalizationService"] = 85,
-        ["TestService"] = 66,
-        ["VRService"] = 101,
+    local iconMap = {
+        ["Part"] = "rbxasset://textures/ClassImages.png",
+        ["Camera"] = "rbxasset://textures/ClassImages.png",
+        ["Terrain"] = "rbxasset://textures/ClassImages.png",
+        ["Model"] = "rbxasset://textures/ClassImages.png",
+        ["Workspace"] = "rbxasset://textures/ClassImages.png",
+        ["StarterGui"] = "rbxasset://textures/ClassImages.png",
+        ["ReplicatedStorage"] = "rbxasset://textures/ClassImages.png",
+        ["CoreGui"] = "rbxasset://textures/ClassImages.png",
+        ["Lighting"] = "rbxasset://textures/ClassImages.png",
+        ["LocalScript"] = "rbxasset://textures/ClassImages.png",
+        ["Script"] = "rbxasset://textures/ClassImages.png",
+        ["Humanoid"] = "rbxasset://textures/ClassImages.png",
+        ["Accessory"] = "rbxasset://textures/ClassImages.png",
+        ["BodyColors"] = "rbxasset://textures/ClassImages.png",
+        ["Pants"] = "rbxasset://textures/ClassImages.png",
+        ["Shirt"] = "rbxasset://textures/ClassImages.png",
+        ["ScreenGui"] = "rbxasset://textures/ClassImages.png",
+        ["Folder"] = "rbxasset://textures/ClassImages.png",
+        ["Players"] = "rbxasset://textures/ClassImages.png",
+        ["TextLabel"] = "rbxasset://textures/ClassImages.png",
+        ["TextButton"] = "rbxasset://textures/ClassImages.png",
+        ["TextBox"] = "rbxasset://textures/ClassImages.png",
+        ["ImageLabel"] = "rbxasset://textures/ClassImages.png",
+        ["ImageButton"] = "rbxasset://textures/ClassImages.png",
+        ["Frame"] = "rbxasset://textures/ClassImages.png",
+        ["ScrollingFrame"] = "rbxasset://textures/ClassImages.png",
     }
-    
-    local idx = classIndexes[className] or 0 
-    return "rbxasset://textures/ClassImages.png", idx
+    return iconMap[className] or "rbxasset://textures/StudioIcon.png", className
 end
 
 local function getClassIconOffset(className)
-    -- Deprecated, handled by getClassIcon now
-    return Vector2.new(0, 0)
+    local offsets = {
+        ["Part"] = Vector2.new(16, 0),
+        ["Camera"] = Vector2.new(80, 0),
+        ["Terrain"] = Vector2.new(176, 0),
+        ["Model"] = Vector2.new(48, 0),
+        ["Workspace"] = Vector2.new(64, 0),
+        ["StarterGui"] = Vector2.new(128, 0),
+        ["ReplicatedStorage"] = Vector2.new(144, 0),
+        ["CoreGui"] = Vector2.new(144, 0),
+        ["Lighting"] = Vector2.new(112, 0),
+        ["LocalScript"] = Vector2.new(96, 0),
+        ["Script"] = Vector2.new(80, 0),
+        ["Humanoid"] = Vector2.new(240, 0),
+        ["Accessory"] = Vector2.new(320, 0),
+        ["BodyColors"] = Vector2.new(288, 0),
+        ["Pants"] = Vector2.new(208, 0),
+        ["Shirt"] = Vector2.new(192, 0),
+        ["ScreenGui"] = Vector2.new(0, 16),
+        ["Folder"] = Vector2.new(0, 32),
+        ["Players"] = Vector2.new(160, 0),
+        
+        -- UI Elements added
+        ["TextLabel"] = Vector2.new(272, 32),
+        ["TextBox"] = Vector2.new(288, 32),
+        ["TextButton"] = Vector2.new(304, 32),
+        ["ImageLabel"] = Vector2.new(224, 32),
+        ["ImageButton"] = Vector2.new(320, 32),
+        ["Frame"] = Vector2.new(256, 32),
+        ["ScrollingFrame"] = Vector2.new(256, 32),
+    }
+    return offsets[className] or Vector2.new(0, 0)
 end
 
 -- Context Menu System
@@ -636,15 +614,13 @@ local function createNode(instance, parentContainer, depth, parentUpdate)
     iconLabel.Parent = contentFrame
     iconLabel.Size = UDim2.new(0, 14, 0, 14) -- 14x14 icon
     iconLabel.BackgroundTransparency = 1
-    local iconAsset, iconIdx = getClassIcon(instance.ClassName)
+    local iconAsset, cName = getClassIcon(instance.ClassName)
     iconLabel.Image = iconAsset
     
-    -- Calculate spritesheet offset
+    -- Restored Offset Math
     if iconAsset == "rbxasset://textures/ClassImages.png" then
         iconLabel.ImageRectSize = Vector2.new(16, 16)
-        local row = math.floor(iconIdx / 16)
-        local col = iconIdx % 16
-        iconLabel.ImageRectOffset = Vector2.new(col * 16, row * 16)
+        iconLabel.ImageRectOffset = getClassIconOffset(instance.ClassName)
     end
 
     local nameLabel = Instance.new("TextLabel")
