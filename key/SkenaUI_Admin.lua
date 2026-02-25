@@ -85,9 +85,10 @@ function SkenaAdmin.Attach(Window, DebugData)
                 end
 
                 -- Memaksa Dex untuk menaruh UI-nya di Hidden Parent dengan nama acak
+                local OriginalInstanceNew = Instance.new
                 fakeEnv.Instance = {
                     new = function(className, parent)
-                        local inst = Instance.new(className)
+                        local inst = OriginalInstanceNew(className)
                         if className == "ScreenGui" then
                             inst.Name = RandomCharacters(math.random(10, 20))
                             if syn and syn.protect_gui then syn.protect_gui(inst) end
