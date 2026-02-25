@@ -54,12 +54,18 @@ getgenv().AFK_HarvestDelay = 60
 getgenv().SelectedCrop_AF1 = "Padi"
 getgenv().SelectedCrop_Manual = "Padi"
 
+getgenv().SkenaSession = {
+    StartTime = os.clock(),
+    TotalSold = 0,
+    TotalEarned = 0
+}
+
 local CROP_DATA = {
-    ["Padi"]       = { SeedName = "Bibit Padi",       EnglishName = "Rice" },
-    ["Jagung"]     = { SeedName = "Bibit Jagung",     EnglishName = "Corn" },
-    ["Tomat"]      = { SeedName = "Bibit Tomat",      EnglishName = "Tomato" },
-    ["Terong"]     = { SeedName = "Bibit Terong",     EnglishName = "Eggplant" },
-    ["Strawberry"] = { SeedName = "Bibit Strawberry", EnglishName = "Strawberry" }
+    ["Padi"]       = { SeedName = "Bibit Padi",       EnglishName = "Rice",       Price = 12 },
+    ["Jagung"]     = { SeedName = "Bibit Jagung",     EnglishName = "Corn",       Price = 25 },
+    ["Tomat"]      = { SeedName = "Bibit Tomat",      EnglishName = "Tomato",     Price = 45 },
+    ["Terong"]     = { SeedName = "Bibit Terong",     EnglishName = "Eggplant",   Price = 80 },
+    ["Strawberry"] = { SeedName = "Bibit Strawberry", EnglishName = "Strawberry", Price = 125 }
 }
 
 local CROP_ORDER = {
@@ -126,10 +132,17 @@ local function SellTargetCrop(cropKey)
                     local name = itemData.Name or itemData.DisplayName
                     if string.find(string.lower(name), string.lower(cData.EnglishName)) or string.find(string.lower(name), string.lower(cropKey)) then
                         local amt = tonumber(itemData.Owned)
+                        local price = tonumber(itemData.SellPrice) or tonumber(itemData.Price) or cData.Price or 0
                         pcall(function()
                             remotes.RequestSell:InvokeServer("SELL", name, amt)
                         end)
                         totalSold = totalSold + amt
+                        
+                        -- Update SkenaSession stats
+                        if getgenv().SkenaSession then
+                            getgenv().SkenaSession.TotalSold = getgenv().SkenaSession.TotalSold + amt
+                            getgenv().SkenaSession.TotalEarned = getgenv().SkenaSession.TotalEarned + (amt * price)
+                        end
                         task.wait(0.3)
                     end
                 end
@@ -175,7 +188,7 @@ local function CreateTracker()
     lblStat.Size = UDim2.new(1, -16, 0, 18)
     lblStat.Position = UDim2.new(0, 8, 0, 30)
     lblStat.BackgroundTransparency = 1
-    lblStat.Text = "Prog: -"
+    lblStat.Text = "Uptime: 00:00:00"
     lblStat.Font = Enum.Font.GothamMedium
     lblStat.TextColor3 = Color3.fromRGB(200, 200, 200)
     lblStat.TextSize = 12
@@ -185,7 +198,7 @@ local function CreateTracker()
     lblNext.Size = UDim2.new(1, -16, 0, 18)
     lblNext.Position = UDim2.new(0, 8, 0, 50)
     lblNext.BackgroundTransparency = 1
-    lblNext.Text = "Next: -"
+    lblNext.Text = "Sold: 0 Items"
     lblNext.Font = Enum.Font.Gotham
     lblNext.TextColor3 = Color3.fromRGB(150, 150, 150)
     lblNext.TextSize = 11
@@ -195,7 +208,7 @@ local function CreateTracker()
     lblTime.Size = UDim2.new(1, -16, 0, 18)
     lblTime.Position = UDim2.new(0, 8, 0, 70)
     lblTime.BackgroundTransparency = 1
-    lblTime.Text = "Wait: -"
+    lblTime.Text = "Earned: Rp 0"
     lblTime.Font = Enum.Font.GothamBold
     lblTime.TextColor3 = Color3.fromRGB(80, 255, 120)
     lblTime.TextSize = 12
@@ -203,18 +216,32 @@ local function CreateTracker()
 
     frm.Visible = false
     getgenv().SkenaTracker = {
-        Update = function(prog, nxt, tleft)
+        Update = function()
             frm.Visible = true
-            lblStat.Text = "Prog: " .. tostring(prog)
-            lblNext.Text = "Next: " .. tostring(nxt)
-            lblTime.Text = "Wait: " .. tostring(tleft)
+            if not getgenv().SkenaSession then return end
+            
+            local elapsed = os.clock() - getgenv().SkenaSession.StartTime
+            local h = math.floor(elapsed / 3600)
+            local m = math.floor((elapsed % 3600) / 60)
+            local s = math.floor(elapsed % 60)
+            
+            lblStat.Text = string.format("Uptime: %02d:%02d:%02d", h, m, s)
+            lblNext.Text = "Sold: " .. tostring(getgenv().SkenaSession.TotalSold) .. " Items"
+            lblTime.Text = "Earned: Rp " .. tostring(getgenv().SkenaSession.TotalEarned)
         end,
         Hide = function() frm.Visible = false end
     }
 end
 CreateTracker()
 
-local function TUpdate(a,b,c) if getgenv().SkenaTracker then getgenv().SkenaTracker.Update(a,b,c) end end
+-- Tracker Updater Loop
+task.spawn(function()
+    while task.wait(1) do
+        if getgenv().SkenaTracker and (getgenv().SkenaAutoFarm_Crop or getgenv().SkenaAutoFarm_Egg) then
+            getgenv().SkenaTracker.Update()
+        end
+    end
+end)
 
 -- Helper loop robust tanam untuk auto farm 1 dan 2
 local function DoPlantCrops(isEggLoop)
@@ -383,14 +410,12 @@ TabAutoFarm1:CreateToggleRow({
             -- Thread Menjual Target Loop (Sell State)
             task.spawn(function()
                 while getgenv().SkenaAutoFarm_Crop do
-                    TUpdate("Menjual Target Tanaman", "Sleep Sell", "Menunggu...")
                     local totalSold = SellTargetCrop(getgenv().SelectedCrop_AF1)
                     if totalSold > 0 then warn("[Sell Target] Berhasil jual " .. totalSold .. " item") end
                     
                     local sDelay = getgenv().AFK_HarvestDelay or 60
                     for sw = sDelay, 1, -1 do
                         if not getgenv().SkenaAutoFarm_Crop then return end
-                        TUpdate("Sleep Sell", "Menjual Target", sw .. "s")
                         task.wait(1)
                     end
                 end
