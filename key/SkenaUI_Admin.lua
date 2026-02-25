@@ -50,18 +50,75 @@ function SkenaAdmin.Attach(Window, DebugData)
     })
 
     TabAdmin:CreateButtonRow({
-        Name = "Custom Dex (Explorer)",
+        Name = "Bypassed Dark Dex V3",
         ButtonText = "Load Dex",
         Callback = function(btn)
             local success, err = pcall(function()
-                -- Menggunakan loadstring dari repository github langsung
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CustomDex.lua"))()
+                warn("[Admin] Memulai proses Bypassing...")
+
+                -- 1. Load CloneRef & Bypasses dari LOCAL REPOSITORY
+                pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CloneRef.lua", true))() end)
+                pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/DexBypasses.lua", true))() end)
+                
+                -- 2. Memanipulasi Environment sebelum Dex di-load
+                local charset = {}
+                for i = 48,  57 do table.insert(charset, string.char(i)) end
+                for i = 65,  90 do table.insert(charset, string.char(i)) end
+                for i = 97, 122 do table.insert(charset, string.char(i)) end
+                local function RandomCharacters(length)
+                    if length > 0 then
+                        return RandomCharacters(length - 1) .. charset[math.random(1, #charset)]
+                    else
+                        return ""
+                    end
+                end
+
+                -- Kita buat environment palsu (Sandbox) agar Dex memakai gethui()
+                local fakeEnv = getfenv(0)
+                local hiddenParent
+                if gethui then
+                    hiddenParent = gethui()
+                elseif syn and syn.protect_gui then
+                    hiddenParent = cloneref(game:GetService("CoreGui"))
+                else
+                    hiddenParent = cloneref(game:GetService("CoreGui"))
+                end
+
+                -- Memaksa Dex untuk menaruh UI-nya di Hidden Parent dengan nama acak
+                fakeEnv.Instance = {
+                    new = function(className, parent)
+                        local inst = Instance.new(className)
+                        if className == "ScreenGui" then
+                            inst.Name = RandomCharacters(math.random(10, 20))
+                            if syn and syn.protect_gui then syn.protect_gui(inst) end
+                            inst.Parent = hiddenParent
+                        elseif parent then
+                            inst.Parent = parent
+                        end
+                        return inst
+                    end
+                }
+                setmetatable(fakeEnv.Instance, {__index = Instance})
+
+                warn("[Admin] Mengunduh Source Code Dark Dex...")
+                -- 3. Load Dark Dex dari repository mu!
+                local dexSource = game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CustomDex.lua")
+                
+                local dexFunc, loadErr = loadstring(dexSource)
+                if not dexFunc then
+                    error("Gagal mengkompilasi Dex: " .. tostring(loadErr))
+                end
+
+                -- Menjalankan Dex dengan Environment terlindungi
+                setfenv(dexFunc, fakeEnv)
+                task.spawn(dexFunc)
             end)
+
             if success then
-                warn("[Admin] Custom Dex berhasil di-load!")
+                warn("[Admin] Bypassed Dark Dex berhasil di-load!")
                 animateBtn(btn, true)
             else
-                warn("[Admin] Gagal me-load Custom Dex: " .. tostring(err))
+                warn("[Admin] Gagal me-load Dark Dex: " .. tostring(err))
                 animateBtn(btn, false)
             end
         end
