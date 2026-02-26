@@ -6,7 +6,8 @@ local currentSelectedRemoteName = ""
 _G.Code = ""
 
 -- StarterGui.Remote Spy
-G2L["1"] = Instance.new("ScreenGui", game.CoreGui);
+local targetGui = pcall(function() return game:GetService("CoreGui") end) and game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+G2L["1"] = Instance.new("ScreenGui", targetGui);
 G2L["1"]["Name"] = [[Remote Spy]];
 G2L["1"]["ResetOnSpawn"] = false
 G2L["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
@@ -147,7 +148,7 @@ G2L["block"].MouseButton1Click:Connect(function()
     end
 end)
 
--- Hooking Engine (Original Style)
+-- Hooking Engine (Updated to use __namecall for outgoing requests)
 local function getPathToInstance(instance)
     local path = {}
     local current = instance
@@ -158,52 +159,36 @@ local function getPathToInstance(instance)
     return "game." .. table.concat(path, ".")
 end
 
-local function handleRemote(remote)
-    local function logCall(...)
-        if ignoredRemotes[remote.Name] then return end
-        
-        local args = {...}
-        local formatted = {}
-        for i, v in ipairs(args) do 
-            formatted[i] = string.format("[%d] = %s", i, typeof(v) == "string" and '"'..v..'"' or tostring(v)) 
+local hasCheckCaller = type(checkcaller) == "function"
+local oldNamecall
+oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+    local method = getnamecallmethod()
+    
+    if (not hasCheckCaller or not checkcaller()) and (method == "FireServer" or method == "InvokeServer") and typeof(self) == "Instance" then
+        if not ignoredRemotes[self.Name] then
+            local args = {...}
+            task.spawn(function()
+                local formatted = {}
+                for i, v in ipairs(args) do 
+                    formatted[i] = string.format("[%d] = %s", i, typeof(v) == "string" and '"'..v..'"' or tostring(v)) 
+                end
+                local argsString = table.concat(formatted, ",\n    ")
+                
+                local btn = G2L["e"]:Clone()
+                btn.Text = self.Name
+                btn.Parent = G2L["d"]
+                btn.MouseButton1Click:Connect(function()
+                    currentSelectedRemoteName = self.Name
+                    _G.Code = string.format("local args = {\n    %s\n}\n%s:%s(unpack(args))", argsString, getPathToInstance(self), method)
+                    G2L["11"].Text = _G.Code
+                end)
+            end)
         end
-        local argsString = table.concat(formatted, ",\n    ")
-        
-        local btn = G2L["e"]:Clone()
-        btn.Text = remote.Name
-        btn.Parent = G2L["d"]
-        btn.MouseButton1Click:Connect(function()
-            currentSelectedRemoteName = remote.Name
-            local callType = remote:IsA("RemoteEvent") and "FireServer" or "InvokeServer"
-            _G.Code = string.format("local args = {\n    %s\n}\n%s:%s(unpack(args))", argsString, getPathToInstance(remote), callType)
-            G2L["11"].Text = _G.Code
-        end)
     end
-
-    if remote:IsA("RemoteEvent") then
-        remote.OnClientEvent:Connect(logCall)
-    elseif remote:IsA("RemoteFunction") then
-        -- We log but don't overwrite OnClientInvoke to prevent breaking the game
-        -- This style is safer for spotting "packs"
-        task.spawn(function()
-            while remote.Parent do
-                remote.OnClientInvoke = function(...) logCall(...) return ... end
-                task.wait(1)
-            end
-        end)
+    
+    if oldNamecall then
+        return oldNamecall(self, ...)
     end
-end
-
-local function wrapRemotes(folder)
-    for _, obj in ipairs(folder:GetDescendants()) do
-        if obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction") then handleRemote(obj) end
-    end
-    folder.DescendantAdded:Connect(function(d)
-        if d:IsA("RemoteEvent") or d:IsA("RemoteFunction") then handleRemote(d) end
-    end)
-end
-
-local folders = {game.ReplicatedStorage, game.StarterGui, game.StarterPack, game.Players.LocalPlayer:WaitForChild("PlayerGui")}
-for _, f in ipairs(folders) do wrapRemotes(f) end
+end)
 
 return G2L["1"], require;

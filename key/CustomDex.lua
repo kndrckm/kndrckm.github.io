@@ -1750,7 +1750,10 @@ local function main()
 		context:AddDivider()
 
 		if expanded == Explorer.SearchExpanded then context:AddRegistered("CLEAR_SEARCH_AND_JUMP_TO") end
-		if env.setclipboard then context:AddRegistered("COPY_PATH") end
+		if env.setclipboard then
+			context:AddRegistered("COPY_PATH")
+			context:AddRegistered("COPY_WHOLE_PATH")
+		end
 		context:AddRegistered("INSERT_OBJECT")
 		context:AddRegistered("SAVE_INST")
 		-- context:AddRegistered("CALL_FUNCTION")
@@ -2189,6 +2192,21 @@ local function main()
 				end
 				resList[count] = "}"
 				env.setclipboard(table.concat(resList,"\n"))
+			end
+		end})
+
+		context:Register("COPY_WHOLE_PATH",{Name = "Copy Whole Path", IconMap = Explorer.LegacyClassIcons, Icon = 50, OnClick = function()
+			local sList = selection.List
+			if #sList == 1 then
+				local str = {}
+				local function dumpNode(node, indent)
+					table.insert(str, string.rep("  ", indent) .. "[" .. node.ClassName .. "] " .. node.Name)
+					for _, child in ipairs(node:GetChildren()) do
+						dumpNode(child, indent + 1)
+					end
+				end
+				dumpNode(sList[1].Obj, 0)
+				env.setclipboard(table.concat(str, "\n"))
 			end
 		end})
 
