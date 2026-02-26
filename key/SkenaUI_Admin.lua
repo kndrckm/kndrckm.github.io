@@ -139,30 +139,21 @@ function SkenaAdmin.Attach(Window, DebugData)
     end
    local TabAdmin = Window:CreateTab("Admin", "database") 
     
-    TabAdmin:CreateButtonRow({
-        Name = "Bypassed Dark Dex V3",
-        ButtonText = "Load Dex",
-        Callback = function(btn)
+    TabAdmin:CreateDoubleButtonRow({
+        Name = "External Tools",
+        Button1Text = "Load Dex V3",
+        Button2Text = "Load RSpy",
+        Callback1 = function(btn)
             local success, err = pcall(function()
                 warn("[Admin] Memulai proses Bypassing...")
-
-                -- 1. Load CloneRef & Bypasses dari LOCAL REPOSITORY
                 pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CloneRef.lua", true))() end)
                 pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/DexBypasses.lua", true))() end)
-                
                 warn("[Admin] Mengunduh Source Code Dark Dex...")
-                -- 2. Load Dark Dex Asli dari repository mu
                 local dexSource = game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CustomDex.lua")
-                
                 local dexFunc, loadErr = loadstring(dexSource)
-                if not dexFunc then
-                    error("Gagal mengkompilasi Dex: " .. tostring(loadErr))
-                end
-
-                -- 3. Menjalankan Dex langsung (Tanpa Sandbox yang merusak UI)
+                if not dexFunc then error("Gagal mengkompilasi Dex: " .. tostring(loadErr)) end
                 task.spawn(dexFunc)
             end)
-
             if success then
                 warn("[Admin] Bypassed Dark Dex berhasil di-load!")
                 animateBtn(btn, true)
@@ -170,13 +161,155 @@ function SkenaAdmin.Attach(Window, DebugData)
                 warn("[Admin] Gagal me-load Dark Dex: " .. tostring(err))
                 animateBtn(btn, false)
             end
+        end,
+        Callback2 = function(btn)
+            local success, err = pcall(function()
+                warn("[Admin] Memuat SimpleSpy V3 (External)...")
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua"))()
+            end)
+            if success then
+                warn("[Admin] SimpleSpy berhasil di-load!")
+                animateBtn(btn, true)
+            else
+                warn("[Admin] Gagal me-load SimpleSpy: " .. tostring(err))
+                animateBtn(btn, false)
+            end
         end
     })
 
-    TabAdmin:CreateButtonRow({
-        Name = "Copy My Position",
-        ButtonText = "Copy Vector3",
-        Callback = function(btn)
+    TabAdmin:CreateDoubleButtonRow({
+        Name = "Workspace Scanners",
+        Button1Text = "TouchInt",
+        Button2Text = "Remotes",
+        Callback1 = function(btn)
+            local ok, errMsg = pcall(function()
+                local lines = {"=== SKENA TOUCHINTEREST SCAN ==="}
+                local seen = {}
+                local count = 0
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if (obj.ClassName == "TouchInterest" or (pcall(function() return obj:IsA("TouchInterest") end) and obj:IsA("TouchInterest"))) and obj.Parent then
+                        local part = obj.Parent
+                        local path = part:GetFullName()
+                        if not seen[path] then
+                            seen[path] = true
+                            count = count + 1
+                            lines[#lines + 1] = "[" .. count .. "] (TouchInterest) " .. part.Name .. " | " .. path
+                        end
+                    end
+                end
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("BasePart") then
+                        for _, child in ipairs(obj:GetChildren()) do
+                            if child:IsA("Script") or child:IsA("LocalScript") then
+                                local path = obj:GetFullName()
+                                if not seen[path] then
+                                    seen[path] = true
+                                    count = count + 1
+                                    lines[#lines + 1] = "[" .. count .. "] (Script) " .. obj.Name .. " | " .. path
+                                end
+                                break
+                            end
+                        end
+                    end
+                end
+                if count == 0 then
+                    warn("[Scan] Tidak ada TouchInterest ditemukan.")
+                    animateBtn(btn, false)
+                    return
+                end
+                local finalStr = table.concat(lines, "\n")
+                if setclipboard then
+                    setclipboard(finalStr)
+                    warn("[Scan] " .. count .. " objek dicopy ke clipboard!")
+                    animateBtn(btn, true)
+                else
+                    print(finalStr)
+                    animateBtn(btn, false)
+                end
+            end)
+            if not ok then
+                warn("[Scan ERROR] " .. tostring(errMsg))
+                animateBtn(btn, false)
+            end
+        end,
+        Callback2 = function(btn)
+            local ok, errMsg = pcall(function()
+                local rs = game:GetService("ReplicatedStorage")
+                local lines = {"=== SKENA REMOTE SCANNER ===", "Location: ReplicatedStorage", ""}
+                local count = 0
+                for _, obj in ipairs(rs:GetDescendants()) do
+                    if obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction") or obj:IsA("BindableEvent") or obj:IsA("BindableFunction") then
+                        count = count + 1
+                        lines[#lines + 1] = "[" .. count .. "] (" .. obj.ClassName .. ") " .. obj.Name .. " | " .. obj:GetFullName()
+                    end
+                end
+                if count == 0 then
+                    warn("[Scan] Tidak ada Remote ditemukan.")
+                    animateBtn(btn, false)
+                    return
+                end
+                local finalStr = table.concat(lines, "\n")
+                if setclipboard then
+                    setclipboard(finalStr)
+                    warn("[Scan] " .. count .. " Remote dicopy ke clipboard!")
+                    animateBtn(btn, true)
+                else
+                    print(finalStr)
+                    animateBtn(btn, false)
+                end
+            end)
+            if not ok then
+                warn("[Scan Remote ERROR] " .. tostring(errMsg))
+                animateBtn(btn, false)
+            end
+        end
+    })
+
+    TabAdmin:CreateDoubleButtonRow({
+        Name = "Player & Entity Tools",
+        Button1Text = "Scan NPCs",
+        Button2Text = "Copy Pos",
+        Callback1 = function(btn)
+            local ok, errMsg = pcall(function()
+                local lp = game.Players.LocalPlayer
+                local playerNames = {}
+                for _, p in ipairs(game.Players:GetPlayers()) do
+                    playerNames[p.Name] = true
+                end
+                
+                local lines = {"=== SKENA MOB/NPC SCAN ==="}
+                local count = 0
+                
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("Humanoid") and obj.Parent and obj.Parent:IsA("Model") then
+                        local model = obj.Parent
+                        if not playerNames[model.Name] and model ~= lp.Character then
+                            count = count + 1
+                            local hrp = model:FindFirstChild("HumanoidRootPart") or model.PrimaryPart
+                            local pos = hrp and string.format("(%.0f, %.0f, %.0f)", hrp.Position.X, hrp.Position.Y, hrp.Position.Z) or "?"
+                            lines[#lines + 1] = string.format("[%d] %s | HP: %s/%s | Pos: %s | Path: %s",
+                                count, model.Name, tostring(math.floor(obj.Health)), tostring(math.floor(obj.MaxHealth)), pos, model:GetFullName())
+                        end
+                    end
+                end
+                
+                lines[#lines + 1] = "\nTotal: " .. count
+                local finalStr = table.concat(lines, "\n")
+                if setclipboard then
+                    setclipboard(finalStr)
+                    warn("[Scan] " .. count .. " mob/NPC dicopy ke clipboard!")
+                    animateBtn(btn, true)
+                else
+                    print(finalStr)
+                    animateBtn(btn, false)
+                end
+            end)
+            if not ok then
+                warn("[Scan Mob ERROR] " .. tostring(errMsg))
+                animateBtn(btn, false)
+            end
+        end,
+        Callback2 = function(btn)
             local char = player.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
             if hrp then
@@ -194,7 +327,7 @@ function SkenaAdmin.Attach(Window, DebugData)
             end
         end
     })
-    
+
     -- Selalu update fungsi LogRemote (agar re-exec mendapat versi terbaru)
     getgenv()._SKENA_SPY_SERIALIZE = function(v, depth)
         depth = depth or 0
@@ -288,266 +421,7 @@ function SkenaAdmin.Attach(Window, DebugData)
         end
     end
 
-    -- Scanner: TouchInterests
-    TabAdmin:CreateButtonRow({
-        Name = "Scan TouchInterests",
-        ButtonText = "Scan",
-        Callback = function(btn)
-            local ok, errMsg = pcall(function()
-                local lines = {"=== SKENA TOUCHINTEREST SCAN ==="}
-                local seen = {}
-                local count = 0
-                for _, obj in ipairs(workspace:GetDescendants()) do
-                    if (obj.ClassName == "TouchInterest" or (pcall(function() return obj:IsA("TouchInterest") end) and obj:IsA("TouchInterest"))) and obj.Parent then
-                        local part = obj.Parent
-                        local path = part:GetFullName()
-                        if not seen[path] then
-                            seen[path] = true
-                            count = count + 1
-                            lines[#lines + 1] = "[" .. count .. "] (TouchInterest) " .. part.Name .. " | " .. path
-                        end
-                    end
-                end
-                for _, obj in ipairs(workspace:GetDescendants()) do
-                    if obj:IsA("BasePart") then
-                        for _, child in ipairs(obj:GetChildren()) do
-                            if child:IsA("Script") or child:IsA("LocalScript") then
-                                local path = obj:GetFullName()
-                                if not seen[path] then
-                                    seen[path] = true
-                                    count = count + 1
-                                    lines[#lines + 1] = "[" .. count .. "] (Script) " .. obj.Name .. " | " .. path
-                                end
-                                break
-                            end
-                        end
-                    end
-                end
-                if count == 0 then
-                    warn("[Scan] Tidak ada TouchInterest ditemukan.")
-                    animateBtn(btn, false)
-                    return
-                end
-                local finalStr = table.concat(lines, "\n")
-                if setclipboard then
-                    setclipboard(finalStr)
-                    warn("[Scan] " .. count .. " objek dicopy ke clipboard!")
-                    animateBtn(btn, true)
-                else
-                    print(finalStr)
-                    animateBtn(btn, false)
-                end
-            end)
-            if not ok then
-                warn("[Scan ERROR] " .. tostring(errMsg))
-                animateBtn(btn, false)
-            end
-        end
-    })
-
-    -- Scanner: All Remotes (ReplicatedStorage)
-    TabAdmin:CreateButtonRow({
-        Name = "Scan All Remotes (RS)",
-        ButtonText = "Scan",
-        Callback = function(btn)
-            local ok, errMsg = pcall(function()
-                local rs = game:GetService("ReplicatedStorage")
-                local lines = {"=== SKENA REMOTE SCANNER ===", "Location: ReplicatedStorage", ""}
-                local count = 0
-                for _, obj in ipairs(rs:GetDescendants()) do
-                    if obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction") or obj:IsA("BindableEvent") or obj:IsA("BindableFunction") then
-                        count = count + 1
-                        lines[#lines + 1] = "[" .. count .. "] (" .. obj.ClassName .. ") " .. obj.Name .. " | " .. obj:GetFullName()
-                    end
-                end
-                if count == 0 then
-                    warn("[Scan] Tidak ada Remote ditemukan.")
-                    animateBtn(btn, false)
-                    return
-                end
-                local finalStr = table.concat(lines, "\n")
-                if setclipboard then
-                    setclipboard(finalStr)
-                    warn("[Scan] " .. count .. " Remote dicopy ke clipboard!")
-                    animateBtn(btn, true)
-                else
-                    print(finalStr)
-                    animateBtn(btn, false)
-                end
-            end)
-            if not ok then
-                warn("[Scan Remote ERROR] " .. tostring(errMsg))
-                animateBtn(btn, false)
-            end
-        end
-    })
-
     -- Spy: Toggle Record + Copy Button (1 baris)
-    TabAdmin:CreateToggleButtonRow({
-        Name = "Spy (Record Actions)",
-        ButtonText = "Copy",
-        OnToggle = function(state)
-            getgenv()._SKENA_IS_SPYING = state
-            if state then
-                getgenv()._SKENA_SPY_LOGS = {}
-                warn("[Spy] Merekam semua aksi ke Server...")
-            end
-        end,
-        OnButton = function(btn)
-            local logs = getgenv()._SKENA_SPY_LOGS
-            if not logs or #logs == 0 then
-                warn("Belum ada tindakan yang direkam.")
-                animateBtn(btn, false)
-                return
-            end
-            local finalStr = "=== SKENA REMOTE SPY DUMP ===" .. table.concat(logs, "\n-------------------")
-            if setclipboard then
-                setclipboard(finalStr)
-                warn("[Spy] " .. #logs .. " log dicopy ke clipboard!")
-                animateBtn(btn, true)
-            else
-                print(finalStr)
-                animateBtn(btn, false)
-            end
-        end
-    })
-    
-    -- ESP: Toggle + Copy Data (1 baris)
-    TabAdmin:CreateToggleButtonRow({
-        Name = "ESP ProximityPrompt",
-        ButtonText = "Copy",
-        OnToggle = function(state)
-            getgenv()._SKENA_ESP_PP = state
-            if state then
-                task.spawn(function()
-                    while getgenv()._SKENA_ESP_PP do
-                        for _, obj in ipairs(workspace:GetDescendants()) do
-                            if obj:IsA("ProximityPrompt") and obj.Parent and obj.Parent:IsA("BasePart") then
-                                local part = obj.Parent
-                                if not part:FindFirstChild("_SkenaESP") then
-                                    pcall(function()
-                                        local bb = Instance.new("BillboardGui")
-                                        bb.Name = "_SkenaESP"
-                                        bb.Size = UDim2.new(0, 200, 0, 50)
-                                        bb.StudsOffset = Vector3.new(0, 3, 0)
-                                        bb.AlwaysOnTop = true
-                                        bb.Parent = part
-                                        
-                                        local lbl = Instance.new("TextLabel", bb)
-                                        lbl.Size = UDim2.new(1, 0, 1, 0)
-                                        lbl.BackgroundTransparency = 0.5
-                                        lbl.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                                        lbl.TextColor3 = Color3.fromRGB(0, 255, 100)
-                                        lbl.Font = Enum.Font.GothamBold
-                                        lbl.TextSize = 12
-                                        lbl.TextWrapped = true
-                                        Instance.new("UICorner", lbl).CornerRadius = UDim.new(0, 4)
-                                        
-                                        local action = obj.ActionText ~= "" and obj.ActionText or "E"
-                                        local objText = obj.ObjectText ~= "" and obj.ObjectText or part.Name
-                                        lbl.Text = "[" .. action .. "] " .. objText
-                                        
-                                        if not part:FindFirstChild("_SkenaHighlight") then
-                                            local hl = Instance.new("Highlight")
-                                            hl.Name = "_SkenaHighlight"
-                                            hl.FillColor = Color3.fromRGB(0, 255, 100)
-                                            hl.FillTransparency = 0.7
-                                            hl.OutlineColor = Color3.fromRGB(0, 255, 100)
-                                            hl.OutlineTransparency = 0
-                                            hl.Parent = part
-                                        end
-                                    end)
-                                end
-                            end
-                        end
-                        task.wait(2)
-                    end
-                    -- Cleanup
-                    for _, obj in ipairs(workspace:GetDescendants()) do
-                        if obj.Name == "_SkenaESP" or obj.Name == "_SkenaHighlight" then
-                            pcall(function() obj:Destroy() end)
-                        end
-                    end
-                end)
-            end
-        end,
-        OnButton = function(btn)
-            -- Scan & Copy semua ProximityPrompt
-            local lines = {"=== SKENA PROXIMITY PROMPT SCAN ==="}
-            local count = 0
-            for _, obj in ipairs(workspace:GetDescendants()) do
-                if obj:IsA("ProximityPrompt") then
-                    count = count + 1
-                    local part = obj.Parent
-                    local action = obj.ActionText ~= "" and obj.ActionText or "E"
-                    local objText = obj.ObjectText ~= "" and obj.ObjectText or ""
-                    lines[#lines + 1] = string.format("[%d] Action: %s | Object: %s | Part: %s | Path: %s",
-                        count, action, objText, part and part.Name or "?", part and part:GetFullName() or "?")
-                end
-            end
-            if count == 0 then
-                warn("[ESP] Tidak ada ProximityPrompt ditemukan.")
-                animateBtn(btn, false)
-                return
-            end
-            if setclipboard then
-                setclipboard(table.concat(lines, "\n"))
-                warn("[ESP] " .. count .. " prompt dicopy ke clipboard!")
-                animateBtn(btn, true)
-            else
-                print(table.concat(lines, "\n"))
-                animateBtn(btn, false)
-            end
-        end
-    })
-
-    -- Scanner: Mobs / NPCs (Humanoid di workspace)
-    TabAdmin:CreateButtonRow({
-        Name = "Scan Mobs / NPCs",
-        ButtonText = "Scan",
-        Callback = function(btn)
-            local ok, errMsg = pcall(function()
-                local lp = game.Players.LocalPlayer
-                local playerNames = {}
-                for _, p in ipairs(game.Players:GetPlayers()) do
-                    playerNames[p.Name] = true
-                end
-                
-                local lines = {"=== SKENA MOB/NPC SCAN ==="}
-                local count = 0
-                
-                for _, obj in ipairs(workspace:GetDescendants()) do
-                    if obj:IsA("Humanoid") and obj.Parent and obj.Parent:IsA("Model") then
-                        local model = obj.Parent
-                        if not playerNames[model.Name] and model ~= lp.Character then
-                            count = count + 1
-                            local hrp = model:FindFirstChild("HumanoidRootPart") or model.PrimaryPart
-                            local pos = hrp and string.format("(%.0f, %.0f, %.0f)", hrp.Position.X, hrp.Position.Y, hrp.Position.Z) or "?"
-                            lines[#lines + 1] = string.format("[%d] %s | HP: %s/%s | Pos: %s | Path: %s",
-                                count, model.Name, tostring(math.floor(obj.Health)), tostring(math.floor(obj.MaxHealth)), pos, model:GetFullName())
-                        end
-                    end
-                end
-                
-                lines[#lines + 1] = "\nTotal: " .. count
-                local finalStr = table.concat(lines, "\n")
-                if setclipboard then
-                    setclipboard(finalStr)
-                    warn("[Scan] " .. count .. " mob/NPC dicopy ke clipboard!")
-                    animateBtn(btn, true)
-                else
-                    print(finalStr)
-                    animateBtn(btn, false)
-                end
-            end)
-            if not ok then
-                warn("[Scan Mob ERROR] " .. tostring(errMsg))
-                animateBtn(btn, false)
-            end
-        end
-    })
-
-    -- Auto Interact: Toggle + Copy Log (1 baris)
     getgenv()._SKENA_INTERACT_LOGS = getgenv()._SKENA_INTERACT_LOGS or {}
     TabAdmin:CreateToggleButtonRow({
         Name = "Auto Interact (Log)",
