@@ -22,33 +22,123 @@ local function animateBtn(btn, success)
 end
 
 function SkenaAdmin.Attach(Window, DebugData)
+    -- === GENERAL PANEL (Available to everyone) ===
+    local TabGeneral = Window:CreateTab("General", "home")
+    
+    local isFlying = false
+    local flySpeed = 50
+    TabGeneral:CreateToggleRow({
+        Name = "Fly Toggle",
+        HasSpeed = true,
+        DefaultSpeed = "50",
+        OnSpeedChange = function(val)
+            local s = tonumber(val)
+            if s then flySpeed = s end
+        end,
+        OnToggle = function(state)
+            isFlying = state
+            local char = player.Character
+            if not char then return end
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if not hrp or not hum then return end
+            
+            if isFlying then
+                -- Cleanup any existing fly objects
+                for _, v in ipairs(hrp:GetChildren()) do
+                    if v.Name == "SkenaFlyBG" or v.Name == "SkenaFlyBV" then v:Destroy() end
+                end
+                
+                local bg = Instance.new("BodyGyro")
+                bg.Name = "SkenaFlyBG"
+                bg.P = 9e4
+                bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+                bg.CFrame = hrp.CFrame
+                bg.Parent = hrp
+                
+                local bv = Instance.new("BodyVelocity")
+                bv.Name = "SkenaFlyBV"
+                bv.Velocity = Vector3.new(0, 0, 0)
+                bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+                bv.Parent = hrp
+                
+                hum.PlatformStand = true
+                
+                local cam = workspace.CurrentCamera
+                local uis = game:GetService("UserInputService")
+                
+                if getgenv()._SKENA_FLY_CONN then getgenv()._SKENA_FLY_CONN:Disconnect() end
+                getgenv()._SKENA_FLY_CONN = game:GetService("RunService").RenderStepped:Connect(function()
+                    if not isFlying or not hrp or not hrp:FindFirstChild("SkenaFlyBG") or not hrp:FindFirstChild("SkenaFlyBV") then 
+                        if getgenv()._SKENA_FLY_CONN then getgenv()._SKENA_FLY_CONN:Disconnect() end
+                        return 
+                    end
+                    
+                    bg.CFrame = cam.CFrame
+                    local moveDir = Vector3.new()
+                    
+                    if uis:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end
+                    if uis:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.CFrame.LookVector end
+                    if uis:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.CFrame.RightVector end
+                    if uis:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.CFrame.RightVector end
+                    if uis:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0, 1, 0) end
+                    if uis:IsKeyDown(Enum.KeyCode.LeftShift) then moveDir = moveDir - Vector3.new(0, 1, 0) end
+                    
+                    if moveDir.Magnitude > 0 then
+                        moveDir = moveDir.Unit
+                    end
+                    bv.Velocity = moveDir * flySpeed
+                end)
+            else
+                if getgenv()._SKENA_FLY_CONN then getgenv()._SKENA_FLY_CONN:Disconnect() end
+                local bg = hrp:FindFirstChild("SkenaFlyBG")
+                local bv = hrp:FindFirstChild("SkenaFlyBV")
+                if bg then bg:Destroy() end
+                if bv then bv:Destroy() end
+                hum.PlatformStand = false
+            end
+        end
+    })
+
+    local speedChangerEnabled = false
+    local targetWalkSpeed = 16
+    TabGeneral:CreateToggleRow({
+        Name = "Speed Changer",
+        HasSpeed = true,
+        DefaultSpeed = "16",
+        OnSpeedChange = function(val)
+            local num = tonumber(val)
+            if num then targetWalkSpeed = num end
+        end,
+        OnToggle = function(state)
+            speedChangerEnabled = state
+            if speedChangerEnabled then
+                if getgenv()._SKENA_SPEED_CONN then getgenv()._SKENA_SPEED_CONN:Disconnect() end
+                getgenv()._SKENA_SPEED_CONN = game:GetService("RunService").Stepped:Connect(function()
+                    local char = player.Character
+                    local hum = char and char:FindFirstChildOfClass("Humanoid")
+                    if hum and speedChangerEnabled then
+                        if hum.WalkSpeed ~= targetWalkSpeed then
+                            hum.WalkSpeed = targetWalkSpeed
+                        end
+                    end
+                end)
+            else
+                if getgenv()._SKENA_SPEED_CONN then getgenv()._SKENA_SPEED_CONN:Disconnect() end
+                local char = player.Character
+                local hum = char and char:FindFirstChildOfClass("Humanoid")
+                if hum then
+                    hum.WalkSpeed = 16
+                end
+            end
+        end
+    })
+
     if not WHITELISTED_ADMINS[player.UserId] then
         return 
     end
    local TabAdmin = Window:CreateTab("Admin", "database") 
     
-    TabAdmin:CreateButtonRow({
-        Name = "Copy My Position",
-        ButtonText = "Copy Vector3",
-        Callback = function(btn)
-            local char = player.Character
-            local hrp = char and char:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                local p = hrp.Position
-                local posStr = string.format("Vector3.new(%.3f, %.3f, %.3f)", p.X, p.Y, p.Z)
-                if setclipboard then
-                    setclipboard(posStr)
-                    animateBtn(btn, true)
-                else
-                    warn("Posisi anda: " .. posStr)
-                    animateBtn(btn, false)
-                end
-            else
-                animateBtn(btn, false)
-            end
-        end
-    })
-
     TabAdmin:CreateButtonRow({
         Name = "Bypassed Dark Dex V3",
         ButtonText = "Load Dex",
@@ -78,6 +168,28 @@ function SkenaAdmin.Attach(Window, DebugData)
                 animateBtn(btn, true)
             else
                 warn("[Admin] Gagal me-load Dark Dex: " .. tostring(err))
+                animateBtn(btn, false)
+            end
+        end
+    })
+
+    TabAdmin:CreateButtonRow({
+        Name = "Copy My Position",
+        ButtonText = "Copy Vector3",
+        Callback = function(btn)
+            local char = player.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                local p = hrp.Position
+                local posStr = string.format("Vector3.new(%.3f, %.3f, %.3f)", p.X, p.Y, p.Z)
+                if setclipboard then
+                    setclipboard(posStr)
+                    animateBtn(btn, true)
+                else
+                    warn("Posisi anda: " .. posStr)
+                    animateBtn(btn, false)
+                end
+            else
                 animateBtn(btn, false)
             end
         end
