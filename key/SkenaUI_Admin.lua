@@ -164,14 +164,14 @@ function SkenaAdmin.Attach(Window, DebugData)
         end,
         Callback2 = function(btn)
             local success, err = pcall(function()
-                warn("[Admin] Memuat SimpleSpy V3 (External)...")
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua"))()
+                warn("[Admin] Memuat Xeno RSpy...")
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/XenoRSpy.lua", true))()
             end)
             if success then
-                warn("[Admin] SimpleSpy berhasil di-load!")
+                warn("[Admin] Xeno RSpy berhasil di-load!")
                 animateBtn(btn, true)
             else
-                warn("[Admin] Gagal me-load SimpleSpy: " .. tostring(err))
+                warn("[Admin] Gagal me-load Xeno RSpy: " .. tostring(err))
                 animateBtn(btn, false)
             end
         end
