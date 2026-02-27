@@ -47,8 +47,8 @@ task.spawn(function()
         if getgenv()._SKENA_TOGGLE_RUN then
             local char = player.Character
             local hum = char and char:FindFirstChildOfClass("Humanoid")
-            if hum and hum.WalkSpeed < 30 then
-                hum.WalkSpeed = 35
+            if hum and hum.WalkSpeed ~= 28 then
+                hum.WalkSpeed = 28
             end
         end
     end
@@ -56,6 +56,7 @@ end)
 
 TabMain:CreateToggleRow({
     Name = " [ Toggle Run ]",
+    Default = getgenv()._SKENA_TOGGLE_RUN,
     OnToggle = function(state)
         getgenv()._SKENA_TOGGLE_RUN = state
         if not state then
