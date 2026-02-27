@@ -81,8 +81,8 @@ function SkenaAdmin.Attach(Window, DebugData)
                     if uis:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.CFrame.LookVector end
                     if uis:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.CFrame.RightVector end
                     if uis:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.CFrame.RightVector end
-                    if uis:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0, 1, 0) end
-                    if uis:IsKeyDown(Enum.KeyCode.LeftShift) then moveDir = moveDir - Vector3.new(0, 1, 0) end
+                    if uis:IsKeyDown(Enum.KeyCode.Space) or uis:IsKeyDown(Enum.KeyCode.E) then moveDir = moveDir + Vector3.new(0, 1, 0) end
+                    if uis:IsKeyDown(Enum.KeyCode.LeftShift) or uis:IsKeyDown(Enum.KeyCode.Q) then moveDir = moveDir - Vector3.new(0, 1, 0) end
                     
                     if moveDir.Magnitude > 0 then
                         moveDir = moveDir.Unit
@@ -422,6 +422,56 @@ function SkenaAdmin.Attach(Window, DebugData)
     end
 
     -- Spy: Toggle Record + Copy Button (1 baris)
+    getgenv()._SKENA_SPY_LOG_FN = function(remote, method, args)
+        if not getgenv()._SKENA_SPY_LOGS then getgenv()._SKENA_SPY_LOGS = {} end
+        local argsStr = "none"
+        if #args > 0 then
+            pcall(function()
+                local strs = {}
+                for i, v in ipairs(args) do
+                    table.insert(strs, tostring(v))
+                end
+                argsStr = table.concat(strs, ", ")
+            end)
+        end
+        local logPath = remote:GetFullName()
+        local logEntry = string.format("[%s] %s:%s(...) \nArgs: %s", os.date("%X"), logPath, method, argsStr)
+        table.insert(getgenv()._SKENA_SPY_LOGS, logEntry)
+    end
+
+    TabAdmin:CreateToggleButtonRow({
+        Name = "Record Actions (Spy)",
+        ButtonText = "Copy",
+        OnToggle = function(state)
+            getgenv()._SKENA_IS_SPYING = state
+            if state then
+                getgenv()._SKENA_SPY_LOGS = {} -- Reset ketika record di start ulang
+                warn("[Spy] Recording started...")
+            else
+                local count = getgenv()._SKENA_SPY_LOGS and #getgenv()._SKENA_SPY_LOGS or 0
+                warn("[Spy] Recording stopped. Total Logs: " .. count)
+            end
+        end,
+        OnButton = function(btn)
+            local logs = getgenv()._SKENA_SPY_LOGS
+            if not logs or #logs == 0 then
+                warn("[Spy] Belum ada record yang dicatat.")
+                animateBtn(btn, false)
+                return
+            end
+            local finalStr = "=== SKENA SPY LOG (" .. #logs .. " entries) ===\n" .. table.concat(logs, "\n\n")
+            if setclipboard then
+                setclipboard(finalStr)
+                warn("[Spy] " .. #logs .. " log dicopy ke clipboard!")
+                animateBtn(btn, true)
+            else
+                print(finalStr)
+                warn("[Spy] Data diprint ke console F9 karena executor tidak support setclipboard.")
+                animateBtn(btn, false)
+            end
+        end
+    })
+
     getgenv()._SKENA_INTERACT_LOGS = getgenv()._SKENA_INTERACT_LOGS or {}
     TabAdmin:CreateToggleButtonRow({
         Name = "Auto Interact (Log)",
