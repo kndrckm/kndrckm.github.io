@@ -552,6 +552,23 @@ function SkenaUI:CreateWindow(Options)
             if Options.HasSpeed then
                 out.SpeedBox = attachTextBox("Spd", Options.DefaultSpeed, Options.OnSpeedChange, 40, 8, "Speed")
             end
+            if Options.HasSpeedometer then
+                local container = Instance.new("Frame", RightContainer)
+                container.BackgroundTransparency = 1
+                container.LayoutOrder = 7
+                container.Size = UDim2.new(0, 50, 0, 24)
+                
+                local lbl = Instance.new("TextLabel", container)
+                lbl.BackgroundTransparency = 1
+                lbl.Size = UDim2.new(1, 0, 1, 0)
+                lbl.Text = "0.0 s/s"
+                lbl.Font = Enum.Font.GothamBold
+                lbl.TextSize = 11
+                lbl.TextColor3 = Palette.Accent
+                lbl.TextXAlignment = Enum.TextXAlignment.Right
+                
+                out.Speedometer = lbl
+            end
             if Options.HasInput then
                 out.InputBox = attachTextBox(Options.InputPlaceholder or "", Options.InputDefault or "", Options.OnInputChange, Options.InputWidth or 80, 8, Options.InputPrefix)
             end

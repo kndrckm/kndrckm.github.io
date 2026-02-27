@@ -102,9 +102,10 @@ function SkenaAdmin.Attach(Window, DebugData)
 
     local speedChangerEnabled = false
     local targetWalkSpeed = 16
-    TabGeneral:CreateToggleRow({
+    local speedRow = TabGeneral:CreateToggleRow({
         Name = "Speed Changer",
         HasSpeed = true,
+        HasSpeedometer = true,
         DefaultSpeed = "16",
         OnSpeedChange = function(val)
             local num = tonumber(val)
@@ -133,6 +134,19 @@ function SkenaAdmin.Attach(Window, DebugData)
             end
         end
     })
+
+    if speedRow and speedRow.Speedometer then
+        if getgenv()._SKENA_SPEEDOMETER_CONN then getgenv()._SKENA_SPEEDOMETER_CONN:Disconnect() end
+        getgenv()._SKENA_SPEEDOMETER_CONN = game:GetService("RunService").RenderStepped:Connect(function()
+            local char = player.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if hrp and speedRow.Speedometer and speedRow.Speedometer.Parent then
+                local vel = hrp.Velocity or hrp.AssemblyLinearVelocity
+                local speed = Vector3.new(vel.X, 0, vel.Z).Magnitude
+                speedRow.Speedometer.Text = string.format("%.1f s/s", speed)
+            end
+        end)
+    end
 
     if not WHITELISTED_ADMINS[player.UserId] then
         return 
