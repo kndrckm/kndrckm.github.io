@@ -474,13 +474,22 @@ function SkenaAdmin.Attach(Window, DebugData)
                 return
             end
             local finalStr = "=== SKENA SPY LOG (" .. #logs .. " entries) ===\n" .. table.concat(logs, "\n\n")
-            if setclipboard then
-                setclipboard(finalStr)
+            
+            local success, err = pcall(function()
+                if setclipboard then
+                    setclipboard(finalStr)
+                else
+                    error("setclipboard is not supported by your executor")
+                end
+            end)
+            
+            if success then
                 warn("[Spy] " .. #logs .. " log dicopy ke clipboard!")
                 animateBtn(btn, true)
             else
                 print(finalStr)
-                warn("[Spy] Data diprint ke console F9 karena executor tidak support setclipboard.")
+                warn("[Spy] Gagal copy ke clipboard: " .. tostring(err))
+                warn("[Spy] Data diprint ke console F9 sebagai gantinya.")
                 animateBtn(btn, false)
             end
         end

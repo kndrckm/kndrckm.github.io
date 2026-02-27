@@ -82,35 +82,69 @@ local function doTP(pos)
     end
 end
 
-TabMain:CreateButtonRow({
-    Name = "Grassland",
+local TP_LOCATIONS = {
+    ["Grassland"] = Vector3.new(188.961, 35.779, -254.614),
+    ["Desert (2x luck, 100k)"] = Vector3.new(260.278, 17.110, -927.792),
+    ["Snow (4x luck, 1.5M)"] = Vector3.new(286.322, 16.160, -1581.303),
+    ["Jungle (6x luck, 15M)"] = Vector3.new(442.860, 113.981, -2744.834)
+}
+
+-- Create the Dropdown UI for Teleports
+local TPDropdown
+TPDropdown = TabMain:CreateDropdownButton({
+    Name = " [ Teleport To ]",
     ButtonText = "TP",
-    Callback = function()
-        doTP(Vector3.new(188.961, 35.779, -254.614))
+    Columns = 1,
+    Callback = function(val)
+        getgenv().SelectedUMR_TP = val
+    end,
+    OnButton = function()
+        local selected = getgenv().SelectedUMR_TP
+        if selected and TP_LOCATIONS[selected] then
+            doTP(TP_LOCATIONS[selected])
+        end
     end
 })
 
-TabMain:CreateButtonRow({
-    Name = "Desert (2x luck, 100 kill)",
-    ButtonText = "TP",
-    Callback = function()
-        doTP(Vector3.new(260.278, 17.110, -927.792))
+-- Populate the Dropdown with Teleport Locations
+local tpInitial = true
+for locName, _ in pairs(TP_LOCATIONS) do
+    TPDropdown:AddItem(locName, tpInitial)
+    if tpInitial then
+        getgenv().SelectedUMR_TP = locName
+        tpInitial = false
     end
+end
+
+-- Features
+TabMain:CreateTextRow({
+    Text = "── Features ──"
 })
 
-TabMain:CreateButtonRow({
-    Name = "Snow (4x luck, 1,500 kill)",
-    ButtonText = "TP",
-    Callback = function()
-        doTP(Vector3.new(286.322, 16.160, -1581.303))
-    end
-})
+getgenv()._SKENA_AUTO_SP = false
+RegisterLoop("_SKENA_AUTO_SP")
 
-TabMain:CreateButtonRow({
-    Name = "Jungle (6x luck, 15,000 kill)",
-    ButtonText = "TP",
-    Callback = function()
-        doTP(Vector3.new(442.860, 113.981, -2744.834))
+TabMain:CreateToggleRow({
+    Name = " [ Auto Update SP Models ]",
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_SP = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_SP do
+                    pcall(function()
+                        local rs = game:GetService("ReplicatedStorage")
+                        local remote = rs:FindFirstChild("Remotes") and rs.Remotes:FindFirstChild("UpdateSPModels")
+                        if remote then
+                            local spValues = {210000, 2200000, 2290000, 2390000, 270000}
+                            for _, val in ipairs(spValues) do
+                                remote:FireServer(val)
+                            end
+                        end
+                    end)
+                    task.wait(1)
+                end
+            end)
+        end
     end
 })
 
