@@ -82,11 +82,11 @@ local function doTP(pos)
     end
 end
 
-local TP_LOCATIONS = {
-    ["Grassland"] = Vector3.new(188.961, 35.779, -254.614),
-    ["Desert (2x luck, 100k)"] = Vector3.new(260.278, 17.110, -927.792),
-    ["Snow (4x luck, 1.5M)"] = Vector3.new(286.322, 16.160, -1581.303),
-    ["Jungle (6x luck, 15M)"] = Vector3.new(442.860, 113.981, -2744.834)
+local TP_ORDERED = {
+    { name = "Grassland", pos = Vector3.new(188.961, 35.779, -254.614) },
+    { name = "Desert (2x luck, 100k)", pos = Vector3.new(260.278, 17.110, -927.792) },
+    { name = "Snow (4x luck, 1.5M)", pos = Vector3.new(286.322, 16.160, -1581.303) },
+    { name = "Jungle (6x luck, 15M)", pos = Vector3.new(442.860, 113.981, -2744.834) }
 }
 
 -- Create the Dropdown UI for Teleports
@@ -100,20 +100,21 @@ TPDropdown = TabMain:CreateDropdownButton({
     end,
     OnButton = function()
         local selected = getgenv().SelectedUMR_TP
-        if selected and TP_LOCATIONS[selected] then
-            doTP(TP_LOCATIONS[selected])
+        if selected then
+            for _, loc in ipairs(TP_ORDERED) do
+                if loc.name == selected then
+                    doTP(loc.pos)
+                    break
+                end
+            end
         end
     end
 })
 
--- Populate the Dropdown with Teleport Locations
-local tpInitial = true
-for locName, _ in pairs(TP_LOCATIONS) do
-    TPDropdown:AddItem(locName, tpInitial)
-    if tpInitial then
-        getgenv().SelectedUMR_TP = locName
-        tpInitial = false
-    end
+-- Populate the Dropdown with Teleport Locations (preserving exact order)
+for i, loc in ipairs(TP_ORDERED) do
+    TPDropdown:AddItem(loc.name, i == 1)
+    if i == 1 then getgenv().SelectedUMR_TP = loc.name end
 end
 
 -- Features
@@ -131,6 +132,7 @@ TabMain:CreateToggleRow({
         if state then
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_SP do
+                    -- 1. Try Remote Method (Sequential firing)
                     pcall(function()
                         local rs = game:GetService("ReplicatedStorage")
                         local remote = rs:FindFirstChild("Remotes") and rs.Remotes:FindFirstChild("UpdateSPModels")
@@ -138,10 +140,36 @@ TabMain:CreateToggleRow({
                             local spValues = {210000, 2200000, 2290000, 2390000, 270000}
                             for _, val in ipairs(spValues) do
                                 remote:FireServer(val)
+                                task.wait(0.1)
                             end
                         end
                     end)
-                    task.wait(1)
+                    
+                    -- 2. Try Physical Interaction (Mouse Click simulation)
+                    pcall(function()
+                        local char = player.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            -- Scan nearby for any machine that might be an SP upgrade
+                            for _, obj in ipairs(workspace:GetDescendants()) do
+                                if obj:IsA("ClickDetector") or obj:IsA("ProximityPrompt") then
+                                    local parent = obj.Parent
+                                    if parent and parent:IsA("BasePart") then
+                                        local dist = (hrp.Position - parent.Position).Magnitude
+                                        if dist < 25 then
+                                            -- Attempt to interact if it looks like an SP machine or is nearby
+                                            if obj:IsA("ClickDetector") then
+                                                fireclickdetector(obj)
+                                            else
+                                                fireproximityprompt(obj)
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                    task.wait(1.5)
                 end
             end)
         end
