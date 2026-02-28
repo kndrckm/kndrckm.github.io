@@ -35,36 +35,39 @@ end
 -- TAB MAIN
 -- ==========================================
 
--- Toggle Run (Default: ON)
--- Set to true by default when script loads
+-- Toggle Run: Memaksa karakter berlari layaknya menekan (Shift) dengan mengubah statuslari atau menekan Virtual Input
 if getgenv()._SKENA_TOGGLE_RUN == nil then
     getgenv()._SKENA_TOGGLE_RUN = true
 end
 RegisterLoop("_SKENA_TOGGLE_RUN")
 
+local vim = game:GetService("VirtualInputManager")
+
 task.spawn(function()
-    while task.wait(0.1) do
+    local rs = game:GetService("RunService")
+    while task.wait() do
+        -- Terus cek agar kalau karakter ada/respawn, kita tekan "LeftShift" di background
         if getgenv()._SKENA_TOGGLE_RUN then
             local char = player.Character
-            local hum = char and char:FindFirstChildOfClass("Humanoid")
-            if hum and hum.WalkSpeed ~= 28 then
-                hum.WalkSpeed = 28
+            if char and char:FindFirstChild("Humanoid") then
+                pcall(function()
+                    vim:SendKeyEvent(true, Enum.KeyCode.LeftShift, false, game)
+                end)
             end
         end
     end
 end)
 
 TabMain:CreateToggleRow({
-    Name = " [ Toggle Run ]",
+    Name = "Toggle Run",
     Default = getgenv()._SKENA_TOGGLE_RUN,
     OnToggle = function(state)
         getgenv()._SKENA_TOGGLE_RUN = state
         if not state then
-            local char = player.Character
-            local hum = char and char:FindFirstChildOfClass("Humanoid")
-            if hum then
-                hum.WalkSpeed = 16
-            end
+            -- Release the Shift key holding state as fallback
+            pcall(function()
+                vim:SendKeyEvent(false, Enum.KeyCode.LeftShift, false, game)
+            end)
         end
     end
 })
@@ -84,15 +87,16 @@ end
 
 local TP_ORDERED = {
     { name = "Grassland", pos = Vector3.new(188.961, 35.779, -254.614) },
-    { name = "Desert (2x luck, 100k)", pos = Vector3.new(260.278, 17.110, -927.792) },
-    { name = "Snow (4x luck, 1.5M)", pos = Vector3.new(286.322, 16.160, -1581.303) },
-    { name = "Jungle (6x luck, 15M)", pos = Vector3.new(442.860, 113.981, -2744.834) }
+    { name = "Desert (2x luck, 100 kill)", pos = Vector3.new(260.278, 17.110, -927.792) },
+    { name = "Snow (4x luck, 1.5K kill)", pos = Vector3.new(286.322, 16.160, -1581.303) },
+    { name = "Jungle (6x luck, 15K kill)", pos = Vector3.new(442.860, 113.981, -2744.834) },
+    { name = "Volcano (8x luck, 200K kill)", pos = Vector3.new(668.332, 10.214, -4100.939) }
 }
 
 -- Create the Dropdown UI for Teleports
 local TPDropdown
 TPDropdown = TabMain:CreateDropdownButton({
-    Name = " [ Teleport To ]",
+    Name = "Teleport To",
     ButtonText = "TP",
     Columns = 1,
     Callback = function(val)
@@ -126,50 +130,48 @@ getgenv()._SKENA_AUTO_SP = false
 RegisterLoop("_SKENA_AUTO_SP")
 
 TabMain:CreateToggleRow({
-    Name = " [ Auto Update SP Models ]",
+    Name = "Auto Update SP Models",
     OnToggle = function(state)
         getgenv()._SKENA_AUTO_SP = state
         if state then
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_SP do
-                    -- 1. Try Remote Method (Sequential firing)
-                    pcall(function()
-                        local rs = game:GetService("ReplicatedStorage")
-                        local remote = rs:FindFirstChild("Remotes") and rs.Remotes:FindFirstChild("UpdateSPModels")
-                        if remote then
-                            local spValues = {210000, 2200000, 2290000, 2390000, 270000}
-                            for _, val in ipairs(spValues) do
-                                remote:FireServer(val)
-                                task.wait(0.1)
-                            end
-                        end
-                    end)
-                    
-                    -- 2. Try Physical Interaction (Mouse Click simulation)
                     pcall(function()
                         local char = player.Character
                         local hrp = char and char:FindFirstChild("HumanoidRootPart")
                         if hrp then
-                            -- Scan nearby for any machine that might be an SP upgrade
+                            -- Cari ClickDetector/ProximityPrompt terdekat pada mesin upgrade
+                            -- Stand in front of the machine to auto click it
+                            local fired = false
                             for _, obj in ipairs(workspace:GetDescendants()) do
-                                if obj:IsA("ClickDetector") or obj:IsA("ProximityPrompt") then
+                                if obj:IsA("ClickDetector") or (obj:IsA("ProximityPrompt") and obj.Enabled) then
                                     local parent = obj.Parent
                                     if parent and parent:IsA("BasePart") then
                                         local dist = (hrp.Position - parent.Position).Magnitude
-                                        if dist < 25 then
-                                            -- Attempt to interact if it looks like an SP machine or is nearby
+                                        if dist < 45 then
+                                            -- Jika dekat, simulasikan klik/interaction
                                             if obj:IsA("ClickDetector") then
                                                 fireclickdetector(obj)
                                             else
                                                 fireproximityprompt(obj)
                                             end
+                                            fired = true
                                         end
                                     end
                                 end
                             end
+                            -- Jika ada remote update dengan static arguments, coba panggil fallback. 
+                            -- Tapi diutamakan ClickDetector karena harga SP model dinamis.
+                            if not fired then
+                                local rs = game:GetService("ReplicatedStorage")
+                                local remote = rs:FindFirstChild("Remotes") and rs.Remotes:FindFirstChild("UpdateSPModels")
+                                if remote then
+                                    -- Kadang game menyimpan value yang bisa dibaca di client, tapi kalau tak ada kita biarkan ClickDetector bekerja.
+                                end
+                            end
                         end
                     end)
-                    task.wait(1.5)
+                    task.wait(0.5) -- Spam click
                 end
             end)
         end
