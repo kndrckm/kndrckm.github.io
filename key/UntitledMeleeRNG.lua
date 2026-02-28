@@ -178,6 +178,39 @@ TabMain:CreateToggleRow({
     end
 })
 
+TabMain:CreateButtonRow({
+    Name = "Open Totem Menu (Must be nearby)",
+    ButtonText = "Open",
+    Callback = function()
+        pcall(function()
+            local char = player.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if not hrp then return end
+            
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("ProximityPrompt") and obj.ActionText == "Use" then
+                    local model = obj:FindFirstAncestorOfClass("Model")
+                    if model and (model.Name:lower():find("totem") or model.Name == "Totem of Fortune") then
+                        -- Cek jarak supaya gamenya tidak kick karena eksploit jarak jauh
+                        local objPart = obj.Parent
+                        if objPart and objPart:IsA("BasePart") then
+                            local dist = (hrp.Position - objPart.Position).Magnitude
+                            if dist < 20 then
+                                fireproximityprompt(obj)
+                                warn("[Skena Hub] Totem menu triggered.")
+                                return
+                            else
+                                warn("[Skena Hub] Totem terlalu jauh (" .. tostring(math.floor(dist)) .. " studs). Dekati dulu!")
+                            end
+                        end
+                    end
+                end
+            end
+            warn("[Skena Hub] Totem of Fortune tidak ditemukan/tidak aktif di dekatmu.")
+        end)
+    end
+})
+
 getgenv()._SKENA_AUTO_BOSS = false
 RegisterLoop("_SKENA_AUTO_BOSS")
 
