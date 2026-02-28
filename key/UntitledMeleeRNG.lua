@@ -178,6 +178,68 @@ TabMain:CreateToggleRow({
     end
 })
 
+getgenv()._SKENA_AUTO_BOSS = false
+RegisterLoop("_SKENA_AUTO_BOSS")
+
+TabMain:CreateToggleRow({
+    Name = "Auto Boss Raid",
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_BOSS = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_BOSS do
+                    pcall(function()
+                        local char = player.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        if not hrp then return end
+                        
+                        -- Start Raid process: Try to fire the remote
+                        local rs = game:GetService("ReplicatedStorage")
+                        local startRaid = rs:FindFirstChild("Remotes") and rs.Remotes:FindFirstChild("StartRaid")
+                        if startRaid then
+                            startRaid:FireServer(true)
+                        end
+                        
+                        -- Raid Combat Logistics (TP to mobs so auto attack hits them)
+                        -- The map often spawns the mob in the workspace, or folders like Npcs or Mobs
+                        local minDist = 9e9
+                        local targetMobHrp = nil
+                        
+                        local folders = {workspace:FindFirstChild("Mobs"), workspace:FindFirstChild("Npcs"), workspace:FindFirstChild("Enemies")}
+                        for _, folder in ipairs(folders) do
+                            if folder then
+                                for _, mob in ipairs(folder:GetChildren()) do
+                                    if mob:IsA("Model") then
+                                        local mHrp = mob:FindFirstChild("HumanoidRootPart") or mob.PrimaryPart
+                                        -- Usually mobs are not players and shouldn't be fully transparent
+                                        if mHrp and mHrp.Transparency < 0.9 and (not mHrp.Anchored) then
+                                            local dist = (hrp.Position - mHrp.Position).Magnitude
+                                            if dist < minDist then
+                                                minDist = dist
+                                                targetMobHrp = mHrp
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        
+                        -- If we found an enemy, float near them (not flying, just TP near them on ground)
+                        if targetMobHrp then
+                            -- Teleport near the mob (offsetting 3 studs in front/back ideally grounded)
+                            hrp.CFrame = targetMobHrp.CFrame * CFrame.new(0, 0, 3)
+                            
+                            -- Reset velocity to avoid flinging
+                            hrp.Velocity = Vector3.new(0,0,0)
+                        end
+                    end)
+                    task.wait(0.2)
+                end
+            end)
+        end
+    end
+})
+
 -- ==========================================
 -- ATTACH ADMIN MODULE
 -- ==========================================
