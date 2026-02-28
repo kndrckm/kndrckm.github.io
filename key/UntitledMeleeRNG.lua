@@ -98,7 +98,7 @@ local TPDropdown
 TPDropdown = TabMain:CreateDropdownButton({
     Name = "Teleport To",
     ButtonText = "TP",
-    Columns = 1,
+    Columns = 2,
     Callback = function(val)
         getgenv().SelectedUMR_TP = val
     end,
