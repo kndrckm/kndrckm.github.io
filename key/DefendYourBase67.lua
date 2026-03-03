@@ -41,19 +41,62 @@ local function GetBaseHPPercentage()
     local hpValue = nil
     local maxHpValue = nil
 
+    -- [1] Cari di Workspace (Prioritas: Model bernama Door/Base atau HP Value)
     for _, obj in ipairs(workspace:GetDescendants()) do
+        -- Cari Humanoid di Model "Door" atau "Base"
+        if obj:IsA("Humanoid") and obj.Parent then
+            local pName = obj.Parent.Name:lower()
+            if pName:match("door") or pName:match("base") or pName:match("gate") then
+                hpValue = obj.Health
+                maxHpValue = obj.MaxHealth
+                break
+            end
+        end
+        
+        -- Cari IntValue/NumberValue (Lebih spesifik)
         if obj:IsA("IntValue") or obj:IsA("NumberValue") then
             local name = obj.Name:lower()
-            if name:match("health") or name == "hp" or name:match("basehp") then
+            if name == "doorhealth" or name == "basehealth" or (name:match("hp") and obj.Parent and obj.Parent.Name:lower():match("door")) then
                 hpValue = obj.Value
                 local parent = obj.Parent
-                if parent then
-                    local maxObj = parent:FindFirstChild("MaxHealth") or parent:FindFirstChild("MaxHP")
-                    if maxObj and (maxObj:IsA("IntValue") or maxObj:IsA("NumberValue")) then
-                        maxHpValue = maxObj.Value
-                    end
+                local maxObj = parent:FindFirstChild("MaxHealth") or parent:FindFirstChild("MaxHP") or parent:FindFirstChild("Max" .. obj.Name)
+                if maxObj and (maxObj:IsA("IntValue") or maxObj:IsA("NumberValue")) then
+                    maxHpValue = maxObj.Value
                 end
                 break
+            end
+        end
+    end
+
+    -- [2] Cek Attributes (Beberapa game modern pakai ini)
+    if not hpValue then
+        local door = workspace:FindFirstChild("Door", true) or workspace:FindFirstChild("Base", true)
+        if door then
+            hpValue = door:GetAttribute("Health") or door:GetAttribute("HP")
+            maxHpValue = door:GetAttribute("MaxHealth") or door:GetAttribute("MaxHP")
+        end
+    end
+
+    -- [3] Cek PlayerGui (Jika HP ditampilkan di TextLabel)
+    if not hpValue then
+        local pg = player:FindFirstChild("PlayerGui")
+        if pg then
+            -- Cari TextLabel yang isinya "/" (biasanya format 100/100)
+            for _, v in ipairs(pg:GetDescendants()) do
+                if v:IsA("TextLabel") and v.Visible and v.Text:match("/") then
+                    local current, max = v.Text:match("(%d+%.?%d*)%s*/%s*(%d+%.?%d*)")
+                    if current and max then
+                        -- Pastikan bukan HP player (biasanya TextLabel HP player ada di bar bawah/kiri)
+                        -- Kita asumsikan HP door adalah yang angkanya paling besar atau di lokasi tertentu
+                        local cNum = tonumber(current:gsub(",", ""))
+                        local mNum = tonumber(max:gsub(",", ""))
+                        if mNum and mNum > 0 then
+                            -- Game ini HP Base biasanya ribuan (seperti 10,000 di screenshot)
+                            hpValue = cNum
+                            maxHpValue = mNum
+                        end
+                    end
+                end
             end
         end
     end
