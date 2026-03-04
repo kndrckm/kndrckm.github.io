@@ -138,11 +138,34 @@ TabMain:CreateSliderRow({
     end
 })
 
+local HitboxConnection
 TabMain:CreateToggleRow({
-    Name = "Hitbox Expander (WIP)",
+    Name = "Hitbox Expander",
     Default = false,
     OnToggle = function(state)
-        -- Placeholder
+        getgenv()._SKENALB_HITBOX_EXPANDER = state
+        if state then
+            HitboxConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                if not getgenv()._SKENALB_HITBOX_EXPANDER then return end
+                for _, obj in pairs(workspace:GetDescendants()) do
+                    if obj:IsA("Part") and (obj.Name == "Hitbox" or obj.BrickColor == BrickColor.new("Bright red") or obj.BrickColor == BrickColor.new("Really red")) then
+                        if obj.Parent and obj.Parent ~= game.Players.LocalPlayer.Character then
+                            -- Perbesar kotak merah ini agar mudah kena tebas
+                            obj.Size = Vector3.new(20, 20, 20)
+                            obj.Transparency = 0.5
+                            obj.CanCollide = false
+                        end
+                    end
+                end
+            end)
+            warn("[Auto] Hitbox Expander: ON")
+        else
+            warn("[Auto] Hitbox Expander: OFF")
+            if HitboxConnection then
+                HitboxConnection:Disconnect()
+                HitboxConnection = nil
+            end
+        end
     end
 })
 
