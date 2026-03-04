@@ -41,37 +41,52 @@ TabMain:CreateTextRow({
 -- Tambahkan fitur spesifik game di sini
 local getgenv = getgenv or function() return _G end
 
--- Auto Collect Money (Terpisah 1-8)
+-- Manual Collect Money (Terpisah 1-8)
 for i = 1, 8 do
-    TabMain:CreateToggleRow({
-        Name = "Auto Collect Money " .. i,
-        OnToggle = function(state)
-            getgenv()["_SKENA_AUTO_COLLECT_MONEY_" .. i] = state
-            if state then
-                task.spawn(function()
-                    while getgenv()["_SKENA_AUTO_COLLECT_MONEY_" .. i] do
-                        pcall(function()
-                            -- Cari Plot milik Player (format nama "Username Plot")
-                            local player = game.Players.LocalPlayer
-                            local plotName = player.Name .. " Plot"
-                            local plot = workspace:FindFirstChild("Plots") and workspace.Plots:FindFirstChild(plotName)
+    TabMain:CreateDoubleButtonRow({
+        Name = "Manual Collect Podium " .. i,
+        Button1Text = "Metode 1 (Angka)",
+        Button2Text = "Metode 2 (Part)",
+        Callback1 = function(btn)
+            local success, err = pcall(function()
+                local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
+                if event and event:FindFirstChild("PodiumCashCollectVFXEvent") then
+                    event.PodiumCashCollectVFXEvent:FireServer(i)
+                end
+            end)
+            if success then
+                btn.Text = "Fired!"
+                task.delay(1, function() btn.Text = "Metode 1 (Angka)" end)
+            else
+                btn.Text = "Error"
+                warn(err)
+            end
+        end,
+        Callback2 = function(btn)
+            local success, err = pcall(function()
+                local player = game.Players.LocalPlayer
+                local plotName = player.Name .. " Plot"
+                local plot = workspace:FindFirstChild("Plots") and workspace.Plots:FindFirstChild(plotName)
                             
-                            if plot then
-                                local podiumsFolder = plot:FindFirstChild("PodiumFloorParts")
-                                if podiumsFolder then
-                                    local targetPart = podiumsFolder:FindFirstChild(tostring(i))
-                                    if targetPart then
-                                        local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
-                                        if event and event:FindFirstChild("PodiumCashCollectVFXEvent") then
-                                            event.PodiumCashCollectVFXEvent:FireServer(targetPart)
-                                        end
-                                    end
-                                end
+                if plot then
+                    local podiumsFolder = plot:FindFirstChild("PodiumFloorParts")
+                    if podiumsFolder then
+                        local targetPart = podiumsFolder:FindFirstChild(tostring(i))
+                        if targetPart then
+                            local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
+                            if event and event:FindFirstChild("PodiumCashCollectVFXEvent") then
+                                event.PodiumCashCollectVFXEvent:FireServer(targetPart)
                             end
-                        end)
-                        task.wait(1) -- Adjust delay if necessary
+                        end
                     end
-                end)
+                end
+            end)
+            if success then
+                btn.Text = "Fired!"
+                task.delay(1, function() btn.Text = "Metode 2 (Part)" end)
+            else
+                btn.Text = "Error"
+                warn(err)
             end
         end
     })
