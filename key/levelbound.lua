@@ -46,15 +46,58 @@ TabMain:CreateToggle({
    end,
 })
 
+local KillAuraConnection
 TabMain:CreateToggle({
    Name = "Kill Aura Melee",
    CurrentValue = false,
    Flag = "KillAuraMelee",
    Callback = function(Value)
       if Value then
-         print("[Auto] Kill Aura Melee: ON")
+         local placeId = game.PlaceId
+         if placeId == 74848159470277 or placeId == 128981447330754 then
+            local Event = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("AttackV2")
+            print("[Auto] Kill Aura Melee Levelbound: ON")
+            
+            KillAuraConnection = game:GetService("RunService").Heartbeat:Connect(function()
+               local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+               if hrp then
+                  -- Find closest enemy
+                  local closestEnemy = nil
+                  local shortestDist = 20 -- radius 20 studs
+                  
+                  for _, obj in pairs(workspace:GetDescendants()) do
+                     if obj:IsA("Humanoid") and obj.Parent and obj.Parent ~= game.Players.LocalPlayer.Character then
+                        local enemyHrp = obj.Parent:FindFirstChild("HumanoidRootPart")
+                        if enemyHrp and obj.Health > 0 then
+                           local dist = (hrp.Position - enemyHrp.Position).Magnitude
+                           if dist < shortestDist then
+                              shortestDist = dist
+                              closestEnemy = obj.Parent
+                           end
+                        end
+                     end
+                  end
+                  
+                  if closestEnemy then
+                     -- Kita asumsikan 'target' butuh Instance musuh atau ID musuh. Untuk amannya kirim model musuh
+                     Event:FireServer(1, 1)
+                     Event:FireServer(2, 1, {closestEnemy})
+                     Event:FireServer(2, 1, {closestEnemy})
+                     Event:FireServer(2, 1, {closestEnemy})
+                     Event:FireServer(3, 1)
+                  end
+               end
+            end)
+         else
+            print("[Auto] Kill Aura Melee: ON (Not Levelbound)")
+            -- Implementasi default untuk game lain jika diperlukan
+         end
       else
          print("[Auto] Kill Aura Melee: OFF")
+         if KillAuraConnection then
+            KillAuraConnection:Disconnect()
+            KillAuraConnection = nil
+         end
       end
    end,
 })

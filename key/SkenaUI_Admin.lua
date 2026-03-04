@@ -148,6 +148,22 @@ function SkenaAdmin.Attach(Window, DebugData)
         end)
     end
 
+    local TabSettings = Window:CreateTab("Settings", "settings", true)
+
+    TabSettings:CreateButtonRow({
+        Name = "Unload SkenaHub",
+        Callback = function()
+            local CoreGui = game:GetService("CoreGui")
+            local ui = nil
+            if pcall(function() return CoreGui.RobloxGui end) then
+                ui = CoreGui:FindFirstChild("SkenaHub_UI")
+            else
+                ui = game.Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("SkenaHub_UI")
+            end
+            if ui then ui:Destroy() end
+        end
+    })
+
     if not WHITELISTED_ADMINS[player.UserId] then
         return 
     end
