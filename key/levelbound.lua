@@ -157,13 +157,18 @@ TabMain:CreateToggleRow({
         if state then
             HitboxConnection = game:GetService("RunService").Heartbeat:Connect(function()
                 if not getgenv()._SKENALB_HITBOX_EXPANDER then return end
-                for _, obj in pairs(workspace:GetDescendants()) do
-                    if obj:IsA("Part") and (obj.Name == "Hitbox" or obj.BrickColor == BrickColor.new("Bright red") or obj.BrickColor == BrickColor.new("Really red")) then
-                        if obj.Parent and obj.Parent ~= game.Players.LocalPlayer.Character then
-                            -- Perbesar kotak merah ini agar mudah kena tebas
-                            obj.Size = Vector3.new(20, 20, 20)
-                            obj.Transparency = 0.5
-                            obj.CanCollide = false
+                
+                local charFolder = workspace:FindFirstChild("Characters")
+                if not charFolder then return end
+
+                for _, enemyModel in pairs(charFolder:GetChildren()) do
+                    if enemyModel:IsA("Model") and enemyModel ~= game.Players.LocalPlayer.Character and not string.find(enemyModel.Name, "%(NPC%)") then
+                        local charHitbox = enemyModel:FindFirstChild("CharHitbox")
+                        if charHitbox and charHitbox:IsA("Part") then
+                            charHitbox.Size = Vector3.new(30, 30, 30)
+                            charHitbox.Transparency = 0.5
+                            charHitbox.BrickColor = BrickColor.new("Bright red")
+                            charHitbox.CanCollide = false
                         end
                     end
                 end
