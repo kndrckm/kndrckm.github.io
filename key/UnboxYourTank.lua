@@ -51,9 +51,22 @@ for i = 1, 8 do
                 task.spawn(function()
                     while getgenv()["_SKENA_AUTO_COLLECT_MONEY_" .. i] do
                         pcall(function()
-                            local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
-                            if event and event:FindFirstChild("PodiumCashCollectVFXEvent") then
-                                event.PodiumCashCollectVFXEvent:FireServer(i)
+                            -- Cari Plot milik Player (format nama "Username Plot")
+                            local player = game.Players.LocalPlayer
+                            local plotName = player.Name .. " Plot"
+                            local plot = workspace:FindFirstChild("Plots") and workspace.Plots:FindFirstChild(plotName)
+                            
+                            if plot then
+                                local podiumsFolder = plot:FindFirstChild("PodiumFloorParts")
+                                if podiumsFolder then
+                                    local targetPart = podiumsFolder:FindFirstChild(tostring(i))
+                                    if targetPart then
+                                        local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
+                                        if event and event:FindFirstChild("PodiumCashCollectVFXEvent") then
+                                            event.PodiumCashCollectVFXEvent:FireServer(targetPart)
+                                        end
+                                    end
+                                end
                             end
                         end)
                         task.wait(1) -- Adjust delay if necessary
