@@ -137,14 +137,16 @@ TabMain:CreateToggleRow({
     end
 })
 
+getgenv()._SKENALB_HITBOX_SIZE = 10
+
 TabMain:CreateSliderRow({
-    Name = "Hitbox Size (WIP)",
-    Min = 1,
-    Max = 20,
-    Default = 2,
+    Name = "Hitbox Size",
+    Min = 2,
+    Max = 30,
+    Default = 10,
     Suffix = " studs",
     Callback = function(val)
-        -- Placeholder
+        getgenv()._SKENALB_HITBOX_SIZE = val
     end
 })
 
@@ -165,8 +167,9 @@ TabMain:CreateToggleRow({
                     if enemyModel:IsA("Model") and enemyModel ~= game.Players.LocalPlayer.Character and not string.find(enemyModel.Name, "%(NPC%)") then
                         local charHitbox = enemyModel:FindFirstChild("CharHitbox")
                         if charHitbox and charHitbox:IsA("Part") then
-                            charHitbox.Size = Vector3.new(30, 30, 30)
-                            charHitbox.Transparency = 0.5
+                            local s = getgenv()._SKENALB_HITBOX_SIZE or 10
+                            charHitbox.Size = Vector3.new(s, s, s)
+                            charHitbox.Transparency = 0.9
                             charHitbox.BrickColor = BrickColor.new("Bright red")
                             charHitbox.CanCollide = false
                         end
