@@ -9,7 +9,6 @@ pcall(function()
 end)
 
 local PlaceId = game.PlaceId
-local GameId = game.GameId
 local SkenaHub_CoreURL = ""
 
 if PlaceId == 114272390738102 then
@@ -26,7 +25,7 @@ elseif PlaceId == 99248392277037 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/UntitledMeleeRNG.lua"
 elseif PlaceId == 135707546762730 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/UnboxYourTank.lua"
-elseif GameId == 9529182643 or PlaceId == 74848159470277 or PlaceId == 128981447330754 then
+elseif PlaceId == 74848159470277 or PlaceId == 128981447330754 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/levelbound.lua"
 else
     -- Game tidak disupport: Load Fallback Admin (untuk di-test / bypass oleh admin)
