@@ -175,6 +175,28 @@ TabMain:CreateToggleRow({
                         end
                     end
                 end
+
+                -- Kembalikan juga expander box merah random di game (opsional sesuai request)
+                for _, obj in pairs(workspace:GetDescendants()) do
+                    if obj:IsA("Part") and (obj.Name == "Hitbox" or obj.BrickColor == BrickColor.new("Bright red") or obj.BrickColor == BrickColor.new("Really red")) then
+                        if obj.Parent and obj.Parent ~= game.Players.LocalPlayer.Character and obj.Name ~= "CharHitbox" then
+                            local s = getgenv()._SKENALB_HITBOX_SIZE or 10
+                            obj.Size = Vector3.new(s, s, s)
+                            obj.Transparency = 0.95 -- Sangat transparan
+                            obj.CanCollide = false
+                            
+                            -- Buat garis tipis pembatas
+                            if not obj:FindFirstChild("SkenaBoxLine") then
+                                local sel = Instance.new("SelectionBox")
+                                sel.Name = "SkenaBoxLine"
+                                sel.Adornee = obj
+                                sel.LineThickness = 0.02
+                                sel.Color3 = Color3.fromRGB(255, 0, 0)
+                                sel.Parent = obj
+                            end
+                        end
+                    end
+                end
             end)
             warn("[Auto] Hitbox Expander: ON")
         else
