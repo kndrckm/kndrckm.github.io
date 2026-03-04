@@ -154,6 +154,34 @@ function SkenaAdmin.Attach(Window, DebugData)
    local TabAdmin = Window:CreateTab("Admin", "database") 
     
     TabAdmin:CreateDoubleButtonRow({
+        Name = "Server Info",
+        Button1Text = "Copy GameId",
+        Button2Text = "Copy PlaceId",
+        Callback1 = function(btn)
+            local id = tostring(game.GameId)
+            if setclipboard then
+                setclipboard(id)
+                warn("[Admin] GameId copied: " .. id)
+                animateBtn(btn, true)
+            else
+                print("GameId: " .. id)
+                animateBtn(btn, false)
+            end
+        end,
+        Callback2 = function(btn)
+            local id = tostring(game.PlaceId)
+            if setclipboard then
+                setclipboard(id)
+                warn("[Admin] PlaceId copied: " .. id)
+                animateBtn(btn, true)
+            else
+                print("PlaceId: " .. id)
+                animateBtn(btn, false)
+            end
+        end
+    })
+
+    TabAdmin:CreateDoubleButtonRow({
         Name = "External Tools",
         Button1Text = "Load Dex V3",
         Button2Text = "Load RSpy",
