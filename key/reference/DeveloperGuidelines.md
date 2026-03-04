@@ -41,3 +41,40 @@ Saat Anda menggunakan opsi klik kanan CobaltSpy, ada empat hal yang didapatkan:
 
 3. **Copy Remote Path & Copy Script Path:**
    Digunakan murni untuk keperluan *reverse-engineering*. Jika remote dienkripsi menggunakan parameter dinamis, mengetahui letak pasti *LocalScript* pengaksesnya (Script Path) memungkinkan kita untuk mendekompilasinya dan menembus sistem enkripsi (membuat formula dekripsi sendiri) menggunakan tool injektor.
+
+## 4. Standarisasi SkenaUI HUB (Pembuatan Script UI Baru)
+Saat Anda meminta AI untuk membuatkan script atau Hub baru untuk game Roblox tertentu, **JANGAN MENGGUNAKAN LIBRARY PIHAK KETIGA SEPERTI RAYFIELD ATAU FLUENT UNTUK INISIALISASI UI.**
+
+Seluruh script buatan kita *selalu* harus diintegrasikan langsung ke dalam ekosistem `SkenaUI_Library.lua` yang sudah kita kembangkan agar sinkron dengan Skena Admin, *Toggle Key* global, dan tema visualnya.
+
+**Contoh Template Standar (Seperti SurviveTheCold.lua / SawahIndo.lua):**
+```lua
+local SkenaUI_LibURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SkenaUI_Library.lua"
+local SkenaUI = loadstring(game:HttpGet(SkenaUI_LibURL .. "?t=" .. tostring(os.time()), true))()
+
+-- 1. Buat Window
+local Window = SkenaUI.CreateWindow("SkenaHub", "Judul Game Anda!", false)
+
+-- 2. Buat Tab Utama dan Utility (Gunakan Lucide icons seperti "zap", "eye", "settings")
+local TabMain = Window:CreateTab("Main", "zap", false)
+local TabSettings = Window:CreateTab("Settings", "settings", true)
+
+-- 3. Load Fitur
+TabMain:CreateToggleRow({
+    Name = "Contoh Fitur",
+    OnToggle = function(state)
+        -- Logika Toggle
+    end
+})
+
+-- 4. Wajib Panggil Modul SkenaAdmin di Akhir!
+task.spawn(function()
+    local succ, SkenaAdmin = pcall(function()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SkenaUI_Admin.lua?t=" .. tostring(os.time())))()
+    end)
+    if succ and SkenaAdmin then
+        SkenaAdmin.Attach(Window, {})
+    end
+end)
+```
+Selalu pastikan setiap tab diatur menggunakan fungsi `CreateTab` dari SkenaUI dan menyertakan injeksi `SkenaUI_Admin.lua` secara diam-diam di bagian paling akhir file!
