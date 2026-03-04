@@ -54,7 +54,8 @@ TabMain:CreateToggle({
    Callback = function(Value)
       if Value then
          local placeId = game.PlaceId
-         if placeId == 74848159470277 or placeId == 128981447330754 then
+         local gameId = game.GameId
+         if placeId == 74848159470277 or placeId == 128981447330754 or gameId == 9529182643 then
             local Event = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("AttackV2")
             print("[Auto] Kill Aura Melee Levelbound: ON")
             
