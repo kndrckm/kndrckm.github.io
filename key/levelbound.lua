@@ -62,34 +62,44 @@ TabMain:CreateToggleRow({
                 KillAuraConnection = game:GetService("RunService").Heartbeat:Connect(function()
                     local char = game.Players.LocalPlayer.Character
                     local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local closestEnemy = nil
+                    local charactersFolder = workspace:FindFirstChild("Characters")
+                    
+                    if hrp and charactersFolder then
+                        local closestEnemyID = nil
                         local shortestDist = 20 -- radius 20 studs
                         
-                        for _, obj in pairs(workspace:GetDescendants()) do
-                            if obj:IsA("Humanoid") and obj.Parent and obj.Parent ~= char then
-                                local enemyHrp = obj.Parent:FindFirstChild("HumanoidRootPart")
-                                if enemyHrp and obj.Health > 0 then
+                        -- Cari musuh di dalam folder Characters
+                        for _, obj in pairs(charactersFolder:GetChildren()) do
+                            -- Pastikan dia model, bukan player (char sendiri), tidak ada label (NPC)
+                            if obj:IsA("Model") and obj ~= char and not string.find(obj.Name, "%(NPC%)") then
+                                local enemyHrp = obj:FindFirstChild("HumanoidRootPart")
+                                local enemyHum = obj:FindFirstChild("Humanoid")
+                                
+                                if enemyHrp and enemyHum and enemyHum.Health > 0 then
                                     local dist = (hrp.Position - enemyHrp.Position).Magnitude
                                     if dist < shortestDist then
-                                        shortestDist = dist
-                                        closestEnemy = obj.Parent
+                                        -- Ekstrak ID dari nama (Contoh: "Goblin [2]" -> 2)
+                                        local idMatch = string.match(obj.Name, "%[(%d+)%]$")
+                                        if idMatch then
+                                            shortestDist = dist
+                                            closestEnemyID = tonumber(idMatch)
+                                        end
                                     end
                                 end
                             end
                         end
                         
-                        if closestEnemy then
+                        if closestEnemyID then
                             -- Simulasi swing sequence berdasarkan log
                             local lv = hrp.CFrame.LookVector
                             local dirStr = string.format("%.2f:%.2f:%.2f", lv.X, lv.Y, lv.Z)
                             
                             Event:FireServer(1, 1) -- Memulai Ayun
                             Event:FireServer(4, 1, nil, dirStr) -- Inject koordinat penglihatan
-                            Event:FireServer(2, 1, {closestEnemy}) -- Hit Type 2
-                            Event:FireServer(2, 1, {closestEnemy})
-                            Event:FireServer(5, 1, {closestEnemy}) -- Hit Type 5
-                            Event:FireServer(5, 1, {closestEnemy})
+                            Event:FireServer(2, 1, {closestEnemyID}) -- Hit Type 2 -> Kirim ID Angka!
+                            Event:FireServer(2, 1, {closestEnemyID})
+                            Event:FireServer(5, 1, {closestEnemyID}) -- Hit Type 5
+                            Event:FireServer(5, 1, {closestEnemyID})
                             Event:FireServer(3, 1) -- Selesai Ayun
                         end
                     end
