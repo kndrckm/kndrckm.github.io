@@ -150,6 +150,17 @@ function SkenaAdmin.Attach(Window, DebugData)
 
     local TabSettings = Window:CreateTab("Settings", "settings", true)
 
+    TabSettings:CreateInputRow({
+        Name = "UI Toggle Key",
+        Placeholder = "Z",
+        Default = "Z",
+        Callback = function(keyStr)
+            if typeof(Window.SetToggleKey) == "function" then
+                Window:SetToggleKey(keyStr)
+            end
+        end
+    })
+
     TabSettings:CreateButtonRow({
         Name = "Unload SkenaHub",
         Callback = function()
