@@ -39,3 +39,27 @@ TabMain:CreateTextRow({
 })
 
 -- Tambahkan fitur spesifik game di sini
+local getgenv = getgenv or function() return _G end
+
+-- Auto Collect Money
+TabMain:CreateToggleRow({
+    Name = "Auto Collect Money",
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_COLLECT_MONEY = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_COLLECT_MONEY do
+                    pcall(function()
+                        local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
+                        if event and event:FindFirstChild("PodiumCashCollectVFXEvent") then
+                            for i = 1, 8 do
+                                event.PodiumCashCollectVFXEvent:FireServer(i)
+                            end
+                        end
+                    end)
+                    task.wait(1) -- Sesuaikan delay agar tidak terlalu cepat (spam)
+                end
+            end)
+        end
+    end
+})
