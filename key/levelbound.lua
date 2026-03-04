@@ -80,12 +80,24 @@ TabMain:CreateToggle({
                   end
                   
                   if closestEnemy then
-                     -- Kita asumsikan 'target' butuh Instance musuh atau ID musuh. Untuk amannya kirim model musuh
-                     Event:FireServer(1, 1)
+                     -- Simulasi swing sequence berdasarkan log terbaru (18:34 dan 19:24)
+                     local lv = hrp.CFrame.LookVector
+                     local dirStr = string.format("%.2f:%.2f:%.2f", lv.X, lv.Y, lv.Z)
+                     
+                     Event:FireServer(1, 1) -- Memulai Ayun
+                     
+                     -- Inject argumen '4' (Arah Ayunan Senjata) yang ditemukan di log baru
+                     Event:FireServer(4, 1, nil, dirStr)
+                     
+                     -- Tembakkan baik Hit Detection lama (2) maupun baru (5)
+                     -- untuk mengcover berbagai tipe senjata dalam satu kali putaran
                      Event:FireServer(2, 1, {closestEnemy})
                      Event:FireServer(2, 1, {closestEnemy})
-                     Event:FireServer(2, 1, {closestEnemy})
-                     Event:FireServer(3, 1)
+                     
+                     Event:FireServer(5, 1, {closestEnemy})
+                     Event:FireServer(5, 1, {closestEnemy})
+                     
+                     Event:FireServer(3, 1) -- Selesai Ayun
                   end
                end
             end)
