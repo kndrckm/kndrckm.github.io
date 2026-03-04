@@ -38,56 +38,56 @@ TabMain:CreateTextRow({
     Text = "Game: Unbox Your Tank"
 })
 
--- Tambahkan fitur spesifik game di sini
-local getgenv = getgenv or function() return _G end
-
--- Manual Collect Money (Terpisah 1-8)
-for i = 1, 8 do
-    TabMain:CreateDoubleButtonRow({
-        Name = "Manual Collect Podium " .. i,
-        Button1Text = "Metode 1 (Angka)",
-        Button2Text = "Metode 2 (Part)",
-        Callback1 = function(btn)
-            local success, err = pcall(function()
-                local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
-                if event and event:FindFirstChild("PodiumCashCollectVFXEvent") then
-                    event.PodiumCashCollectVFXEvent:FireServer(i)
-                end
-            end)
-            if success then
-                btn.Text = "Fired!"
-                task.delay(1, function() btn.Text = "Metode 1 (Angka)" end)
-            else
-                btn.Text = "Error"
-                warn(err)
-            end
-        end,
-        Callback2 = function(btn)
-            local success, err = pcall(function()
-                local player = game.Players.LocalPlayer
-                local plotName = player.Name .. " Plot"
-                local plot = workspace:FindFirstChild("Plots") and workspace.Plots:FindFirstChild(plotName)
-                            
-                if plot then
-                    local podiumsFolder = plot:FindFirstChild("PodiumFloorParts")
-                    if podiumsFolder then
-                        local targetPart = podiumsFolder:FindFirstChild(tostring(i))
-                        if targetPart then
-                            local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
-                            if event and event:FindFirstChild("PodiumCashCollectVFXEvent") then
-                                event.PodiumCashCollectVFXEvent:FireServer(targetPart)
+-- Auto Collect Money via Physical Touch (Teleport)
+TabMain:CreateToggleRow({
+    Name = "Auto Collect Money (Teleport)",
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_COLLECT_TP = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_COLLECT_TP do
+                    pcall(function()
+                        local player = game.Players.LocalPlayer
+                        local char = player.Character
+                        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                        local plotName = player.Name .. " Plot"
+                        local plot = workspace:FindFirstChild("Plots") and workspace.Plots:FindFirstChild(plotName)
+                        
+                        if hrp and plot then
+                            local podiumsFolder = plot:FindFirstChild("PodiumFloorParts")
+                            if podiumsFolder then
+                                -- Simpan posisi asli
+                                local originalPos = hrp.CFrame
+                                
+                                -- Pindah ke tiap podium
+                                for i = 1, 8 do
+                                    if not getgenv()._SKENA_AUTO_COLLECT_TP then break end
+                                    local targetPart = podiumsFolder:FindFirstChild(tostring(i))
+                                    if targetPart and targetPart:IsA("BasePart") then
+                                        -- Teleport ke atas podium
+                                        hrp.CFrame = targetPart.CFrame + Vector3.new(0, 3, 0)
+                                        task.wait(0.2) -- Beri waktu agar Touch/Distance Check server ter-registrasi
+                                        
+                                        -- Opsi: trigger FireServer angka jika memang dibutuhkan bersamaan touch
+                                        pcall(function()
+                                            local event = game:GetService("ReplicatedStorage"):FindFirstChild("Events")
+                                            if event and event:FindFirstChild("PodiumCashCollectVFXEvent") then
+                                                event.PodiumCashCollectVFXEvent:FireServer(i)
+                                            end
+                                        end)
+                                    end
+                                end
+                                
+                                -- Kembali ke posisi asli jika masih aktif
+                                if getgenv()._SKENA_AUTO_COLLECT_TP then
+                                    hrp.CFrame = originalPos
+                                end
                             end
                         end
-                    end
+                    end)
+                    task.wait(2) -- Delay sebelum ronde berikutnya
                 end
             end)
-            if success then
-                btn.Text = "Fired!"
-                task.delay(1, function() btn.Text = "Metode 2 (Part)" end)
-            else
-                btn.Text = "Error"
-                warn(err)
-            end
         end
-    })
-end
+    end
+})
