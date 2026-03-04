@@ -142,7 +142,7 @@ getgenv()._SKENALB_HITBOX_SIZE = 10
 TabMain:CreateSliderRow({
     Name = "Hitbox Size",
     Min = 2,
-    Max = 30,
+    Max = 200,
     Default = 10,
     Suffix = " studs",
     Callback = function(val)
@@ -169,9 +169,17 @@ TabMain:CreateToggleRow({
                         if charHitbox and charHitbox:IsA("Part") then
                             local s = getgenv()._SKENALB_HITBOX_SIZE or 10
                             charHitbox.Size = Vector3.new(s, s, s)
-                            charHitbox.Transparency = 0.9
-                            charHitbox.BrickColor = BrickColor.new("Bright red")
+                            charHitbox.Transparency = 1
                             charHitbox.CanCollide = false
+                            
+                            if not charHitbox:FindFirstChild("SkenaBoxLine") then
+                                local sel = Instance.new("SelectionBox")
+                                sel.Name = "SkenaBoxLine"
+                                sel.Adornee = charHitbox
+                                sel.LineThickness = 0.05
+                                sel.Color3 = Color3.fromRGB(255, 0, 0)
+                                sel.Parent = charHitbox
+                            end
                         end
                     end
                 end
@@ -182,17 +190,12 @@ TabMain:CreateToggleRow({
                         if obj.Parent and obj.Parent ~= game.Players.LocalPlayer.Character and obj.Name ~= "CharHitbox" then
                             local s = getgenv()._SKENALB_HITBOX_SIZE or 10
                             obj.Size = Vector3.new(s, s, s)
-                            obj.Transparency = 0.95 -- Sangat transparan
+                            obj.Transparency = 0.7 -- 70% transparency
                             obj.CanCollide = false
                             
-                            -- Buat garis tipis pembatas
-                            if not obj:FindFirstChild("SkenaBoxLine") then
-                                local sel = Instance.new("SelectionBox")
-                                sel.Name = "SkenaBoxLine"
-                                sel.Adornee = obj
-                                sel.LineThickness = 0.02
-                                sel.Color3 = Color3.fromRGB(255, 0, 0)
-                                sel.Parent = obj
+                            -- Hapus outline lama jika ada
+                            if obj:FindFirstChild("SkenaBoxLine") then
+                                obj.SkenaBoxLine:Destroy()
                             end
                         end
                     end
