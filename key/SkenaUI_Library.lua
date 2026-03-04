@@ -49,6 +49,8 @@ function SkenaUI:CreateWindow(Options)
     SG.Name = "SkenaHub_UI"
     SG.Parent = parentUI
     SG.ResetOnSpawn = false
+    SG.DisplayOrder = 9999
+    SG.ZIndexBehavior = Enum.ZIndexBehavior.Global
 
     local WindowObj = {
         CurrentTab = nil,
