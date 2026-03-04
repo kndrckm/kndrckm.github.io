@@ -23,6 +23,8 @@ elseif PlaceId == 135668295983945 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SkillPointLegend.lua"
 elseif PlaceId == 99248392277037 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/UntitledMeleeRNG.lua"
+elseif PlaceId == 135707546762730 then
+    SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/UnboxYourTank.lua"
 else
     -- Game tidak disupport: Load Fallback Admin (untuk di-test / bypass oleh admin)
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/FallbackAdmin.lua"
