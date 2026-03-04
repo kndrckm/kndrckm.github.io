@@ -220,6 +220,28 @@ function SkenaAdmin.Attach(Window, DebugData)
     })
 
     TabAdmin:CreateDoubleButtonRow({
+        Name = "Advanced Spy Tools",
+        Button1Text = "Load CobaltSpy",
+        Button2Text = "N/A",
+        Callback1 = function(btn)
+            local success, err = pcall(function()
+                warn("[Admin] Memuat CobaltSpy...")
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CobaltSpy.lua", true))()
+            end)
+            if success then
+                warn("[Admin] CobaltSpy berhasil di-load!")
+                animateBtn(btn, true)
+            else
+                warn("[Admin] Gagal me-load CobaltSpy: " .. tostring(err))
+                animateBtn(btn, false)
+            end
+        end,
+        Callback2 = function(btn)
+            animateBtn(btn, false)
+        end
+    })
+
+    TabAdmin:CreateDoubleButtonRow({
         Name = "Workspace Scanners",
         Button1Text = "TouchInt",
         Button2Text = "Remotes",
