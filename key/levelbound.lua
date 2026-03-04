@@ -1,6 +1,5 @@
 -- ==========================================
 -- SKENA HUB : Levelbound
--- Game IDs: 9529182643
 -- Place IDs: 74848159470277, 128981447330754
 -- ==========================================
 
@@ -37,7 +36,7 @@ end
 -- ==========================================
 
 TabMain:CreateToggleRow({
-    Name = "Kill Aura Range",
+    Name = "Kill Aura Range (WIP)",
     Default = false,
     OnToggle = function(state)
         if state then
@@ -110,7 +109,7 @@ TabMain:CreateToggleRow({
 
 RegisterLoop("_SKENALB_AUTO_DAILY")
 TabMain:CreateToggleRow({
-    Name = "Auto Claim Daily Quest",
+    Name = "Auto Claim Daily Quest (WIP)",
     Default = false,
     OnToggle = function(state)
         getgenv()._SKENALB_AUTO_DAILY = state
@@ -120,7 +119,7 @@ TabMain:CreateToggleRow({
 
 RegisterLoop("_SKENALB_AUTO_SKILL")
 TabMain:CreateToggleRow({
-    Name = "Auto Skill",
+    Name = "Auto Skill (WIP)",
     Default = false,
     OnToggle = function(state)
         getgenv()._SKENALB_AUTO_SKILL = state
@@ -129,7 +128,7 @@ TabMain:CreateToggleRow({
 })
 
 TabMain:CreateSliderRow({
-    Name = "Hitbox Size",
+    Name = "Hitbox Size (WIP)",
     Min = 1,
     Max = 20,
     Default = 2,
@@ -140,7 +139,7 @@ TabMain:CreateSliderRow({
 })
 
 TabMain:CreateToggleRow({
-    Name = "Hitbox Expander",
+    Name = "Hitbox Expander (WIP)",
     Default = false,
     OnToggle = function(state)
         -- Placeholder
@@ -152,7 +151,7 @@ TabMain:CreateToggleRow({
 -- ==========================================
 
 TabVisuals:CreateSliderRow({
-    Name = "ESP Range",
+    Name = "ESP Range (WIP)",
     Min = 10,
     Max = 500,
     Default = 100,
@@ -165,7 +164,7 @@ TabVisuals:CreateSliderRow({
 local visualToggles = {"Chest ESP", "Enemy ESP", "Ruby ESP", "Altar ESP"}
 for _, name in ipairs(visualToggles) do
     TabVisuals:CreateToggleRow({
-        Name = name,
+        Name = name .. " (WIP)",
         Default = false,
         OnToggle = function(state)
             -- Placeholder
@@ -178,7 +177,7 @@ end
 -- ==========================================
 
 TabInvasion:CreateButtonRow({
-    Name = "Join Dungeon as PK",
+    Name = "Join Dungeon as PK (WIP)",
     ButtonText = "Join",
     Callback = function()
         warn("[Action] Joining Dungeon as PK...")
@@ -186,7 +185,7 @@ TabInvasion:CreateButtonRow({
 })
 
 TabInvasion:CreateToggleRow({
-    Name = "Auto Farm Invasion",
+    Name = "Auto Farm Invasion (WIP)",
     Default = false,
     OnToggle = function(state)
         -- Placeholder
@@ -194,7 +193,7 @@ TabInvasion:CreateToggleRow({
 })
 
 TabTeleport:CreateButtonRow({
-    Name = "Teleport Settings (GUI)",
+    Name = "Teleport Settings [GUI] (WIP)",
     ButtonText = "Setup",
     Callback = function()
         warn("[Info] Gunakan Dropdown di layar utama untuk setup Dungeon")
@@ -204,7 +203,7 @@ TabTeleport:CreateButtonRow({
 local tpMods = {"Lucky Dungeon", "Invasions", "Ghostified", "Private Group", "Solo Mode"}
 for _, name in ipairs(tpMods) do
     TabTeleport:CreateToggleRow({
-        Name = name,
+        Name = name .. " (WIP)",
         Default = false,
         OnToggle = function(state)
             -- Placeholder
@@ -213,7 +212,7 @@ for _, name in ipairs(tpMods) do
 end
 
 TabTeleport:CreateButtonRow({
-    Name = "Create Dungeon Group",
+    Name = "Create Dungeon Group (WIP)",
     ButtonText = "Create",
     Callback = function()
         warn("[Action] Creating Dungeon Group...")
@@ -235,7 +234,7 @@ local gameMods = {
 
 for _, modName in ipairs(gameMods) do
     TabModifiers:CreateToggleRow({
-        Name = modName,
+        Name = modName .. " (WIP)",
         Default = false,
         OnToggle = function(state)
             -- Placeholder
