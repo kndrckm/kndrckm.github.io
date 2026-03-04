@@ -9,6 +9,7 @@ Pada beberapa game, mengirim argumen `"inf"` ke RemoteEvent yang mengharapkan an
 **Penyebab Teknis:**
 - Saat fungsi `tonumber("inf")` dieksekusi oleh mesin Lua, hasilnya bukan error (ter-evaluasi menjadi `nil`), melainkan direpresentasikan sebagai `math.huge` (Angka tak terhingga positif).
 - Jika *Server Script* Developer tidak mengamankan variabel ini (misalnya dengan mengecek `value == math.huge` atau membuat batasan limit maksimal / `math.clamp`), maka database server akan memperbarui akun pemain dengan angka tak terhingga tersebut.
+- Hal ini sangat berbahaya jika argumen remote tersebut bertindak sebagai pengali (**multiplier**). Misalnya, remote `RE_ApplyOnceTrain` menerima nilai pengali *train speed* seperti `1.1` atau `1.5`. Jika dikirim `"inf"`, script server (yang lupa melakukan *sanity check*) mengalkulasi `Penambahan_Kekuatan = Base_Latihan * multiplier`. Karena *multiplier*-nya `math.huge`, jadinya penambahan kekuatan seketika menjadi tidak bernilai/mentok di angka maksimal.
 - Walaupun angkanya "tak terhingga", sistem penyimpanan profil pemain (DataStoreService) Roblox tidak menoleransi `math.huge`. Akibatnya, angka tersebut terpotong menjadi integer maksimal yang dapat dikalkulasikan (misalnya `999,999,999`).
 
 **Pelajaran Penting (Bagi Developer Game):**
