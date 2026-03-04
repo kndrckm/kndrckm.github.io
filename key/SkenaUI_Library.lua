@@ -614,22 +614,36 @@ function SkenaUI:CreateWindow(Options)
             ValTxt.TextColor3 = Palette.TextSecondary
             ValTxt.TextXAlignment = Enum.TextXAlignment.Right
 
-            -- iOS style slider
+            -- Perbesar area interaksi (transparan) agar sangat mudah di-klik/geser
             local SlideBg = Instance.new("TextButton", RightContainer)
-            SlideBg.Size = UDim2.new(1, -50, 0, 6)
-            SlideBg.Position = UDim2.new(0, 50, 0.5, -3)
-            SlideBg.BackgroundColor3 = Palette.InputHdr
+            SlideBg.Size = UDim2.new(1, -50, 0, 24)
+            SlideBg.Position = UDim2.new(0, 50, 0.5, -12)
+            SlideBg.BackgroundTransparency = 1
             SlideBg.Text = ""
-            SlideBg.AutoButtonColor = false
-            Instance.new("UICorner", SlideBg).CornerRadius = UDim.new(1,0)
-            local SStroke = Instance.new("UIStroke", SlideBg)
+
+            -- Garis visual
+            local SlideTrack = Instance.new("Frame", SlideBg)
+            SlideTrack.Size = UDim2.new(1, 0, 0, 6)
+            SlideTrack.Position = UDim2.new(0, 0, 0.5, -3)
+            SlideTrack.BackgroundColor3 = Palette.InputHdr
+            Instance.new("UICorner", SlideTrack).CornerRadius = UDim.new(1,0)
+            local SStroke = Instance.new("UIStroke", SlideTrack)
             SStroke.Color = Palette.Border
             SStroke.Thickness = 1
 
-            local SlideFill = Instance.new("Frame", SlideBg)
+            -- Isi bar slider
+            local SlideFill = Instance.new("Frame", SlideTrack)
             SlideFill.Size = UDim2.new((Default-Min)/(Max-Min), 0, 1, 0)
             SlideFill.BackgroundColor3 = Palette.TextPrimary
             Instance.new("UICorner", SlideFill).CornerRadius = UDim.new(1,0)
+
+            -- Knob raksasa berbentuk persegi panjang lekuk
+            local SlideKnob = Instance.new("Frame", SlideFill)
+            SlideKnob.Size = UDim2.new(0, 12, 0, 16)
+            SlideKnob.Position = UDim2.new(1, -6, 0.5, -8)
+            SlideKnob.BackgroundColor3 = Palette.TextPrimary
+            local KnobCorner = Instance.new("UICorner", SlideKnob)
+            KnobCorner.CornerRadius = UDim.new(0, 4)
 
             local dragging = false
             local function update(input)
