@@ -186,7 +186,7 @@ local function handleHitboxToggle(state)
                     if obj:IsA("Part") and (obj.Name == "Hitbox" or obj.BrickColor == BrickColor.new("Bright red") or obj.BrickColor == BrickColor.new("Really red")) then
                         if obj.Parent and (not localChar or not obj:IsDescendantOf(localChar)) and obj.Name ~= "CharHitbox" then
                             -- Tidak mengubah obj.Size agar ukurannya tetap asli (terutama untuk area jebakan)
-                            obj.Transparency = 0.9 -- Buat agar terlihat/semi-transparan
+                            obj.Transparency = 0.7 -- Buat agar terlihat/semi-transparan
                             
                             -- Hapus outline lama jika ada
                             if obj:FindFirstChild("SkenaBoxLine") then
