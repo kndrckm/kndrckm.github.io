@@ -142,8 +142,8 @@ getgenv()._SKENALB_HITBOX_SIZE = 10
 TabMain:CreateSliderRow({
     Name = "Hitbox Size",
     Min = 2,
-    Max = 200,
-    Default = 10,
+    Max = 50,
+    Default = 30,
     Suffix = " studs",
     Callback = function(val)
         getgenv()._SKENALB_HITBOX_SIZE = val
