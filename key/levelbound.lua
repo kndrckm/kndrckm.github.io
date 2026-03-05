@@ -180,15 +180,13 @@ local function handleHitboxToggle(state)
                     end
                 end
 
-                -- Kembalikan juga expander box merah random di game (opsional sesuai request)
+                -- Tampilkan jebakan/hitbox lain tanpa mengubah ukuran aslinya
                 local localChar = game.Players.LocalPlayer.Character
                 for _, obj in pairs(workspace:GetDescendants()) do
                     if obj:IsA("Part") and (obj.Name == "Hitbox" or obj.BrickColor == BrickColor.new("Bright red") or obj.BrickColor == BrickColor.new("Really red")) then
                         if obj.Parent and (not localChar or not obj:IsDescendantOf(localChar)) and obj.Name ~= "CharHitbox" then
-                            local s = getgenv()._SKENALB_HITBOX_SIZE or 10
-                            obj.Size = Vector3.new(s, s, s)
-                            obj.Transparency = 0.7 -- 70% transparency
-                            obj.CanCollide = false
+                            -- Tidak mengubah obj.Size agar ukurannya tetap asli (terutama untuk area jebakan)
+                            obj.Transparency = 0.4 -- Buat agar terlihat/semi-transparan
                             
                             -- Hapus outline lama jika ada
                             if obj:FindFirstChild("SkenaBoxLine") then
