@@ -142,7 +142,7 @@ getgenv()._SKENALB_HITBOX_SIZE = 10
 TabMain:CreateSliderRow({
     Name = "Hitbox Size",
     Min = 2,
-    Max = 50,
+    Max = 100,
     Default = 30,
     Suffix = " studs",
     Callback = function(val)
@@ -150,35 +150,31 @@ TabMain:CreateSliderRow({
     end
 })
 
-local HitboxConnection
-TabMain:CreateToggleRow({
-    Name = "Hitbox Expander",
-    Default = false,
-    OnToggle = function(state)
-        getgenv()._SKENALB_HITBOX_EXPANDER = state
-        if state then
-            HitboxConnection = game:GetService("RunService").Heartbeat:Connect(function()
-                if not getgenv()._SKENALB_HITBOX_EXPANDER then return end
-                
+local function handleHitboxToggle(state)
+    getgenv()._SKENALB_HITBOX_EXPANDER = state
+    if state then
+        warn("[Auto] Hitbox Expander: ON")
+        task.spawn(function()
+            while getgenv()._SKENALB_HITBOX_EXPANDER do
                 local charFolder = workspace:FindFirstChild("Characters")
-                if not charFolder then return end
-
-                for _, enemyModel in pairs(charFolder:GetChildren()) do
-                    if enemyModel:IsA("Model") and enemyModel ~= game.Players.LocalPlayer.Character and not string.find(enemyModel.Name, "%(NPC%)") then
-                        local charHitbox = enemyModel:FindFirstChild("CharHitbox")
-                        if charHitbox and charHitbox:IsA("Part") then
-                            local s = getgenv()._SKENALB_HITBOX_SIZE or 10
-                            charHitbox.Size = Vector3.new(s, s, s)
-                            charHitbox.Transparency = 1
-                            charHitbox.CanCollide = false
-                            
-                            if not charHitbox:FindFirstChild("SkenaBoxLine") then
-                                local sel = Instance.new("SelectionBox")
-                                sel.Name = "SkenaBoxLine"
-                                sel.Adornee = charHitbox
-                                sel.LineThickness = 0.05
-                                sel.Color3 = Color3.fromRGB(255, 0, 0)
-                                sel.Parent = charHitbox
+                if charFolder then
+                    for _, enemyModel in pairs(charFolder:GetChildren()) do
+                        if enemyModel:IsA("Model") and enemyModel ~= game.Players.LocalPlayer.Character and not string.find(enemyModel.Name, "%(NPC%)") then
+                            local charHitbox = enemyModel:FindFirstChild("CharHitbox")
+                            if charHitbox and charHitbox:IsA("Part") then
+                                local s = getgenv()._SKENALB_HITBOX_SIZE or 10
+                                charHitbox.Size = Vector3.new(s, s, s)
+                                charHitbox.Transparency = 1
+                                charHitbox.CanCollide = false
+                                
+                                if not charHitbox:FindFirstChild("SkenaBoxLine") then
+                                    local sel = Instance.new("SelectionBox")
+                                    sel.Name = "SkenaBoxLine"
+                                    sel.Adornee = charHitbox
+                                    sel.LineThickness = 0.05
+                                    sel.Color3 = Color3.fromRGB(255, 0, 0)
+                                    sel.Parent = charHitbox
+                                end
                             end
                         end
                     end
@@ -200,17 +196,38 @@ TabMain:CreateToggleRow({
                         end
                     end
                 end
-            end)
-            warn("[Auto] Hitbox Expander: ON")
-        else
-            warn("[Auto] Hitbox Expander: OFF")
-            if HitboxConnection then
-                HitboxConnection:Disconnect()
-                HitboxConnection = nil
+                
+                -- Tunggu 1 detik sebelum mengecek lagi, ini sangat penting untuk mencegah lag ekstrim!
+                task.wait(1)
             end
-        end
+        end)
+    else
+        warn("[Auto] Hitbox Expander: OFF")
     end
+end
+
+getgenv()._SKENALB_HITBOX_KEY = "r"
+local HitboxToggleObj = TabMain:CreateToggleRow({
+    Name = "Hitbox Expander",
+    Default = false,
+    HasKey = true,
+    DefaultKey = getgenv()._SKENALB_HITBOX_KEY,
+    OnKeyChange = function(newKey)
+        getgenv()._SKENALB_HITBOX_KEY = string.lower(newKey)
+    end,
+    OnToggle = handleHitboxToggle
 })
+
+game:GetService("UserInputService").InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    if input.KeyCode.Name:lower() == getgenv()._SKENALB_HITBOX_KEY then
+        local newState = not getgenv()._SKENALB_HITBOX_EXPANDER
+        if HitboxToggleObj and HitboxToggleObj.ToggleState then
+            HitboxToggleObj.ToggleState(newState)
+        end
+        handleHitboxToggle(newState)
+    end
+end)
 
 -- ==========================================
 -- 2. VISUALS
