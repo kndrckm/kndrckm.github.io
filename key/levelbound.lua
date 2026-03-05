@@ -181,9 +181,10 @@ local function handleHitboxToggle(state)
                 end
 
                 -- Kembalikan juga expander box merah random di game (opsional sesuai request)
+                local localChar = game.Players.LocalPlayer.Character
                 for _, obj in pairs(workspace:GetDescendants()) do
                     if obj:IsA("Part") and (obj.Name == "Hitbox" or obj.BrickColor == BrickColor.new("Bright red") or obj.BrickColor == BrickColor.new("Really red")) then
-                        if obj.Parent and obj.Parent ~= game.Players.LocalPlayer.Character and obj.Name ~= "CharHitbox" then
+                        if obj.Parent and (not localChar or not obj:IsDescendantOf(localChar)) and obj.Name ~= "CharHitbox" then
                             local s = getgenv()._SKENALB_HITBOX_SIZE or 10
                             obj.Size = Vector3.new(s, s, s)
                             obj.Transparency = 0.7 -- 70% transparency
