@@ -181,13 +181,16 @@ TabMain:CreateToggleRow({
             task.spawn(function()
                 while getgenv()._SKENA_AUTO_UPGRADE_DOOR do
                     pcall(function()
-                        local Event = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrade")
-                        Event:FireServer(
-                            "upgrade",
-                            workspace.Bases:GetChildren()[7].Door
-                        )
+                        local event = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrade")
+                        local bases = workspace:WaitForChild("Bases"):GetChildren()
+                        for i = 1, 7 do
+                            local base = bases[i]
+                            if base and base:FindFirstChild("Door") then
+                                event:FireServer("upgrade", base.Door)
+                            end
+                        end
                     end)
-                    task.wait(1) -- Adjust delay as needed
+                    task.wait(1)
                 end
             end)
         end
