@@ -1,6 +1,6 @@
 -- ==========================================
 -- SKENA HUB : Levelbound
--- Place IDs: 74848159470277, 128981447330754, 97689234675651
+-- Place IDs: 74848159470277, 128981447330754
 -- ==========================================
 
 local SkenaUI_LibURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SkenaUI_Library.lua"
@@ -55,7 +55,7 @@ TabMain:CreateToggleRow({
         if state then
             local placeId = game.PlaceId
             local gameId = game.GameId
-            if placeId == 74848159470277 or placeId == 128981447330754 or placeId == 97689234675651 or gameId == 9529182643 then
+            if placeId == 74848159470277 or placeId == 128981447330754 or gameId == 9529182643 then
                 local Event = game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("AttackV2")
                 warn("[Auto] Kill Aura Melee Levelbound: ON")
                 

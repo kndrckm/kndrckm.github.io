@@ -9,25 +9,26 @@ pcall(function()
 end)
 
 local PlaceId = game.PlaceId
+local GameId = game.GameId
 local SkenaHub_CoreURL = ""
 
-if PlaceId == 114272390738102 then
+if PlaceId == 114272390738102 or GameId == 114272390738102 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SurvivetheLoop.lua"
-elseif PlaceId == 134750290201751 then
+elseif PlaceId == 134750290201751 or GameId == 134750290201751 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SurvivetheCold.lua"
-elseif PlaceId == 83369512629707 then
+elseif PlaceId == 83369512629707 or GameId == 83369512629707 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SawahIndo.lua"
-elseif PlaceId == 91764591674792 then
+elseif PlaceId == 91764591674792 or GameId == 91764591674792 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/StopBrainrots.lua"
-elseif PlaceId == 135668295983945 then
+elseif PlaceId == 135668295983945 or GameId == 135668295983945 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SkillPointLegend.lua"
-elseif PlaceId == 99248392277037 then
+elseif PlaceId == 99248392277037 or GameId == 99248392277037 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/UntitledMeleeRNG.lua"
-elseif PlaceId == 135707546762730 then
+elseif PlaceId == 135707546762730 or GameId == 135707546762730 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/UnboxYourTank.lua"
-elseif PlaceId == 102669100769936 or PlaceId == 97689234675651 then
+elseif PlaceId == 102669100769936 or GameId == 102669100769936 or PlaceId == 97689234675651 or GameId == 97689234675651 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/DefendYourBase67.lua"
-elseif PlaceId == 74848159470277 or PlaceId == 128981447330754 then
+elseif PlaceId == 74848159470277 or GameId == 74848159470277 or PlaceId == 128981447330754 or GameId == 128981447330754 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/levelbound.lua"
 else
     -- Game tidak disupport: Load Fallback Admin (untuk di-test / bypass oleh admin)
