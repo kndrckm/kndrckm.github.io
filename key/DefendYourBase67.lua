@@ -13,7 +13,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 local Window = SkenaUI.CreateWindow("SkenaHub", "Defend Your Base 67", false)
-local TabMain = Window:CreateTab("Main", "zap", false)
+local TabMain = Window:CreateTab("DefendYourBase67", "shield", false)
 local TabSettings = Window:CreateTab("Settings", "settings", true)
 
 -- Kill phantom loops
@@ -164,6 +164,32 @@ TabMain:CreateButtonRow({
                 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Base"):FireServer(unpack(args))
             end)
             task.wait(0.1)
+        end
+    end
+})
+
+
+-- ==========================================
+-- AUTO UPGRADE DOOR
+-- ==========================================
+RegisterLoop("_SKENA_AUTO_UPGRADE_DOOR")
+TabMain:CreateToggleRow({
+    Name = " [ Auto Upgrade Door ]",
+    OnToggle = function(state)
+        getgenv()._SKENA_AUTO_UPGRADE_DOOR = state
+        if state then
+            task.spawn(function()
+                while getgenv()._SKENA_AUTO_UPGRADE_DOOR do
+                    pcall(function()
+                        local Event = game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrade")
+                        Event:FireServer(
+                            "upgrade",
+                            workspace.Bases:GetChildren()[7].Door
+                        )
+                    end)
+                    task.wait(1) -- Adjust delay as needed
+                end
+            end)
         end
     end
 })
