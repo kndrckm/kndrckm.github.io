@@ -1,13 +1,13 @@
 -- ==========================================
 -- SKENA HUB : Simple Spells!
--- Game ID: 118433033586507
+-- Place ID: 118433033586507
 -- ==========================================
 
 local SkenaUI_LibURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SkenaUI_Library.lua"
 local SkenaUI = loadstring(game:HttpGet(SkenaUI_LibURL .. "?t=" .. tostring(os.time()), true))()
 
 -- 1. Buat Window
-local Window = SkenaUI.CreateWindow("SkenaHub", "SEISEN HUB | Simple Spells!", false)
+local Window = SkenaUI.CreateWindow("SkenaHub", "Skena Hub | Simple Spells!", false)
 
 -- 2. Buat Tab
 local TabMain = Window:CreateTab("Main", "zap", false)
@@ -32,7 +32,6 @@ end
 -- ==========================================
 
 local selectedSpell = "Common Spell [50 Gold]"
-local spellQuantity = 1
 
 local spellMap = {
     ["Common Spell [50 Gold]"] = workspace:FindFirstChild("CrystallBall_1"),
@@ -41,16 +40,6 @@ local spellMap = {
     ["??? [25,000 Gold]"] = workspace:FindFirstChild("CrystallBall_4"),
     ["??? [100,000 Gold]"] = workspace:FindFirstChild("CrystallBall_5")
 }
-
-TabMain:CreateInputRow({
-    Name = "Buy Quantity",
-    Placeholder = "1",
-    Default = "1",
-    Callback = function(val)
-        local n = tonumber(val)
-        if n then spellQuantity = n end
-    end
-})
 
 local buyDrop = TabMain:CreateDropdownButton({
     Name = "Buy Spell",
@@ -62,8 +51,8 @@ local buyDrop = TabMain:CreateDropdownButton({
         local ball = spellMap[selectedSpell]
         local event = game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvent_3")
         if ball and event then
-            event:FireServer("BuyCrystalBall", ball, spellQuantity)
-            warn("[Skena] Membeli " .. tostring(spellQuantity) .. "x " .. selectedSpell)
+            event:FireServer("BuyCrystalBall", ball, 1)
+            warn("[Skena] Membeli 1x " .. selectedSpell)
         else
             warn("[Skena] Gagal membeli: CrystalBall atau Remote tidak ditemukan!")
         end

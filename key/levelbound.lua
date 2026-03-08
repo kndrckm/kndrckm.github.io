@@ -7,7 +7,7 @@ local SkenaUI_LibURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github
 local SkenaUI = loadstring(game:HttpGet(SkenaUI_LibURL .. "?t=" .. tostring(os.time()), true))()
 
 -- 1. Buat Window
-local Window = SkenaUI.CreateWindow("SkenaHub", "SEISEN HUB | Levelbound", false)
+local Window = SkenaUI.CreateWindow("SkenaHub", "Skena Hub | Levelbound", false)
 
 -- 2. Buat Tab
 local TabMain = Window:CreateTab("Main", "zap", false)

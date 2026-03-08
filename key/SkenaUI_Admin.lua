@@ -167,31 +167,39 @@ function SkenaAdmin.Attach(Window, DebugData)
     end
 
     local noclipEnabled = false
-    TabGeneral:CreateToggleRow({
-        Name = "No Clip",
-        Default = false,
-        OnToggle = function(state)
-            noclipEnabled = state
-            if noclipEnabled then
-                if getgenv()._SKENA_NOCLIP_CONN then getgenv()._SKENA_NOCLIP_CONN:Disconnect() end
-                getgenv()._SKENA_NOCLIP_CONN = game:GetService("RunService").Stepped:Connect(function()
-                    if not noclipEnabled then
-                        if getgenv()._SKENA_NOCLIP_CONN then getgenv()._SKENA_NOCLIP_CONN:Disconnect() end
-                        return
-                    end
-                    local char = player.Character
-                    if char then
-                        for _, v in ipairs(char:GetDescendants()) do
-                            if v:IsA("BasePart") and v.CanCollide then
-                                v.CanCollide = false
-                            end
+    local noclipKey = "n"
+    local function handleNoclipToggle(state)
+        noclipEnabled = state
+        if noclipEnabled then
+            if getgenv()._SKENA_NOCLIP_CONN then getgenv()._SKENA_NOCLIP_CONN:Disconnect() end
+            getgenv()._SKENA_NOCLIP_CONN = game:GetService("RunService").Stepped:Connect(function()
+                if not noclipEnabled then
+                    if getgenv()._SKENA_NOCLIP_CONN then getgenv()._SKENA_NOCLIP_CONN:Disconnect() end
+                    return
+                end
+                local char = player.Character
+                if char then
+                    for _, v in ipairs(char:GetDescendants()) do
+                        if v:IsA("BasePart") and v.CanCollide then
+                            v.CanCollide = false
                         end
                     end
-                end)
-            else
-                if getgenv()._SKENA_NOCLIP_CONN then getgenv()._SKENA_NOCLIP_CONN:Disconnect() end
-            end
+                end
+            end)
+        else
+            if getgenv()._SKENA_NOCLIP_CONN then getgenv()._SKENA_NOCLIP_CONN:Disconnect() end
         end
+    end
+
+    local noclipRow = TabGeneral:CreateToggleRow({
+        Name = "No Clip",
+        Default = false,
+        HasKey = true,
+        DefaultKey = noclipKey,
+        OnKeyChange = function(val)
+            noclipKey = val:lower()
+        end,
+        OnToggle = handleNoclipToggle
     })
 
     -- Global Keyboard Listeners for General Tab
@@ -210,6 +218,12 @@ function SkenaAdmin.Attach(Window, DebugData)
                 speedRow.ToggleState(newState)
             end
             handleSpeedToggle(newState)
+        elseif key == noclipKey then
+            local newState = not noclipEnabled
+            if noclipRow and noclipRow.ToggleState then
+                noclipRow.ToggleState(newState)
+            end
+            handleNoclipToggle(newState)
         end
     end)
 
