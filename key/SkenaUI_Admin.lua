@@ -260,21 +260,10 @@ function SkenaAdmin.Attach(Window, DebugData)
    local TabAdmin = Window:CreateTab("Admin", "database") 
     
     TabAdmin:CreateDoubleButtonRow({
-        Name = "Server Info",
-        Button1Text = "Copy GameId",
-        Button2Text = "Copy PlaceId",
+        Name = "Place Info & Dex",
+        Button1Text = "Copy PlaceId",
+        Button2Text = "Load Dex V3",
         Callback1 = function(btn)
-            local id = tostring(game.GameId)
-            if setclipboard then
-                setclipboard(id)
-                warn("[Admin] GameId copied: " .. id)
-                animateBtn(btn, true)
-            else
-                print("GameId: " .. id)
-                animateBtn(btn, false)
-            end
-        end,
-        Callback2 = function(btn)
             local id = tostring(game.PlaceId)
             if setclipboard then
                 setclipboard(id)
@@ -284,14 +273,8 @@ function SkenaAdmin.Attach(Window, DebugData)
                 print("PlaceId: " .. id)
                 animateBtn(btn, false)
             end
-        end
-    })
-
-    TabAdmin:CreateDoubleButtonRow({
-        Name = "External Tools",
-        Button1Text = "Load Dex V3",
-        Button2Text = "Load RSpy",
-        Callback1 = function(btn)
+        end,
+        Callback2 = function(btn)
             local success, err = pcall(function()
                 warn("[Admin] Memulai proses Bypassing...")
                 pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CloneRef.lua", true))() end)
@@ -309,8 +292,14 @@ function SkenaAdmin.Attach(Window, DebugData)
                 warn("[Admin] Gagal me-load Dark Dex: " .. tostring(err))
                 animateBtn(btn, false)
             end
-        end,
-        Callback2 = function(btn)
+        end
+    })
+
+    TabAdmin:CreateDoubleButtonRow({
+        Name = "Spy Tools",
+        Button1Text = "Load RSpy",
+        Button2Text = "Load CobaltSpy",
+        Callback1 = function(btn)
             local success, err = pcall(function()
                 warn("[Admin] Memuat Xeno RSpy...")
                 loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/XenoRSpy.lua", true))()
@@ -322,14 +311,8 @@ function SkenaAdmin.Attach(Window, DebugData)
                 warn("[Admin] Gagal me-load Xeno RSpy: " .. tostring(err))
                 animateBtn(btn, false)
             end
-        end
-    })
-
-    TabAdmin:CreateDoubleButtonRow({
-        Name = "Advanced Spy Tools",
-        Button1Text = "Load CobaltSpy",
-        Button2Text = "N/A",
-        Callback1 = function(btn)
+        end,
+        Callback2 = function(btn)
             local success, err = pcall(function()
                 warn("[Admin] Memuat CobaltSpy...")
                 loadstring(game:HttpGet("https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/main/key/CobaltSpy.lua", true))()
@@ -341,11 +324,72 @@ function SkenaAdmin.Attach(Window, DebugData)
                 warn("[Admin] Gagal me-load CobaltSpy: " .. tostring(err))
                 animateBtn(btn, false)
             end
-        end,
-        Callback2 = function(btn)
-            animateBtn(btn, false)
         end
     })
+
+    local espEnabled = false
+    local function handleESPToggle(state)
+        espEnabled = state
+        if espEnabled then
+            if getgenv()._SKENA_ESP_CONN then getgenv()._SKENA_ESP_CONN:Disconnect() end
+            getgenv()._SKENA_ESP_CONN = game:GetService("RunService").RenderStepped:Connect(function()
+                if not espEnabled then
+                    if getgenv()._SKENA_ESP_CONN then getgenv()._SKENA_ESP_CONN:Disconnect() end
+                    return
+                end
+                
+                local localChar = player.Character
+                local function applyESP(model)
+                    if model == localChar then return end
+                    local hum = model:FindFirstChildOfClass("Humanoid")
+                    local hrp = model:FindFirstChild("HumanoidRootPart")
+                    if hum and hrp then
+                        local highlight = model:FindFirstChild("SkenaESP")
+                        if not highlight then
+                            highlight = Instance.new("Highlight")
+                            highlight.Name = "SkenaESP"
+                            highlight.FillTransparency = 0.5
+                            highlight.OutlineTransparency = 0
+                            highlight.FillColor = Color3.fromRGB(255, 255, 255)
+                            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                            highlight.Parent = model
+                        end
+                    end
+                end
+
+                for _, p in ipairs(Players:GetPlayers()) do
+                    if p.Character then applyESP(p.Character) end
+                end
+                
+                local charFolder = workspace:FindFirstChild("Characters")
+                if charFolder then
+                    for _, obj in ipairs(charFolder:GetChildren()) do
+                        if obj:IsA("Model") then applyESP(obj) end
+                    end
+                end
+            end)
+        else
+            if getgenv()._SKENA_ESP_CONN then getgenv()._SKENA_ESP_CONN:Disconnect() end
+            for _, p in ipairs(Players:GetPlayers()) do
+                if p.Character and p.Character:FindFirstChild("SkenaESP") then
+                    p.Character.SkenaESP:Destroy()
+                end
+            end
+            local charFolder = workspace:FindFirstChild("Characters")
+            if charFolder then
+                for _, obj in ipairs(charFolder:GetChildren()) do
+                    if obj:FindFirstChild("SkenaESP") then obj.SkenaESP:Destroy() end
+                end
+            end
+        end
+    end
+
+    TabAdmin:CreateToggleRow({
+        Name = "ESP (Players & NPCs)",
+        Default = false,
+        OnToggle = handleESPToggle
+    })
+
 
     TabAdmin:CreateDoubleButtonRow({
         Name = "Workspace Scanners",
