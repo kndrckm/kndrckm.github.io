@@ -30,6 +30,8 @@ elseif PlaceId == 102669100769936 or GameId == 102669100769936 or PlaceId == 976
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/DefendYourBase67.lua"
 elseif PlaceId == 74848159470277 or GameId == 74848159470277 or PlaceId == 128981447330754 or GameId == 128981447330754 then
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/levelbound.lua"
+elseif GameId == 118433033586507 then
+    SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/SimpleSpells.lua"
 else
     -- Game tidak disupport: Load Fallback Admin (untuk di-test / bypass oleh admin)
     SkenaHub_CoreURL = "https://raw.githubusercontent.com/kndrckm/kndrckm.github.io/refs/heads/main/key/FallbackAdmin.lua"

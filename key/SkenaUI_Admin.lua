@@ -27,112 +27,130 @@ function SkenaAdmin.Attach(Window, DebugData)
     
     local isFlying = false
     local flySpeed = 50
-    TabGeneral:CreateToggleRow({
+    local flyKey = "f"
+
+    local function handleFlyToggle(state)
+        isFlying = state
+        local char = player.Character
+        if not char then return end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if not hrp or not hum then return end
+        
+        if isFlying then
+            -- Cleanup any existing fly objects
+            for _, v in ipairs(hrp:GetChildren()) do
+                if v.Name == "SkenaFlyBG" or v.Name == "SkenaFlyBV" then v:Destroy() end
+            end
+            
+            local bg = Instance.new("BodyGyro")
+            bg.Name = "SkenaFlyBG"
+            bg.P = 9e4
+            bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.CFrame = hrp.CFrame
+            bg.Parent = hrp
+            
+            local bv = Instance.new("BodyVelocity")
+            bv.Name = "SkenaFlyBV"
+            bv.Velocity = Vector3.new(0, 0, 0)
+            bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            bv.Parent = hrp
+            
+            hum.PlatformStand = true
+            
+            local cam = workspace.CurrentCamera
+            local uis = game:GetService("UserInputService")
+            
+            if getgenv()._SKENA_FLY_CONN then getgenv()._SKENA_FLY_CONN:Disconnect() end
+            getgenv()._SKENA_FLY_CONN = game:GetService("RunService").RenderStepped:Connect(function()
+                if not isFlying or not hrp or not hrp:FindFirstChild("SkenaFlyBG") or not hrp:FindFirstChild("SkenaFlyBV") then 
+                    if getgenv()._SKENA_FLY_CONN then getgenv()._SKENA_FLY_CONN:Disconnect() end
+                    return 
+                end
+                
+                bg.CFrame = cam.CFrame
+                local moveDir = Vector3.new()
+                
+                if uis:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end
+                if uis:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.CFrame.LookVector end
+                if uis:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.CFrame.RightVector end
+                if uis:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.CFrame.RightVector end
+                if uis:IsKeyDown(Enum.KeyCode.Space) or uis:IsKeyDown(Enum.KeyCode.E) then moveDir = moveDir + Vector3.new(0, 1, 0) end
+                if uis:IsKeyDown(Enum.KeyCode.LeftShift) or uis:IsKeyDown(Enum.KeyCode.Q) then moveDir = moveDir - Vector3.new(0, 1, 0) end
+                
+                if moveDir.Magnitude > 0 then
+                    moveDir = moveDir.Unit
+                end
+                bv.Velocity = moveDir * flySpeed
+            end)
+        else
+            if getgenv()._SKENA_FLY_CONN then getgenv()._SKENA_FLY_CONN:Disconnect() end
+            local bg = hrp:FindFirstChild("SkenaFlyBG")
+            local bv = hrp:FindFirstChild("SkenaFlyBV")
+            if bg then bg:Destroy() end
+            if bv then bv:Destroy() end
+            hum.PlatformStand = false
+        end
+    end
+
+    local flyRow = TabGeneral:CreateToggleRow({
         Name = "Fly Toggle",
         HasSpeed = true,
+        HasKey = true,
+        DefaultKey = flyKey,
         DefaultSpeed = "50",
+        OnKeyChange = function(val)
+            flyKey = val:lower()
+        end,
         OnSpeedChange = function(val)
             local s = tonumber(val)
             if s then flySpeed = s end
         end,
-        OnToggle = function(state)
-            isFlying = state
-            local char = player.Character
-            if not char then return end
-            local hrp = char:FindFirstChild("HumanoidRootPart")
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            if not hrp or not hum then return end
-            
-            if isFlying then
-                -- Cleanup any existing fly objects
-                for _, v in ipairs(hrp:GetChildren()) do
-                    if v.Name == "SkenaFlyBG" or v.Name == "SkenaFlyBV" then v:Destroy() end
-                end
-                
-                local bg = Instance.new("BodyGyro")
-                bg.Name = "SkenaFlyBG"
-                bg.P = 9e4
-                bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-                bg.CFrame = hrp.CFrame
-                bg.Parent = hrp
-                
-                local bv = Instance.new("BodyVelocity")
-                bv.Name = "SkenaFlyBV"
-                bv.Velocity = Vector3.new(0, 0, 0)
-                bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-                bv.Parent = hrp
-                
-                hum.PlatformStand = true
-                
-                local cam = workspace.CurrentCamera
-                local uis = game:GetService("UserInputService")
-                
-                if getgenv()._SKENA_FLY_CONN then getgenv()._SKENA_FLY_CONN:Disconnect() end
-                getgenv()._SKENA_FLY_CONN = game:GetService("RunService").RenderStepped:Connect(function()
-                    if not isFlying or not hrp or not hrp:FindFirstChild("SkenaFlyBG") or not hrp:FindFirstChild("SkenaFlyBV") then 
-                        if getgenv()._SKENA_FLY_CONN then getgenv()._SKENA_FLY_CONN:Disconnect() end
-                        return 
-                    end
-                    
-                    bg.CFrame = cam.CFrame
-                    local moveDir = Vector3.new()
-                    
-                    if uis:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end
-                    if uis:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.CFrame.LookVector end
-                    if uis:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.CFrame.RightVector end
-                    if uis:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.CFrame.RightVector end
-                    if uis:IsKeyDown(Enum.KeyCode.Space) or uis:IsKeyDown(Enum.KeyCode.E) then moveDir = moveDir + Vector3.new(0, 1, 0) end
-                    if uis:IsKeyDown(Enum.KeyCode.LeftShift) or uis:IsKeyDown(Enum.KeyCode.Q) then moveDir = moveDir - Vector3.new(0, 1, 0) end
-                    
-                    if moveDir.Magnitude > 0 then
-                        moveDir = moveDir.Unit
-                    end
-                    bv.Velocity = moveDir * flySpeed
-                end)
-            else
-                if getgenv()._SKENA_FLY_CONN then getgenv()._SKENA_FLY_CONN:Disconnect() end
-                local bg = hrp:FindFirstChild("SkenaFlyBG")
-                local bv = hrp:FindFirstChild("SkenaFlyBV")
-                if bg then bg:Destroy() end
-                if bv then bv:Destroy() end
-                hum.PlatformStand = false
-            end
-        end
+        OnToggle = handleFlyToggle
     })
 
     local speedChangerEnabled = false
     local targetWalkSpeed = 16
+    local walkKey = "g"
+
+    local function handleSpeedToggle(state)
+        speedChangerEnabled = state
+        if speedChangerEnabled then
+            if getgenv()._SKENA_SPEED_CONN then getgenv()._SKENA_SPEED_CONN:Disconnect() end
+            getgenv()._SKENA_SPEED_CONN = game:GetService("RunService").Stepped:Connect(function()
+                local char = player.Character
+                local hum = char and char:FindFirstChildOfClass("Humanoid")
+                if hum and speedChangerEnabled then
+                    if hum.WalkSpeed ~= targetWalkSpeed then
+                        hum.WalkSpeed = targetWalkSpeed
+                    end
+                end
+            end)
+        else
+            if getgenv()._SKENA_SPEED_CONN then getgenv()._SKENA_SPEED_CONN:Disconnect() end
+            local char = player.Character
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+            if hum then
+                hum.WalkSpeed = 16
+            end
+        end
+    end
+
     local speedRow = TabGeneral:CreateToggleRow({
         Name = "Speed Changer",
         HasSpeed = true,
+        HasKey = true,
         HasSpeedometer = true,
+        DefaultKey = walkKey,
         DefaultSpeed = "16",
+        OnKeyChange = function(val)
+            walkKey = val:lower()
+        end,
         OnSpeedChange = function(val)
             local num = tonumber(val)
             if num then targetWalkSpeed = num end
         end,
-        OnToggle = function(state)
-            speedChangerEnabled = state
-            if speedChangerEnabled then
-                if getgenv()._SKENA_SPEED_CONN then getgenv()._SKENA_SPEED_CONN:Disconnect() end
-                getgenv()._SKENA_SPEED_CONN = game:GetService("RunService").Stepped:Connect(function()
-                    local char = player.Character
-                    local hum = char and char:FindFirstChildOfClass("Humanoid")
-                    if hum and speedChangerEnabled then
-                        if hum.WalkSpeed ~= targetWalkSpeed then
-                            hum.WalkSpeed = targetWalkSpeed
-                        end
-                    end
-                end)
-            else
-                if getgenv()._SKENA_SPEED_CONN then getgenv()._SKENA_SPEED_CONN:Disconnect() end
-                local char = player.Character
-                local hum = char and char:FindFirstChildOfClass("Humanoid")
-                if hum then
-                    hum.WalkSpeed = 16
-                end
-            end
-        end
+        OnToggle = handleSpeedToggle
     })
 
     if speedRow and speedRow.Speedometer then
@@ -147,6 +165,53 @@ function SkenaAdmin.Attach(Window, DebugData)
             end
         end)
     end
+
+    local noclipEnabled = false
+    TabGeneral:CreateToggleRow({
+        Name = "No Clip",
+        Default = false,
+        OnToggle = function(state)
+            noclipEnabled = state
+            if noclipEnabled then
+                if getgenv()._SKENA_NOCLIP_CONN then getgenv()._SKENA_NOCLIP_CONN:Disconnect() end
+                getgenv()._SKENA_NOCLIP_CONN = game:GetService("RunService").Stepped:Connect(function()
+                    if not noclipEnabled then
+                        if getgenv()._SKENA_NOCLIP_CONN then getgenv()._SKENA_NOCLIP_CONN:Disconnect() end
+                        return
+                    end
+                    local char = player.Character
+                    if char then
+                        for _, v in ipairs(char:GetDescendants()) do
+                            if v:IsA("BasePart") and v.CanCollide then
+                                v.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            else
+                if getgenv()._SKENA_NOCLIP_CONN then getgenv()._SKENA_NOCLIP_CONN:Disconnect() end
+            end
+        end
+    })
+
+    -- Global Keyboard Listeners for General Tab
+    game:GetService("UserInputService").InputBegan:Connect(function(input, gpe)
+        if gpe then return end
+        local key = input.KeyCode.Name:lower()
+        if key == flyKey then
+            local newState = not isFlying
+            if flyRow and flyRow.ToggleState then
+                flyRow.ToggleState(newState)
+            end
+            handleFlyToggle(newState)
+        elseif key == walkKey then
+            local newState = not speedChangerEnabled
+            if speedRow and speedRow.ToggleState then
+                speedRow.ToggleState(newState)
+            end
+            handleSpeedToggle(newState)
+        end
+    end)
 
     local TabSettings = Window:CreateTab("Settings", "settings", true)
 
